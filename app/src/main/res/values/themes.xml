@@ -3,7 +3,11 @@
     <style name="Base.Theme.WeightDojo" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="android:statusBarColor">#191516
+        </item>
     </style>
 
     <style name="Theme.WeightDojo" parent="Base.Theme.WeightDojo" />
+
 </resources>

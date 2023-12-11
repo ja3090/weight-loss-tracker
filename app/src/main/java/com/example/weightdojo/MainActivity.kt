@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import com.example.weightdojo.database.Database
 import com.example.weightdojo.screens.MainScreen
+import com.example.weightdojo.ui.AppTheme
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
@@ -16,7 +17,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            MainScreen(config = config)
+            AppTheme {
+                MainScreen(config = config)
+            }
         }
     }
 }

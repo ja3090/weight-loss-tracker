@@ -1,20 +1,21 @@
-package com.example.weightdojo.database
+package com.example.weightdojo.database.dao
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.Database
-import com.example.weightdojo.database.dao.ConfigDao
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.utils.Hashing
-import kotlinx.coroutines.Dispatchers
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
+import java.security.MessageDigest
 
-class ConfigRepoTest {
+class ConfigDaoTest {
     private lateinit var configDao: ConfigDao
     private lateinit var db: AppDatabase
 
@@ -36,18 +37,26 @@ class ConfigRepoTest {
     fun passcodeEntersCorrectly() {
         val passcode = "1234"
 
-        val details = Hashing.generateHashDetails(passcode)
+        val uponCreation = Hashing.generateHashDetails(passcode)
 
         runBlocking {
             configDao.createConfig(
                 passcodeEnabled = true,
-                passwordHash = details.hash,
-                salt = details.salt
+                passwordHash = uponCreation.passwordHash,
+                salt = uponCreation.salt
             )
 
             val config = configDao.getConfig()
 
-            assert(config !== null)
+            assertNotNull("Config has been entered", config !== null)
+            config as Config
+
+            val onLoggingIn = Hashing.generateHashDetails(passcode, config.salt)
+
+            assertTrue(
+                "Password hashes match",
+                MessageDigest.isEqual(onLoggingIn.passwordHash, config.passwordHash)
+            )
         }
     }
 }

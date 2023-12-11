@@ -23,7 +23,7 @@ class ConfigRepositoryImpl(
 
                 configDao.createConfig(
                     passcodeEnabled = true,
-                    passwordHash = hashDetails.hash,
+                    passwordHash = hashDetails.passwordHash,
                     salt = hashDetails.salt
                 )
 
