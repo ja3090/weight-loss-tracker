@@ -8,14 +8,11 @@ import com.example.weightdojo.screens.MainScreen
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var database: Database
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        database = Database(applicationContext)
-
         val config = runBlocking {
-            database.getDb().configDao().getConfig()
+            MyApp.appModule.database.configDao().getConfig()
         }
 
         setContent {

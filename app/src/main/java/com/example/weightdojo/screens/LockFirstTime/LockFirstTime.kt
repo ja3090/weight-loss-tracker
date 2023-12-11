@@ -8,18 +8,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.keypad.Keypad
+import com.example.weightdojo.utils.VMFactory
 import kotlin.reflect.KSuspendFunction0
 
 @Composable
-fun LockFirstTime(onSubmitRedirect: KSuspendFunction0<Unit>) {
-    val viewModel = viewModel<LockFirstTimeViewModel>(
-        factory = viewModelFactory {
+fun LockFirstTime(
+    onSubmitRedirect: KSuspendFunction0<Unit>,
+    viewModel: LockFirstTimeViewModel = viewModel(
+        factory = VMFactory.build {
             LockFirstTimeViewModel(MyApp.appModule.database)
         }
     )
+) {
+
     val state = viewModel.state
     fun getInputValue(): String {
         return if (state.enteringPasscode) state.firstEnter

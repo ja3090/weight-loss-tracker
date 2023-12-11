@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.screens.LockFirstTime.LockFirstTime
+import com.example.weightdojo.screens.lockfirsttime.LockFirstTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

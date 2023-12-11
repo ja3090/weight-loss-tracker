@@ -2,12 +2,11 @@ package com.example.weightdojo.screens.lockfirsttime
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.weightdojo.database.Database
-import com.example.weightdojo.utils.Hashing
 import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.database.AppDatabase
-import kotlinx.coroutines.CoroutineScope
+import com.example.weightdojo.repositories.ConfigRepository
+import com.example.weightdojo.repositories.ConfigRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -21,7 +20,8 @@ data class LockFirstTimeState(
 )
 
 open class LockFirstTimeViewModel(
-    private val database: AppDatabase
+    private val database: AppDatabase,
+    private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())
 
@@ -67,36 +67,19 @@ open class LockFirstTimeViewModel(
         state = state.copy(confirmingPasscode = false, enteringPasscode = true, secondEnter = "")
     }
 
-    protected open suspend fun submitConfig(): Boolean {
-        state = state.copy(loading = true)
-
-        val success = CoroutineScope(Dispatchers.IO).async {
-            try {
-
-                val hashDetails = Hashing.generateHashDetails(state.secondEnter)
-
-                database.getDb().configDao().createConfig(
-                    passcodeEnabled = true,
-                    passwordHash = hashDetails.hash,
-                    salt = hashDetails.salt
-                )
-
-                return@async true
-            } catch (e: Exception) {
-                return@async false
-            }
+     private suspend fun submitConfig(): Boolean {
+        withContext(Dispatchers.Main) {
+            state = state.copy(loading = true)
         }
+
+        val success = viewModelScope.async(Dispatchers.IO) {
+            return@async repo.submitConfig(state.secondEnter)
+        }.await()
 
         withContext(Dispatchers.Main) {
-            state = state.copy(loading = false)
+            state = state.copy(loading = true)
         }
 
-        return success.await()
-    }
-}
-
-class LFTVMTest : LockFirstTimeViewModel() {
-    override suspend fun submitConfig(): Boolean {
-        return true
+        return success
     }
 }
