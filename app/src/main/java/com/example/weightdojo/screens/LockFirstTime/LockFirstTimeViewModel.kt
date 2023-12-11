@@ -1,10 +1,12 @@
-package com.example.weightdojo.screens.LockFirstTime
+package com.example.weightdojo.screens.lockfirsttime
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.weightdojo.database.Database
 import com.example.weightdojo.utils.Hashing
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weightdojo.database.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -18,8 +20,8 @@ data class LockFirstTimeState(
     var loading: Boolean = false
 )
 
-class LockFirstTimeViewModel(
-    private val database: Database = Database()
+open class LockFirstTimeViewModel(
+    private val database: AppDatabase
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())
 
@@ -65,7 +67,7 @@ class LockFirstTimeViewModel(
         state = state.copy(confirmingPasscode = false, enteringPasscode = true, secondEnter = "")
     }
 
-    private suspend fun submitConfig(): Boolean {
+    protected open suspend fun submitConfig(): Boolean {
         state = state.copy(loading = true)
 
         val success = CoroutineScope(Dispatchers.IO).async {
@@ -90,5 +92,11 @@ class LockFirstTimeViewModel(
         }
 
         return success.await()
+    }
+}
+
+class LFTVMTest : LockFirstTimeViewModel() {
+    override suspend fun submitConfig(): Boolean {
+        return true
     }
 }

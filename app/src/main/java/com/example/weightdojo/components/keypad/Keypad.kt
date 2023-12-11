@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction0
 
@@ -28,10 +27,10 @@ fun Keypad(
     goBack: () -> Unit,
     submit: KSuspendFunction0<Boolean>,
     inputValue: String,
-    navHostController: NavHostController,
     viewModel: ViewModel,
     promptText: String,
-    isConfirming: Boolean = false
+    isConfirming: Boolean = false,
+    onSubmitRedirect: KSuspendFunction0<Unit>,
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -101,7 +100,7 @@ fun Keypad(
                     viewModel.viewModelScope.launch {
                         val ok = submit()
 
-                        if (ok) navHostController.navigate("Home")
+                        if (ok) onSubmitRedirect()
                     }
                 }
             }

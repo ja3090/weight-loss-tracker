@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.LockFirstTime
+package com.example.weightdojo.screens.lockfirsttime
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
@@ -8,14 +8,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.keypad.Keypad
+import kotlin.reflect.KSuspendFunction0
 
 @Composable
-fun LockFirstTime(
-    navHostController: NavHostController
-) {
-    val viewModel = viewModel<LockFirstTimeViewModel>()
+fun LockFirstTime(onSubmitRedirect: KSuspendFunction0<Unit>) {
+    val viewModel = viewModel<LockFirstTimeViewModel>(
+        factory = viewModelFactory {
+            LockFirstTimeViewModel(MyApp.appModule.database)
+        }
+    )
     val state = viewModel.state
     fun getInputValue(): String {
         return if (state.enteringPasscode) state.firstEnter
@@ -26,7 +30,7 @@ fun LockFirstTime(
         return if (state.enteringPasscode) "Create a 4-digit passcode"
         else "Confirm your passcode"
     }
-    
+
     if (state.confirmingPasscode) {
         Text(text = "< Back")
     }
@@ -37,10 +41,10 @@ fun LockFirstTime(
         submit = viewModel::submit,
         goBack = viewModel::goBack,
         inputValue = getInputValue(),
-        navHostController = navHostController,
         viewModel = viewModel,
         promptText = getPromptText(),
-        isConfirming = state.confirmingPasscode
+        isConfirming = state.confirmingPasscode,
+        onSubmitRedirect = onSubmitRedirect
     )
 
     if (state.loading) {

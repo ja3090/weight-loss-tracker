@@ -19,33 +19,20 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun configDao(): ConfigDao
 }
 
-class Database(
-    context: Context? = null
-) {
+class Database {
     companion object {
-        private var db: AppDatabase? = null
-    }
-
-    fun getDb(): AppDatabase {
-        if (db == null) {
-            throw Exception("db is null")
-        } else {
-            return db as AppDatabase
+        fun buildDb(context: Context, useTestDb: Boolean): AppDatabase {
+            if (useTestDb) {
+                return Room.inMemoryDatabaseBuilder(
+                    context,
+                    AppDatabase::class.java
+                ).build()
+            } else {
+                return Room.databaseBuilder(
+                    context,
+                    AppDatabase::class.java, "wd-database"
+                ).build()
+            }
         }
-    }
-    private fun setDb(context: Context?) {
-        if (db == null) {
-            if (context == null) throw Exception("Provide context arg")
-            val instance = Room.databaseBuilder(
-                context,
-                AppDatabase::class.java, "wd-database"
-            ).build()
-
-            db = instance
-        }
-    }
-
-    init {
-        setDb(context)
     }
 }

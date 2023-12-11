@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -8,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.screens.LockFirstTime.LockFirstTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 enum class Screens {
     LockFirstTime,
@@ -29,13 +30,19 @@ fun MainScreen(
     config: Config?,
     navHostController: NavHostController = rememberNavController()
 ) {
+    suspend fun redirectToHome() {
+        withContext(Dispatchers.Main) {
+            navHostController.navigate(Screens.Home.name)
+        }
+    }
+
     NavHost(
         navController = navHostController,
         startDestination = getStartDest(config).name
     ) {
         composable(route = Screens.LockFirstTime.name) {
             LockFirstTime(
-                navHostController = navHostController
+                onSubmitRedirect = ::redirectToHome
             )
         }
         composable(route = Screens.Lock.name) {

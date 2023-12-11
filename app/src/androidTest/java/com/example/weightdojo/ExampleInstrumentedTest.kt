@@ -2,6 +2,7 @@ package com.example.weightdojo
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.weightdojo.screens.LockFirstTime.LFTVMTest
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,6 +20,9 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val viewModel = LFTVMTest()
+
+
         assertEquals("com.example.weightdojo", appContext.packageName)
     }
 }
