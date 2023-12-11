@@ -70,6 +70,7 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 
 
+
     val navVersion = "2.7.5"
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
