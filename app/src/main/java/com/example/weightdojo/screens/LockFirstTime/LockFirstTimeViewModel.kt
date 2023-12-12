@@ -25,12 +25,14 @@ open class LockFirstTimeViewModel(
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())
 
+    val passcodeLength = 4
+
     fun addInput(text: String) {
-        val enterFirst = state.enteringPasscode && state.firstEnter.length != 4
+        val enterFirst = state.enteringPasscode && state.firstEnter.length != passcodeLength
 
         if (enterFirst) state = state.copy(firstEnter = state.firstEnter + text)
 
-        val enterSecond = state.confirmingPasscode && state.secondEnter.length != 4
+        val enterSecond = state.confirmingPasscode && state.secondEnter.length != passcodeLength
 
         if (enterSecond) state = state.copy(secondEnter = state.secondEnter + text)
     }
@@ -46,13 +48,13 @@ open class LockFirstTimeViewModel(
     }
 
     suspend fun submit(): Boolean {
-        val enterFinished = state.enteringPasscode && state.firstEnter.length == 4
+        val enterFinished = state.enteringPasscode && state.firstEnter.length == passcodeLength
 
         if (enterFinished) {
             state = state.copy(enteringPasscode = false, confirmingPasscode = true)
         }
 
-        val confirmFinished = state.confirmingPasscode && state.secondEnter.length == 4
+        val confirmFinished = state.confirmingPasscode && state.secondEnter.length == passcodeLength
 
         val matches = state.firstEnter == state.secondEnter
 

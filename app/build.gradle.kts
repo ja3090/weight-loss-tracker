@@ -65,7 +65,8 @@ dependencies {
     implementation("androidx.compose.material:material")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.activity:activity-compose:1.8.1")
+    val composeVersion = "1.8.1"
+    implementation("androidx.activity:activity-compose:$composeVersion")
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 

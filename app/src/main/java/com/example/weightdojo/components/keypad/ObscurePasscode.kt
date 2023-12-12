@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ObscurePasscode(inputValue: String, modifier: Modifier = Modifier) {
+fun ObscurePasscode(inputValue: String, length: Int, modifier: Modifier = Modifier) {
     var ind = 0
 
     Row(
@@ -28,7 +28,7 @@ fun ObscurePasscode(inputValue: String, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        while (ind < 4) {
+        while (ind < length) {
             if (inputValue.length > ind) {
                 Box(
                     modifier = Modifier

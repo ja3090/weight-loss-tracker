@@ -30,6 +30,7 @@ fun Keypad(
     viewModel: ViewModel,
     promptText: String,
     isConfirming: Boolean = false,
+    length: Int,
     onSubmitRedirect: KSuspendFunction0<Unit>,
 ) {
     Column(
@@ -44,6 +45,7 @@ fun Keypad(
             }
             Row(modifier = Modifier.weight(1f)) {
                 ObscurePasscode(
+                    length = length,
                     inputValue = inputValue
                 )
             }
@@ -89,7 +91,8 @@ fun Keypad(
                         .fillMaxSize()
                         .weight(1f)
                         .aspectRatio(1f),
-                    onClick = delete
+                    onClick = delete,
+                    testTag = "Delete"
                 )
                 KeypadButton(
                     text = "0", modifier = Modifier
@@ -112,7 +115,8 @@ fun Keypad(
 
                             if (ok) onSubmitRedirect()
                         }
-                    }
+                    },
+                    testTag = "Submit"
                 )
             }
             Row(

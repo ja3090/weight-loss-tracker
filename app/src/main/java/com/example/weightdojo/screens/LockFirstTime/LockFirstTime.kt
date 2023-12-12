@@ -43,7 +43,8 @@ fun LockFirstTime(
         viewModel = viewModel,
         promptText = getPromptText(),
         isConfirming = state.confirmingPasscode,
-        onSubmitRedirect = onSubmitRedirect
+        onSubmitRedirect = onSubmitRedirect,
+        length = viewModel.passcodeLength
     )
 
     if (state.loading) {
