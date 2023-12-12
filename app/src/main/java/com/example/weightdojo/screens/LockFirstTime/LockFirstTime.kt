@@ -34,10 +34,6 @@ fun LockFirstTime(
         else "Confirm your passcode"
     }
 
-    if (state.confirmingPasscode) {
-        Text(text = "< Back")
-    }
-
     Keypad(
         keyClick = viewModel::addInput,
         delete = viewModel::delete,

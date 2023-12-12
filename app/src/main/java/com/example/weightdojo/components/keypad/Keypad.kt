@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weightdojo.R
 import com.example.weightdojo.components.TextDefault
+import com.example.weightdojo.components.icon.IconBuilder
 import kotlinx.coroutines.launch
 import kotlin.reflect.KSuspendFunction0
 
@@ -79,13 +81,16 @@ fun Keypad(
             Row(
                 modifier = Modifier.weight(1f)
             ) {
-                KeypadButton(
-                    text = "DEL", modifier = Modifier
+                IconBuilder(
+                    id = R.drawable.backspace,
+                    contentDescription = "delete last character",
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.background)
+                        .fillMaxSize()
                         .weight(1f)
-                        .aspectRatio(1f)
-                ) {
-                    delete()
-                }
+                        .aspectRatio(1f),
+                    onClick = delete
+                )
                 KeypadButton(
                     text = "0", modifier = Modifier
                         .weight(1f)
@@ -93,17 +98,22 @@ fun Keypad(
                 ) {
                     keyClick("0")
                 }
-                KeypadButton(
-                    text = ">", modifier = Modifier
+                IconBuilder(
+                    id = R.drawable.check,
+                    contentDescription = "submit",
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.background)
+                        .fillMaxSize()
                         .weight(1f)
-                        .aspectRatio(1f)
-                ) {
-                    viewModel.viewModelScope.launch {
-                        val ok = submit()
+                        .aspectRatio(1f),
+                    onClick = {
+                        viewModel.viewModelScope.launch {
+                            val ok = submit()
 
-                        if (ok) onSubmitRedirect()
+                            if (ok) onSubmitRedirect()
+                        }
                     }
-                }
+                )
             }
             Row(
                 modifier = Modifier.weight(1f)
