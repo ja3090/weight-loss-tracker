@@ -71,6 +71,8 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 
 
+    implementation("androidx.biometric:biometric:1.1.0")
+
 
     val navVersion = "2.7.5"
 

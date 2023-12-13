@@ -13,12 +13,12 @@ data class Config (
     @ColumnInfo(name = "goal_weight") val goalWeight: Float? = null,
     @ColumnInfo(name = "passcode_enabled") val passcodeEnabled: Boolean,
     @ColumnInfo(name = "password_hash") val passwordHash: ByteArray,
-    @ColumnInfo(name = "salt") val salt: ByteArray
+    @ColumnInfo(name = "salt") val salt: ByteArray,
+    @ColumnInfo(name = "bio_enabled") val bioEnabled: Boolean
 ) {
     override fun equals(other: Any?): Boolean {
         if (other !is ByteArray) return false
-        if (this.passwordHash.contentEquals(other)) return false
-        return true
+        return this.passwordHash.contentEquals(other)
     }
 
     override fun hashCode(): Int {

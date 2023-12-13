@@ -16,7 +16,8 @@ data class LockFirstTimeState(
     var secondEnter: String = "",
     var enteringPasscode: Boolean = true,
     var confirmingPasscode: Boolean = false,
-    var loading: Boolean = false
+    var loading: Boolean = false,
+    var showBiometricDialog: Boolean = false
 )
 
 open class LockFirstTimeViewModel(
@@ -26,6 +27,10 @@ open class LockFirstTimeViewModel(
     var state by mutableStateOf(LockFirstTimeState())
 
     val passcodeLength = 4
+
+    fun setShowBiometricDialog(bool: Boolean) {
+        state = state.copy(showBiometricDialog = bool)
+    }
 
     fun addInput(text: String) {
         val enterFirst = state.enteringPasscode && state.firstEnter.length != passcodeLength
@@ -58,24 +63,20 @@ open class LockFirstTimeViewModel(
 
         val matches = state.firstEnter == state.secondEnter
 
-        if (confirmFinished && matches) {
-            return submitConfig()
-        }
-
-        return false
+        return confirmFinished && matches
     }
 
     fun goBack() {
         state = state.copy(confirmingPasscode = false, enteringPasscode = true, secondEnter = "")
     }
 
-     private suspend fun submitConfig(): Boolean {
+     suspend fun submitConfig(bioEnabled: Boolean): Boolean {
         withContext(Dispatchers.Main) {
             state = state.copy(loading = true)
         }
 
         val success = viewModelScope.async(Dispatchers.IO) {
-            return@async repo.submitConfig(state.secondEnter)
+            return@async repo.submitConfig(state.secondEnter, bioEnabled)
         }.await()
 
         withContext(Dispatchers.Main) {

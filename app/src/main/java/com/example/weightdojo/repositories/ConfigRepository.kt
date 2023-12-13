@@ -8,14 +8,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 interface ConfigRepository {
-    suspend fun submitConfig(passcode: String): Boolean
+    suspend fun submitConfig(passcode: String, bioEnabled: Boolean): Boolean
     suspend fun getConfig(): Config?
 }
 
 class ConfigRepositoryImpl(
     private val configDao: ConfigDao
 ) : ConfigRepository {
-    override suspend fun submitConfig(passcode: String): Boolean {
+    override suspend fun submitConfig(passcode: String, bioEnabled: Boolean): Boolean {
         val success = CoroutineScope(Dispatchers.IO).async {
             try {
 
@@ -24,7 +24,8 @@ class ConfigRepositoryImpl(
                 configDao.createConfig(
                     passcodeEnabled = true,
                     passwordHash = hashDetails.passwordHash,
-                    salt = hashDetails.salt
+                    salt = hashDetails.salt,
+                    bioEnabled = bioEnabled
                 )
 
                 return@async true

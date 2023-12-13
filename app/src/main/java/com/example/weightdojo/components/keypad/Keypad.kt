@@ -18,6 +18,7 @@ import com.example.weightdojo.R
 import com.example.weightdojo.components.TextDefault
 import com.example.weightdojo.components.icon.IconBuilder
 import kotlinx.coroutines.launch
+import kotlin.reflect.KFunction0
 import kotlin.reflect.KSuspendFunction0
 
 @Composable
@@ -25,13 +26,11 @@ fun Keypad(
     keyClick: (key: String) -> Unit,
     delete: () -> Unit,
     goBack: () -> Unit,
-    submit: KSuspendFunction0<Boolean>,
+    submit: KFunction0<Unit>,
     inputValue: String,
-    viewModel: ViewModel,
     promptText: String,
     isConfirming: Boolean = false,
     length: Int,
-    onSubmitRedirect: KSuspendFunction0<Unit>,
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -109,13 +108,7 @@ fun Keypad(
                         .fillMaxSize()
                         .weight(1f)
                         .aspectRatio(1f),
-                    onClick = {
-                        viewModel.viewModelScope.launch {
-                            val ok = submit()
-
-                            if (ok) onSubmitRedirect()
-                        }
-                    },
+                    onClick = { submit() },
                     testTag = "Submit"
                 )
             }
