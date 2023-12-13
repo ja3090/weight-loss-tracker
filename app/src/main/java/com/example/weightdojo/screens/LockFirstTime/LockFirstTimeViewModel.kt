@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.lockfirsttime
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.*
@@ -52,7 +53,7 @@ open class LockFirstTimeViewModel(
         if (enterSecond) state = state.copy(secondEnter = state.secondEnter.dropLast(1))
     }
 
-    suspend fun submit(): Boolean {
+    fun submit(): Boolean {
         val enterFinished = state.enteringPasscode && state.firstEnter.length == passcodeLength
 
         if (enterFinished) {
@@ -62,6 +63,9 @@ open class LockFirstTimeViewModel(
         val confirmFinished = state.confirmingPasscode && state.secondEnter.length == passcodeLength
 
         val matches = state.firstEnter == state.secondEnter
+
+        Log.d("confirmFinished", confirmFinished.toString())
+        Log.d("matches", matches.toString())
 
         return confirmFinished && matches
     }

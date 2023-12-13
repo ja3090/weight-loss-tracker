@@ -26,9 +26,9 @@ fun LockFirstTime(
         factory = VMFactory.build {
             LockFirstTimeViewModel(MyApp.appModule.database)
         }
-    )
+    ),
+    context: FragmentActivity = LocalContext.current as FragmentActivity
 ) {
-    val context = LocalContext.current as FragmentActivity
 
     val state = viewModel.state
     fun getInputValue(): String {

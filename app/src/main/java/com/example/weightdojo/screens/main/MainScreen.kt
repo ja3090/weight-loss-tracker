@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens
+package com.example.weightdojo.screens.main
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weightdojo.database.models.Config
+import com.example.weightdojo.screens.Home
+import com.example.weightdojo.screens.Lock
 import com.example.weightdojo.screens.lockfirsttime.LockFirstTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

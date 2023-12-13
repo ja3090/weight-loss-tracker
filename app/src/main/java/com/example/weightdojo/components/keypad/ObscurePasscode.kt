@@ -18,8 +18,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ObscurePasscode(inputValue: String, length: Int, modifier: Modifier = Modifier) {
-    var ind = 0
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -27,12 +25,12 @@ fun ObscurePasscode(inputValue: String, length: Int, modifier: Modifier = Modifi
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        while (ind < length) {
+        for (i in 0 until length) {
             Box(
                 modifier = Modifier
                     .padding(10.dp)
                     .background(
-                        color = if (inputValue.length > ind) MaterialTheme.colors.primaryVariant else Color.Transparent,
+                        color = if (i < inputValue.length) MaterialTheme.colors.primaryVariant else Color.Transparent,
                         shape = CircleShape
                     )
                     .border(
@@ -44,7 +42,5 @@ fun ObscurePasscode(inputValue: String, length: Int, modifier: Modifier = Modifi
                     .align(Alignment.CenterVertically)
             )
         }
-
-        ind += 1
     }
 }

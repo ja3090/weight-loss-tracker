@@ -44,7 +44,8 @@ class ConfigDaoTest {
             configDao.createConfig(
                 passcodeEnabled = true,
                 passwordHash = uponCreation.passwordHash,
-                salt = uponCreation.salt
+                salt = uponCreation.salt,
+                bioEnabled = false
             )
 
             val config = configDao.getConfig()

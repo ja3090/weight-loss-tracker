@@ -1,10 +1,12 @@
 package com.example.weightdojo.screens.lockfirsttime
 
 import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.fragment.app.FragmentActivity
 import androidx.test.core.app.ApplicationProvider
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.Database
@@ -23,7 +25,7 @@ class TestConfigRepo : ConfigRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun submitConfig(passcode: String): Boolean {
+    override suspend fun submitConfig(passcode: String, bioEnabled: Boolean): Boolean {
         return false
     }
 }
@@ -31,13 +33,14 @@ class TestConfigRepo : ConfigRepository {
 class LockFirstTimeTest {
     private lateinit var db: AppDatabase
     private var showText: Boolean = false
+    private lateinit var context: Context
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Before
     fun init() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
+        context = ApplicationProvider.getApplicationContext()
         db = Database.buildDb(context, true)
     }
 
@@ -55,11 +58,15 @@ class LockFirstTimeTest {
     @Throws(Exception::class)
     fun mismatchingCodesAreNotSubmitted() {
         val testConfigRepo = TestConfigRepo()
-        val viewModel = LockFirstTimeViewModel(db, testConfigRepo)
+        val viewModel = LockFirstTimeViewModel(
+            db,
+            testConfigRepo
+        )
 
         composeTestRule.setContent {
             LockFirstTime(
-                onSubmitRedirect = ::mockOnSubmit, viewModel = viewModel
+                onSubmitRedirect = ::mockOnSubmit, viewModel = viewModel,
+                context = FragmentActivity()
             )
         }
 
@@ -87,7 +94,7 @@ class LockFirstTimeTest {
             viewModel.state.secondEnter == secondPass
         )
 
-        val passes = runBlocking { viewModel.submit() }
+        val passes = viewModel.submit()
 
         assertTrue("Mismatching passcodes are rejected", !passes)
     }
