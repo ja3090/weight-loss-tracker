@@ -1,7 +1,6 @@
 package com.example.weightdojo.screens.lockfirsttime
 
 import android.content.Context
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -13,7 +12,6 @@ import com.example.weightdojo.database.Database
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.repositories.ConfigRepository
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

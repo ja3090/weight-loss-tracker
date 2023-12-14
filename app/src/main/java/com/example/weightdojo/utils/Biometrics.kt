@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
+import kotlin.reflect.KSuspendFunction0
 
 class Biometrics {
     companion object {

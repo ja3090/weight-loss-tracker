@@ -11,13 +11,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val config = runBlocking {
-            MyApp.appModule.database.configDao().getConfig()
-        }
-
         setContent {
             AppTheme {
-                MainScreen(config = config)
+                MainScreen()
             }
         }
     }

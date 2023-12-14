@@ -1,57 +1,66 @@
 package com.example.weightdojo.screens.main
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.screens.Home
-import com.example.weightdojo.screens.Lock
+import com.example.weightdojo.screens.lock.Lock
 import com.example.weightdojo.screens.lockfirsttime.LockFirstTime
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-enum class Screens {
-    LockFirstTime,
-    Lock,
-    Home,
-    Entries,
-    Settings,
-    Graphs
-}
-
-fun getStartDest(config: Config?): Enum<Screens> {
-    return if (config == null) Screens.LockFirstTime
-    else if (config.passcodeEnabled) Screens.Lock
-    else Screens.Home
-}
+import com.example.weightdojo.utils.VMFactory
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
-    config: Config?,
-    navHostController: NavHostController = rememberNavController()
-) {
-    suspend fun redirectToHome() {
-        withContext(Dispatchers.Main) {
-            navHostController.navigate(Screens.Home.name)
+    navHostController: NavHostController = rememberNavController(),
+    mainViewModel: MainViewModel = viewModel(
+        factory = VMFactory.build {
+            MainViewModel(MyApp.appModule.database)
         }
-    }
+    ),
+    config: Config? = mainViewModel.state.config,
+) {
+
+    val context = LocalContext.current as FragmentActivity
 
     NavHost(
         navController = navHostController,
-        startDestination = getStartDest(config).name
+        startDestination = mainViewModel.state.destination.name
     ) {
         composable(route = Screens.LockFirstTime.name) {
             LockFirstTime(
-                onSubmitRedirect = ::redirectToHome
+                onSubmitRedirect = {
+                    mainViewModel.viewModelScope.launch {
+//                        mainViewModel.setAuthenticated(true)
+                        navHostController.navigate(Screens.Home.name)
+                    }
+                },
+                context = context
             )
         }
         composable(route = Screens.Lock.name) {
-            Lock()
+            Lock(
+                config = config!!,
+                context = context,
+                redirectToHome = {
+                    mainViewModel.viewModelScope.launch {
+                        mainViewModel.setAuthenticated(true)
+                        navHostController.navigate(Screens.Home.name)
+                    }
+                },
+                isAuthenticated = mainViewModel.state.authenticated,
+            )
         }
         composable(route = Screens.Home.name) {
             Home()
         }
     }
+
 }

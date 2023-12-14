@@ -11,26 +11,25 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.R
 import com.example.weightdojo.components.TextDefault
 import com.example.weightdojo.components.icon.IconBuilder
-import kotlinx.coroutines.launch
-import kotlin.reflect.KFunction0
-import kotlin.reflect.KSuspendFunction0
 
 @Composable
 fun Keypad(
     keyClick: (key: String) -> Unit,
     delete: () -> Unit,
-    goBack: () -> Unit,
-    submit: KFunction0<Unit>,
+    submit: () -> Unit,
     inputValue: String,
     promptText: String,
-    isConfirming: Boolean = false,
-    length: Int,
+    length: Int = PASSCODE_LENGTH,
+    leftOfZeroCustomBtn: @Composable ((
+            modifier: Modifier
+            ) -> Unit)? = null,
+    rightOfZeroCustomBtn: @Composable ((
+        modifier: Modifier
+    ) -> Unit)? = null,
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -109,23 +108,22 @@ fun Keypad(
                         .weight(1f)
                         .aspectRatio(1f),
                     onClick = { submit() },
-                    testTag = "Submit"
+                    testTag = "Submit",
                 )
             }
+
+            if (leftOfZeroCustomBtn == null && rightOfZeroCustomBtn == null) return
+
             Row(
                 modifier = Modifier.weight(1f)
             ) {
-                if (isConfirming) {
-                    KeypadButton(
-                        text = "Back",
+                if (leftOfZeroCustomBtn !== null) {
+                    leftOfZeroCustomBtn(
                         modifier = Modifier
+                            .background(MaterialTheme.colors.background)
+                            .fillMaxSize()
                             .weight(1f)
-                            .aspectRatio(1f),
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colors.primaryVariant
-                    ) {
-                        goBack()
-                    }
+                            .aspectRatio(1f))
                 } else {
                     Box(
                         modifier = Modifier
@@ -135,16 +133,21 @@ fun Keypad(
                             .aspectRatio(1f)
                     )
                 }
-
-                KeypadButton(
-                    text = "Cancel",
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f),
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primaryVariant
-                ) {
-                    println("")
+                if (rightOfZeroCustomBtn !== null) {
+                    rightOfZeroCustomBtn(
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.background)
+                            .fillMaxSize()
+                            .weight(1f)
+                            .aspectRatio(1f))
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.background)
+                            .fillMaxSize()
+                            .weight(1f)
+                            .aspectRatio(1f)
+                    )
                 }
             }
         }

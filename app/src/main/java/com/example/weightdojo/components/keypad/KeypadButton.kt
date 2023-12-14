@@ -22,7 +22,6 @@ fun KeypadButton(
 ) {
     Box(
         modifier = Modifier
-            .background(Color(0xfff5f5f5))
             .clickable { onClick() }
             .background(MaterialTheme.colors.background)
             .fillMaxSize()

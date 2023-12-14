@@ -16,12 +16,12 @@ fun Loading() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.4f))
-    ) {
+            .background(color = Color(0XFF000000).copy(alpha = 0.6f)),
+        contentAlignment = Alignment.Center,
+
+        ) {
         CircularProgressIndicator(
-            modifier = Modifier
-                .width(64.dp)
-                .align(Alignment.Center),
+            modifier = Modifier.width(64.dp),
             color = Color.White,
         )
     }

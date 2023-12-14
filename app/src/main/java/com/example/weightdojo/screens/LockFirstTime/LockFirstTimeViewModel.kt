@@ -1,10 +1,10 @@
 package com.example.weightdojo.screens.lockfirsttime
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
+import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.repositories.ConfigRepository
 import com.example.weightdojo.repositories.ConfigRepositoryImpl
@@ -27,18 +27,16 @@ open class LockFirstTimeViewModel(
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())
 
-    val passcodeLength = 4
-
     fun setShowBiometricDialog(bool: Boolean) {
         state = state.copy(showBiometricDialog = bool)
     }
 
     fun addInput(text: String) {
-        val enterFirst = state.enteringPasscode && state.firstEnter.length != passcodeLength
+        val enterFirst = state.enteringPasscode && state.firstEnter.length != PASSCODE_LENGTH
 
         if (enterFirst) state = state.copy(firstEnter = state.firstEnter + text)
 
-        val enterSecond = state.confirmingPasscode && state.secondEnter.length != passcodeLength
+        val enterSecond = state.confirmingPasscode && state.secondEnter.length != PASSCODE_LENGTH
 
         if (enterSecond) state = state.copy(secondEnter = state.secondEnter + text)
     }
@@ -54,18 +52,15 @@ open class LockFirstTimeViewModel(
     }
 
     fun submit(): Boolean {
-        val enterFinished = state.enteringPasscode && state.firstEnter.length == passcodeLength
+        val enterFinished = state.enteringPasscode && state.firstEnter.length == PASSCODE_LENGTH
 
         if (enterFinished) {
             state = state.copy(enteringPasscode = false, confirmingPasscode = true)
         }
 
-        val confirmFinished = state.confirmingPasscode && state.secondEnter.length == passcodeLength
+        val confirmFinished = state.confirmingPasscode && state.secondEnter.length == PASSCODE_LENGTH
 
         val matches = state.firstEnter == state.secondEnter
-
-        Log.d("confirmFinished", confirmFinished.toString())
-        Log.d("matches", matches.toString())
 
         return confirmFinished && matches
     }
