@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import com.example.weightdojo.components.TextDefault
+import com.example.weightdojo.components.text.TextDefault
 
 @Composable
 fun KeypadButton(
@@ -23,7 +23,7 @@ fun KeypadButton(
     Box(
         modifier = Modifier
             .clickable { onClick() }
-            .background(MaterialTheme.colors.background)
+            .background(MaterialTheme.colors.secondary)
             .fillMaxSize()
             .then(modifier),
         contentAlignment = Alignment.Center

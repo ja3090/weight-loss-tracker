@@ -4,6 +4,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.example.weightdojo.components.text.TextDefault
 
 @Composable
 fun AlertDialog(

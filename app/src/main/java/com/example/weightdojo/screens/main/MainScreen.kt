@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.screens.Home
+import com.example.weightdojo.screens.home.Home
 import com.example.weightdojo.screens.lock.Lock
 import com.example.weightdojo.screens.lockfirsttime.LockFirstTime
 import com.example.weightdojo.utils.VMFactory
@@ -32,7 +32,7 @@ fun MainScreen(
 
     NavHost(
         navController = navHostController,
-        startDestination = mainViewModel.state.destination.name
+        startDestination = Screens.Home.name
     ) {
         composable(route = Screens.LockFirstTime.name) {
             LockFirstTime(

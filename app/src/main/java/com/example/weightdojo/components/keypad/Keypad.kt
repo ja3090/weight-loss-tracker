@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.R
-import com.example.weightdojo.components.TextDefault
+import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.components.icon.IconBuilder
+import com.example.weightdojo.ui.Sizing
 
 @Composable
 fun Keypad(
@@ -25,17 +29,20 @@ fun Keypad(
     promptText: String,
     length: Int = PASSCODE_LENGTH,
     leftOfZeroCustomBtn: @Composable ((
-            modifier: Modifier
-            ) -> Unit)? = null,
+        modifier: Modifier
+    ) -> Unit)? = null,
     rightOfZeroCustomBtn: @Composable ((
         modifier: Modifier
     ) -> Unit)? = null,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
     ) {
         Column(
-            modifier = Modifier.weight(2f),
+            modifier = Modifier
+                .weight(2f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
@@ -50,7 +57,16 @@ fun Keypad(
         }
 
         Column(
-            modifier = Modifier.weight(3f),
+            modifier = Modifier
+                .weight(3f)
+                .clip(
+                    shape = RoundedCornerShape(
+                        Sizing.cornerRounding,
+                        Sizing.cornerRounding,
+                        0.dp,
+                        0.dp
+                    )
+                ),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -66,9 +82,10 @@ fun Keypad(
                         val num = sequence.toString()
 
                         KeypadButton(
-                            text = num, modifier = Modifier
+                            text = num,
+                            modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1f)
+                                .aspectRatio(1f),
                         ) {
                             keyClick(num)
                         }
@@ -85,7 +102,7 @@ fun Keypad(
                     id = R.drawable.backspace,
                     contentDescription = "delete last character",
                     modifier = Modifier
-                        .background(MaterialTheme.colors.background)
+                        .background(MaterialTheme.colors.secondary)
                         .fillMaxSize()
                         .weight(1f)
                         .aspectRatio(1f),
@@ -103,7 +120,7 @@ fun Keypad(
                     id = R.drawable.check,
                     contentDescription = "submit",
                     modifier = Modifier
-                        .background(MaterialTheme.colors.background)
+                        .background(MaterialTheme.colors.secondary)
                         .fillMaxSize()
                         .weight(1f)
                         .aspectRatio(1f),
@@ -119,15 +136,16 @@ fun Keypad(
             ) {
                 if (leftOfZeroCustomBtn !== null) {
                     leftOfZeroCustomBtn(
-                        modifier = Modifier
-                            .background(MaterialTheme.colors.background)
+                        Modifier
+                            .background(MaterialTheme.colors.secondary)
                             .fillMaxSize()
                             .weight(1f)
-                            .aspectRatio(1f))
+                            .aspectRatio(1f)
+                    )
                 } else {
                     Box(
                         modifier = Modifier
-                            .background(MaterialTheme.colors.background)
+                            .background(MaterialTheme.colors.secondary)
                             .fillMaxSize()
                             .weight(1f)
                             .aspectRatio(1f)
@@ -135,15 +153,16 @@ fun Keypad(
                 }
                 if (rightOfZeroCustomBtn !== null) {
                     rightOfZeroCustomBtn(
-                        modifier = Modifier
-                            .background(MaterialTheme.colors.background)
+                        Modifier
+                            .background(MaterialTheme.colors.secondary)
                             .fillMaxSize()
                             .weight(1f)
-                            .aspectRatio(1f))
+                            .aspectRatio(1f)
+                    )
                 } else {
                     Box(
                         modifier = Modifier
-                            .background(MaterialTheme.colors.background)
+                            .background(MaterialTheme.colors.secondary)
                             .fillMaxSize()
                             .weight(1f)
                             .aspectRatio(1f)
