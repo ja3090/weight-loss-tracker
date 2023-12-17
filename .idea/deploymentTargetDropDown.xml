@@ -2,9 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ConfigDaoTest">
-        <State />
-      </entry>
       <entry key="LockFirstTimeTest">
         <State>
           <targetSelectedWithDropDown>
@@ -20,9 +17,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2023-12-13T14:48:43.609721700Z" />
         </State>
-      </entry>
-      <entry key="Tests in 'com.example.weightdojo'">
-        <State />
       </entry>
       <entry key="app">
         <State />

@@ -13,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.R
+import com.example.weightdojo.TestTags
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.ui.Sizing
@@ -107,7 +109,7 @@ fun Keypad(
                         .weight(1f)
                         .aspectRatio(1f),
                     onClick = delete,
-                    testTag = "Delete"
+                    testTag = TestTags.DELETE_BUTTON.name
                 )
                 KeypadButton(
                     text = "0", modifier = Modifier

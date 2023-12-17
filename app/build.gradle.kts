@@ -70,6 +70,8 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
 
+    val mockkVersion = "1.13.7"
+    testImplementation("io.mockk:mockk:${mockkVersion}")
 
     implementation("androidx.biometric:biometric:1.1.0")
 

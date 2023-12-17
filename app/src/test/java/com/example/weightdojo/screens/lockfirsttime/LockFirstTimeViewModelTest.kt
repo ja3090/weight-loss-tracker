@@ -1,26 +1,13 @@
 package com.example.weightdojo.screens.lockfirsttime
 
-import android.content.Context
-import android.util.Log
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.fragment.app.FragmentActivity
-import androidx.test.core.app.ApplicationProvider
 import com.example.weightdojo.PASSCODE_LENGTH
-import com.example.weightdojo.TestTags
 import com.example.weightdojo.database.AppDatabase
-import com.example.weightdojo.database.Database
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.repositories.ConfigRepository
+import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
-import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import java.io.IOException
-import kotlin.reflect.KProperty1
 
 class TestConfigRepo : ConfigRepository {
     override suspend fun getConfig(): Config? {
@@ -32,42 +19,21 @@ class TestConfigRepo : ConfigRepository {
     }
 }
 
-class LockFirstTimeTest {
+class LockFirstTimeViewModelTest {
     private lateinit var db: AppDatabase
-    private lateinit var context: Context
     private lateinit var viewModel: LockFirstTimeViewModel
     private val firstPass = "1234"
     private val secondPass = "4572"
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
-
     @Before
     fun init() {
-        context = ApplicationProvider.getApplicationContext()
-        db = Database.buildDb(context, true)
+        db = mockk<AppDatabase>()
         val testConfigRepo = TestConfigRepo()
         viewModel = LockFirstTimeViewModel(
             db,
             testConfigRepo
         )
-
-        composeTestRule.setContent {
-            LockFirstTime(
-                onSubmitRedirect = ::mockOnSubmit,
-                lockFirstTimeVM = viewModel,
-                context = FragmentActivity()
-            )
-        }
     }
-
-    @After
-    @Throws(IOException::class)
-    fun closeDb() {
-        db.close()
-    }
-
-    private fun mockOnSubmit() {}
 
     @Test
     @Throws(Exception::class)
@@ -112,7 +78,7 @@ class LockFirstTimeTest {
     fun deleteFunction() {
         enterAndSubmitCode(firstPass)
 
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
+        viewModel.delete()
 
         val oneLessChar = firstPass.slice(0..firstPass.length - 2)
 
@@ -131,7 +97,7 @@ class LockFirstTimeTest {
         enterAndSubmitCode(firstPass, true)
         enterAndSubmitCode(secondPass)
 
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
+        viewModel.delete()
 
         val oneLessCharSecond = secondPass.slice(0..secondPass.length - 2)
 
@@ -150,20 +116,20 @@ class LockFirstTimeTest {
 
     private fun enterAndSubmitCode(passcode: String, submit: Boolean = false) {
         for (i in passcode.indices) {
-            composeTestRule.onNodeWithText(passcode[i].toString()).performClick()
+            viewModel.addInput(passcode[i].toString())
 
             if (i == firstPass.length - 1 && submit) {
-                composeTestRule.onNodeWithTag("Submit").performClick()
+                viewModel.submit()
             }
         }
     }
 
     private fun deleteAllCharactersWithExtraClicks() {
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
-        composeTestRule.onNodeWithTag(TestTags.DELETE_BUTTON.name).performClick()
+        viewModel.delete()
+        viewModel.delete()
+        viewModel.delete()
+        viewModel.delete()
+        viewModel.delete()
     }
 
     @Test
@@ -179,7 +145,7 @@ class LockFirstTimeTest {
 
         assertTrue("firstPassMatches", viewModel.state.firstEnter == firstPass)
 
-        composeTestRule.onNodeWithTag("Submit").performClick()
+        viewModel.submit()
 
         enterAndSubmitCode(secondPass)
 

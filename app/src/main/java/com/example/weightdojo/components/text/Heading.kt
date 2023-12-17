@@ -1,6 +1,7 @@
 package com.example.weightdojo.components.text
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -14,6 +15,7 @@ fun Heading(text: String, modifier: Modifier = Modifier) {
         modifier = Modifier
             .padding(vertical = Sizing.paddings.medium)
             .then(modifier),
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colors.primary
     )
 }

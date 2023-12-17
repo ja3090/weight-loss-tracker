@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.lockfirsttime
 
-import android.util.Log
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
@@ -16,7 +15,6 @@ import com.example.weightdojo.utils.Biometrics
 import com.example.weightdojo.utils.VMFactory
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlin.reflect.KFunction1
 
 @Composable
 fun LockFirstTime(
