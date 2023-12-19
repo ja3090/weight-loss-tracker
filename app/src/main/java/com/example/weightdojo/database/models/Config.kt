@@ -3,13 +3,15 @@ package com.example.weightdojo.database.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.weightdojo.utils.CalorieUnits
+import com.example.weightdojo.utils.WeightUnits
 
 
 @Entity(tableName = "config")
 data class Config (
     @PrimaryKey(autoGenerate = true) val id: Long,
-    @ColumnInfo(name = "weight_unit", defaultValue = "KG") val weightUnit: WeightUnit,
-    @ColumnInfo(name = "calorie_unit", defaultValue = "KCAL") val calorieUnit: CalorieUnit,
+    @ColumnInfo(name = "weight_unit", defaultValue = "KG") val weightUnit: WeightUnits,
+    @ColumnInfo(name = "calorie_unit", defaultValue = "KCAL") val calorieUnit: CalorieUnits,
     @ColumnInfo(name = "goal_weight") val goalWeight: Float? = null,
     @ColumnInfo(name = "passcode_enabled") val passcodeEnabled: Boolean,
     @ColumnInfo(name = "password_hash") val passwordHash: ByteArray,
@@ -26,8 +28,4 @@ data class Config (
         result = 31 * result + salt.contentHashCode()
         return result
     }
-}
-
-enum class CalorieUnit {
-    KCAL, KJ
 }

@@ -3,9 +3,8 @@ package com.example.weightdojo.database.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.sql.Date
+import com.example.weightdojo.utils.CalorieUnits
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Entity
 data class Meal (
@@ -16,5 +15,5 @@ data class Meal (
     @ColumnInfo(name = "total_protein") val totalProtein: Float?,
     @ColumnInfo(name = "total_fat") val totalFat: Float?,
     @ColumnInfo(name = "total_calories") val totalCalories: Float,
-    @ColumnInfo(name = "calorie_unit") val calorieUnit: CalorieUnit,
+    @ColumnInfo(name = "calorie_unit") val calorieUnit: CalorieUnits,
 )

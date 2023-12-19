@@ -3,24 +3,23 @@ package com.example.weightdojo.database
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
-import com.example.weightdojo.database.models.CalorieUnit
-import com.example.weightdojo.database.models.WeightUnit
+import com.example.weightdojo.utils.CalorieUnits
+import com.example.weightdojo.utils.WeightUnits
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class Converters {
     @TypeConverter
-    fun toWeightUnit(unit: String) = enumValueOf<WeightUnit>(unit)
+    fun toWeightUnit(unit: String) = enumValueOf<WeightUnits>(unit)
 
     @TypeConverter
-    fun fromWeightUnit(unit: WeightUnit) = unit.name
+    fun fromWeightUnit(unit: WeightUnits) = unit.name
 
     @TypeConverter
-    fun toCalorieUnit(unit: String) = enumValueOf<CalorieUnit>(unit)
+    fun toCalorieUnit(unit: String) = enumValueOf<CalorieUnits>(unit)
 
     @TypeConverter
-    fun fromCalorieUnit(unit: CalorieUnit) = unit.name
+    fun fromCalorieUnit(unit: CalorieUnits) = unit.name
 
     @TypeConverter
     fun fromDate(date: LocalDate): String {

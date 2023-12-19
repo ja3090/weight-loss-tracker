@@ -13,7 +13,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 enum class Screens {
-    LockFirstTime, Lock, Home, Entries, Settings, Graphs
+    LockFirstTime, Lock, Home, Entries, Settings, Charts
 }
 
 data class MainState(

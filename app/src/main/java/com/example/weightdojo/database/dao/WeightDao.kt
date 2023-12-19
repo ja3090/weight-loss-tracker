@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.example.weightdojo.DEPRECATED_MESSAGE
 import com.example.weightdojo.database.models.Weight
-import com.example.weightdojo.database.models.WeightUnit
+import com.example.weightdojo.utils.WeightUnits
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -17,7 +17,7 @@ interface WeightDao {
 
     @Query("INSERT INTO weight ('day_id', 'weight', 'unit', 'date')" +
             "VALUES (:dayId, :weight, :weightUnit, :date)")
-    fun insertWeightEntry(dayId: Long, weight: Float, weightUnit: WeightUnit, date: LocalDate)
+    fun insertWeightEntry(dayId: Long, weight: Float, weightUnit: WeightUnits, date: LocalDate)
 
     @Deprecated(DEPRECATED_MESSAGE)
     @Query("DELETE FROM weight")

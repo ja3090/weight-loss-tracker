@@ -1,9 +1,8 @@
 package com.example.weightdojo.utils
 
 import com.example.weightdojo.database.AppDatabase
-import com.example.weightdojo.database.models.CalorieUnit
 import com.example.weightdojo.database.models.DayWithWeightAndMeals
-import com.example.weightdojo.database.models.WeightUnit
+import com.example.weightdojo.repositories.MealRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import kotlin.random.Random
@@ -70,21 +69,21 @@ class Seeder(
             dayId = day.id,
             weight = Random.nextInt(60, 80).toFloat(),
             date = day.date,
-            weightUnit = if (Random.nextFloat() > 0.5f) WeightUnit.KG else WeightUnit.LBS
+            weightUnit = if (Random.nextFloat() > 0.5f) WeightUnits.KG else WeightUnits.LBS
         )
     }
 
     private fun enterMeal(day: DayDTO) {
-        val dao = database.mealDao()
+        val repo = MealRepositoryImpl(database.mealDao(), database.dayDao())
 
-        dao.insertMealEntry(
+        repo.insertMeal(
             dayId = day.id,
             date = day.date,
             totalCarbohydrates = randomOrNull(40, 100),
             totalFat = randomOrNull(44, 100),
             totalProtein = randomOrNull(40, 105),
             totalCalories = random(),
-            calorieUnit = if (Random.nextFloat() > 0.5f) CalorieUnit.KCAL else CalorieUnit.KJ
+            calorieUnit = if (Random.nextFloat() > 0.5f) CalorieUnits.KCAL else CalorieUnits.KJ
         )
     }
 

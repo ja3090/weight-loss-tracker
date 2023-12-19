@@ -10,13 +10,17 @@ import java.time.LocalDate
 @Dao
 interface DayDao {
     @Transaction
-    @Query("SELECT * FROM day " +
-            "WHERE date = :date")
+    @Query(
+        "SELECT * FROM day " +
+                "WHERE date = :date"
+    )
     fun getDays(date: LocalDate): DayWithWeightAndMeals?
 
     @Transaction
-    @Query("SELECT * FROM day " +
-            "WHERE id = :id")
+    @Query(
+        "SELECT * FROM day " +
+                "WHERE id = :id"
+    )
     fun getDayById(id: Long): DayWithWeightAndMeals
 
     @Query("INSERT INTO day ('date') VALUES (:date)")
@@ -25,4 +29,12 @@ interface DayDao {
     @Deprecated("Used for testing purposes. Do not use anywhere")
     @Query("DELETE FROM day")
     fun _DELETE_ALL()
+
+    @Query(
+        "UPDATE day " +
+                "SET total_calories = :calAvg, total_protein = :proAvg, " +
+                "total_fat = :fatAvg, total_carbohydrates = :carbAvg " +
+                "WHERE id = :dayId"
+    )
+    fun setCalorieStats(calAvg: Float, proAvg: Float, fatAvg: Float, carbAvg: Float, dayId: Long)
 }
