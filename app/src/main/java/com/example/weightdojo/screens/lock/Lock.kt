@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.lock
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope

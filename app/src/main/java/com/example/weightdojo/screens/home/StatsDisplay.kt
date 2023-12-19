@@ -1,4 +1,4 @@
-package com.example.weightdojo.components.text
+package com.example.weightdojo.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
 
 @Composable
@@ -40,7 +41,7 @@ fun StatsDisplay() {
                         Sizing.cornerRounding
                     )
                 )
-                .background(color = MaterialTheme.colors.secondary)
+                .background(color = MaterialTheme.colors.background)
                 .fillMaxWidth(),
         ) {
             Column {

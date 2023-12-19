@@ -1,7 +1,9 @@
 package com.example.weightdojo.screens.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,11 +32,12 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("NewApi")
 @Composable
 fun DayPicker(
-    todayFullDate: LocalDate
+    todayFullDate: LocalDate,
+    dateSetter: (date: LocalDate) -> Unit
 ) {
     val offset = rememberScrollState()
 
-    val year = todayFullDate.format(DateTimeFormatter.ofPattern("YY"))
+    val year = todayFullDate.format(DateTimeFormatter.ofPattern("yy"))
     val month = todayFullDate.format(DateTimeFormatter.ofPattern("MMMM"))
 
     Box {
@@ -56,12 +59,14 @@ fun DayPicker(
                 var compareDates = date.compareTo(todayFullDate.plusDays(4L))
 
                 while (compareDates < 0) {
+                    val thisButtonDate = date
                     val dayOfMonth = date.dayOfMonth.toString()
                     val day = date.format(DateTimeFormatter.ofPattern("EEE"))
                     val today = dayOfMonth == todayFullDate.dayOfMonth.toString()
 
                     Column(
                         Modifier
+                            .clickable { dateSetter(thisButtonDate) }
                             .padding(horizontal = 10.dp)
                             .clip(shape = RoundedCornerShape(Sizing.cornerRounding))
                             .background(if (today) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.background)
@@ -90,7 +95,9 @@ fun DayPicker(
 
         TextDefault(
             text = "$month $year",
-            modifier = Modifier.padding(vertical = Sizing.paddings.medium).alpha(0.6f)
+            modifier = Modifier
+                .padding(vertical = Sizing.paddings.medium)
+                .alpha(0.6f)
         )
     }
 }

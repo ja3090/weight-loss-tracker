@@ -59,7 +59,10 @@ fun MainScreen(
             )
         }
         composable(route = Screens.Home.name) {
-            Home()
+            Home(
+                currentDate = mainViewModel.state.currentDate,
+                dateSetter = mainViewModel::setDate
+            )
         }
     }
 

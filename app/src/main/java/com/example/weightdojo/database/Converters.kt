@@ -5,7 +5,9 @@ import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
 import com.example.weightdojo.database.models.CalorieUnit
 import com.example.weightdojo.database.models.WeightUnit
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class Converters {
     @TypeConverter
@@ -21,13 +23,14 @@ class Converters {
     fun fromCalorieUnit(unit: CalorieUnit) = unit.name
 
     @TypeConverter
-    fun fromDate(date: LocalDateTime): String {
-        return date.toString()
+    fun fromDate(date: LocalDate): String {
+        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return date.format(dateFormat)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
-    fun toDate(date: String): LocalDateTime {
-        return date.let { LocalDateTime.parse(it) }
+    fun toDate(date: String): LocalDate {
+        return date.let { LocalDate.parse(it) }
     }
 }

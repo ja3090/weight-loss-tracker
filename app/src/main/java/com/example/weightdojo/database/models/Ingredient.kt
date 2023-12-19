@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Ingredient (
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "carbohydrates") val carbohydrates: Float,
     @ColumnInfo(name = "protein") val protein: Float,
     @ColumnInfo(name = "fat") val fat: Float,
     @ColumnInfo(name = "calories") val calories: Float,
-    @ColumnInfo(name = "meal_id") val mealId: Int
+    @ColumnInfo(name = "meal_id") val mealId: Long
 )

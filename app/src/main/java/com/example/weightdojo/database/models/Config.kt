@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "config")
 data class Config (
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "weight_unit", defaultValue = "KG") val weightUnit: WeightUnit,
     @ColumnInfo(name = "calorie_unit", defaultValue = "KCAL") val calorieUnit: CalorieUnit,
     @ColumnInfo(name = "goal_weight") val goalWeight: Float? = null,
