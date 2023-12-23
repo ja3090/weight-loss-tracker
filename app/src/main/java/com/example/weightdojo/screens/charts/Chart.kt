@@ -94,6 +94,17 @@ fun Chart(
 //                }
                 .pointerInput(Unit) {
                     detectDragGesturesAfterLongPress(
+                        onDragStart = { offset ->
+                            var index =
+                                floor((offset.x / dimensions.width!!) * points.size)
+                            Log.d("index", index.toString())
+                            Log.d("centroid.x", offset.x.toString())
+
+                            if (index < 0) index = 0F
+                            if (index >= points.size) index = (points.size - 1).toFloat()
+
+                            highlightedDataPoint = points[index.toInt()]
+                        },
                         onDragEnd = {
                             highlightedDataPoint = null
                         },
