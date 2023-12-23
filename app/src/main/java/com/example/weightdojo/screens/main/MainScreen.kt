@@ -11,6 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.models.Config
+import com.example.weightdojo.screens.charts.Chart
+import com.example.weightdojo.screens.charts.ChartScreen
 import com.example.weightdojo.screens.home.Home
 import com.example.weightdojo.screens.lock.Lock
 import com.example.weightdojo.screens.lockfirsttime.LockFirstTime
@@ -32,7 +34,7 @@ fun MainScreen(
 
     NavHost(
         navController = navHostController,
-        startDestination = Screens.Home.name
+        startDestination = Screens.Charts.name
     ) {
         composable(route = Screens.LockFirstTime.name) {
             LockFirstTime(
@@ -63,6 +65,9 @@ fun MainScreen(
                 currentDate = mainViewModel.state.currentDate,
                 dateSetter = mainViewModel::setDate
             )
+        }
+        composable(route = Screens.Charts.name) {
+            ChartScreen()
         }
     }
 

@@ -18,14 +18,14 @@ data class Config (
     @ColumnInfo(name = "salt") val salt: ByteArray,
     @ColumnInfo(name = "bio_enabled") val bioEnabled: Boolean
 ) {
-    override fun equals(other: Any?): Boolean {
-        if (other !is ByteArray) return false
-        return this.passwordHash.contentEquals(other)
-    }
-
-    override fun hashCode(): Int {
-        var result = passwordHash.contentHashCode()
-        result = 31 * result + salt.contentHashCode()
-        return result
-    }
+//    override fun equals(other: Any?): Boolean {
+//        if (other !is ByteArray) return false
+//        return this.passwordHash.contentEquals(other)
+//    }
+//
+//    override fun hashCode(): Int {
+//        var result = passwordHash.contentHashCode()
+//        result = 31 * result + salt.contentHashCode()
+//        return result
+//    }
 }
