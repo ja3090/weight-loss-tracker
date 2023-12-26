@@ -24,7 +24,7 @@ enum class TimePeriods { ONE_WEEK, ONE_MONTH, }
 class ChartViewModel(
     val database: AppDatabase = MyApp.appModule.database,
     val dateRepo: DateRepositoryImpl = DateRepositoryImpl(database.dateDao()),
-    val timePeriods: TimePeriods = TimePeriods.ONE_MONTH
+    val timePeriods: TimePeriods = TimePeriods.ONE_WEEK
 ) : ViewModel() {
 
     var chartState by mutableStateOf(ChartState())
