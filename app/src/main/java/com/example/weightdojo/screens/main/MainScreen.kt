@@ -11,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.screens.charts.Chart
 import com.example.weightdojo.screens.charts.ChartScreen
 import com.example.weightdojo.screens.home.Home
 import com.example.weightdojo.screens.lock.Lock

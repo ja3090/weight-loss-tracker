@@ -1,27 +1,53 @@
 package com.example.weightdojo.repositories
 
-import com.example.weightdojo.database.dao.DateDao
-import com.example.weightdojo.database.dao.RangeDataByDay
+import com.example.weightdojo.database.dao.CalorieChartDao
+import com.example.weightdojo.database.dao.ChartDao
+import com.example.weightdojo.database.dao.ChartData
+import com.example.weightdojo.database.dao.WeightChartDao
 import com.example.weightdojo.database.models.Date
 import java.time.LocalDate
 
 interface DateRepository {
-    fun getData(dates: List<Date>): List<RangeDataByDay>
+    fun getData(dates: List<Date>): List<ChartData>
+    fun getDataByMonth(dates: List<Date>): List<ChartData>
+    fun getEarliestDate(): LocalDate
 }
 
-class DateRepositoryImpl(
-    private val dateDao: DateDao
+open class DateRepoImpl(
+    open val chartDao: ChartDao
 ) : DateRepository {
-    override fun getData(dates: List<Date>): List<RangeDataByDay> {
+    override fun getData(dates: List<Date>): List<ChartData> {
         val from = dates[0].date
         val to = dates[dates.size - 1].date
 
-        dateDao.insertDateRange(dates)
+        chartDao.insertDateRange(dates)
 
-        val range = dateDao.getRangeByDay(from, to)
+        val range = chartDao.getRangeByDay(from, to)
 
-        dateDao.deleteAll()
+        chartDao.deleteAll()
+
+        return range
+    }
+    override fun getEarliestDate(): LocalDate {
+        val row = chartDao.getEarliestWeightDate()
+
+        return row.date
+    }
+    override fun getDataByMonth(dates: List<Date>): List<ChartData> {
+        chartDao.insertDateRange(dates)
+
+        val range = chartDao.getRangeByMonth()
+
+        chartDao.deleteAll()
 
         return range
     }
 }
+
+class WeightDateRepoImpl(
+    override val chartDao: WeightChartDao
+) : DateRepoImpl(chartDao)
+
+class CalorieDateRepoImpl(
+    override val chartDao: CalorieChartDao
+) : DateRepoImpl(chartDao)

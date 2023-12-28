@@ -42,7 +42,7 @@ class Seeder(
             val day = enterDay(thisDate)
 
             enterWeight(day)
-//            if (counter % 3 == 0 || counter % 5 == 0) enterWeight(day)
+//            if (counter % 3 == 0 || counter % 4 == 0) enterWeight(day)
             for (i in 0..2) {
                 enterMeal(day)
             }

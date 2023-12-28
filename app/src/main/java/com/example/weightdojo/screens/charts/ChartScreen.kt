@@ -9,13 +9,13 @@ import com.example.weightdojo.utils.VMFactory
 
 @Composable
 fun ChartScreen(
-    chartViewModel: ChartViewModel = viewModel(
+    chartViewModel: CalorieChartViewModel = viewModel(
         factory = VMFactory.build {
-            ChartViewModel(MyApp.appModule.database)
+            CalorieChartViewModel(MyApp.appModule.database)
         }
     ),
 ) {
     if (chartViewModel.chartState.data == null) return
 
-    Chart(chartState = chartViewModel.chartState)
+    WeightChart(chartViewModel = chartViewModel)
 }

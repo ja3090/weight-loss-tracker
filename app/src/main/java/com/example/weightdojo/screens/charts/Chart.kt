@@ -1,209 +1,171 @@
 package com.example.weightdojo.screens.charts
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import com.example.weightdojo.database.dao.RangeDataByDay
-import kotlin.math.ceil
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.sp
+import com.example.valuedojo.screens.charts.plotPoints
+import com.example.weightdojo.components.text.Heading
+import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.returnNeatDate
+import java.time.LocalDate
 import kotlin.math.floor
 
 data class ChartDimensions(
-    val width: Int = 0,
-    val height: Int = 0
+    val width: Int = 0, val height: Int = 0
 )
 
 @Composable
-fun Chart(
-    chartState: ChartState,
+fun WeightChart(
+    chartViewModel: ChartBaseVM,
+    chartState: ChartState = chartViewModel.chartState,
     lineColor: Color = MaterialTheme.colors.primaryVariant,
 ) {
     if (chartState.data == null || chartState.data.size <= 1) return
 
     var highlightedDataPoint by remember {
-        mutableStateOf<Offset?>(null)
+        mutableStateOf<HighlightablePoint?>(null)
     }
 
     var dimensions by remember {
         mutableStateOf(ChartDimensions())
     }
 
-    val points = remember { List(chartState.data.size) { mutableStateOf<Offset?>(null) } }
+    val points = remember(chartState.data.size) {
+        List(chartState.data.size) { mutableStateOf<HighlightablePoint?>(null) }
+    }
 
-    val (line, shape) = remember(chartState.data, dimensions) {
+    val (line, shape, min, max) = remember(chartState.data, dimensions, points) {
         plotPoints(chartState.data, dimensions, points)
     }
 
+    val textMeasurer = rememberTextMeasurer()
+
+    val textStyle = TextStyle(
+        color = MaterialTheme.colors.primary.copy(0.25f), fontSize = 12.sp
+    )
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
-        Box(
+        Column(
+            modifier = Modifier
+                .padding(horizontal = Sizing.paddings.small)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Heading(
+                text = highlightedDataPoint?.value ?: "Weight Chart"
+            )
+            TextDefault(
+                text = highlightedDataPoint?.date ?: returnNeatDate(LocalDate.now()),
+                modifier = Modifier.padding(bottom = Sizing.paddings.medium)
+            )
+        }
+        Row(
             modifier = Modifier
                 .weight(1f)
-//                .padding(vertical = 50.dp)
+                .padding(top = Sizing.paddings.medium)
         ) {
             Canvas(modifier = Modifier
+                .weight(0.9f)
                 .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectDragGesturesAfterLongPress(
-                        onDragStart = { offset ->
-                            var index =
-                                floor((offset.x / dimensions.width!!) * points.size)
+                .pointerInput(points) {
+                    detectDragGesturesAfterLongPress(onDragStart = { offset ->
+                        var index = floor((offset.x / dimensions.width) * points.size)
 
-                            if (index < 0) index = 0F
-                            if (index >= points.size) index = (points.size - 1).toFloat()
+                        if (index < 0) index = 0F
+                        if (index >= points.size) index = (points.size - 1).toFloat()
 
-                            highlightedDataPoint = points[index.toInt()].value
-                        },
-                        onDragEnd = {
-                            highlightedDataPoint = null
-                        },
-                        onDrag = { change, _ ->
-                            var index =
-                                floor((change.position.x / dimensions.width!!) * points.size)
+                        highlightedDataPoint = points[index.toInt()].value
+                    }, onDragEnd = {
+                        highlightedDataPoint = null
+                    }, onDrag = { change, _ ->
+                        var index = floor((change.position.x / dimensions.width) * points.size)
 
-                            if (index < 0) index = 0F
-                            if (index >= points.size) index = (points.size - 1).toFloat()
+                        if (index < 0) index = 0F
+                        if (index >= points.size) index = (points.size - 1).toFloat()
 
-                            highlightedDataPoint = points[index.toInt()].value
-                        }
-                    )
+                        highlightedDataPoint = points[index.toInt()].value
+                    })
                 }
                 .onGloballyPositioned {
                     dimensions = dimensions.copy(
-                        height = it.size.height,
-                        width = it.size.width
+                        height = it.size.height, width = it.size.width
                     )
-                },
-                onDraw = {
-                    if (highlightedDataPoint != null) {
+                }, onDraw = {
+                if (highlightedDataPoint != null) {
 
-                        drawCircle(
-                            color = lineColor,
-                            radius = 20f,
-                            center = highlightedDataPoint ?: Offset(-15F, -15F)
-                        )
+                    drawCircle(
+                        color = lineColor,
+                        radius = 20f,
+                        center = highlightedDataPoint?.offset ?: Offset(-15F, -15F)
+                    )
 
-                        drawLine(
-                            start = Offset(
-                                highlightedDataPoint?.x ?: -25F,
-                                0F
-                            ), end = Offset(
-                                highlightedDataPoint?.x ?: -25F,
-                                dimensions.height?.toFloat() ?: -25F
-                            ), pathEffect = PathEffect.dashPathEffect(floatArrayOf(10F, 10F), 0f),
-                            color = lineColor
-                        )
-                    }
-                    val gradient = Brush.verticalGradient(
-                        colorStops = arrayOf(
-                            0f to lineColor,
-                            0.1f to lineColor.copy(0.5f),
-                            1f to lineColor.copy(0f)
+                    drawLine(
+                        start = Offset(
+                            highlightedDataPoint?.offset?.x ?: -25F, 0F
                         ),
-                        startY = 0F,
-                        endY = dimensions.height.toFloat()
+                        end = Offset(
+                            highlightedDataPoint?.offset?.x ?: -25F, dimensions.height.toFloat()
+                        ),
+                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10F, 10F), 0f),
+                        color = lineColor
                     )
+                }
+                val gradient = Brush.verticalGradient(
+                    colors = listOf(lineColor.copy(0.35f), lineColor.copy(0f)),
+                    startY = 0F,
+                    endY = dimensions.height.toFloat()
+                )
 
-                    drawPath(path = shape, brush = gradient)
-                    drawPath(path = line, color = lineColor)
-                })
+                drawPath(path = shape, brush = gradient)
+                drawPath(path = line, color = lineColor, style = Stroke(3f))
+
+                xAxes(
+                    data = chartState.data,
+                    textMeasurer = textMeasurer,
+                    dimensions = dimensions,
+                    textStyle = textStyle
+                )
+
+                plotYAxes(min, max, textMeasurer, dimensions, textStyle)
+
+            })
         }
-        Box(modifier = Modifier.weight(1f)) {
-            Text("Filler")
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            PeriodPicker(chartViewModel = chartViewModel)
         }
     }
 }
 
-private fun plotPoints(
-    data: List<RangeDataByDay>,
-    chartDimensions: ChartDimensions,
-    points: List<MutableState<Offset?>>
-): Pair<Path, Path> {
-
-    var lastPoint: Offset? = null
-    val line = Path()
-    val shape = Path()
-
-    if (chartDimensions.height == 0 || chartDimensions.width == 0) {
-        return Pair(line, shape)
-    }
-
-    for (index in data.indices) {
-        val row = data[index]
-
-        if (row.minWeight == null || row.weight == null || row.maxWeight == null) {
-            continue
-        }
-
-        val max = ceil((row.maxWeight + 10) / 10) * 10
-        var min = floor((row.minWeight - 10) / 10) * 10
-
-        if (min < 0) min = 0F
-
-        val total = max - min
-        val x = ((chartDimensions.width / (data.size - 1)) * index).toFloat()
-
-        val y =
-            chartDimensions.height - (chartDimensions.height * ((row.weight - min) / total))
-
-        if (lastPoint != null) {
-            buildCurveLine(line, lastPoint, Offset(x, y))
-            buildCurveLine(shape, lastPoint, Offset(x, y))
-        }
-
-        if (lastPoint == null) {
-            shape.moveTo(0F, 0F)
-            shape.lineTo(x, y)
-            line.moveTo(x, y)
-        }
-
-        if (index == data.size - 1) {
-            shape.lineTo(chartDimensions.width.toFloat(), chartDimensions.height.toFloat())
-            shape.lineTo(0F, chartDimensions.height.toFloat())
-        }
-
-        lastPoint = Offset(x, y)
-
-        points[index].value = Offset(x, y)
-    }
-
-    return Pair(line, shape)
-}
-
-private fun buildCurveLine(path: Path, startPoint: Offset, endPoint: Offset) {
-    val firstControlPoint = Offset(
-        x = startPoint.x + (endPoint.x - startPoint.x) / 2F,
-        y = startPoint.y,
-    )
-    val secondControlPoint = Offset(
-        x = startPoint.x + (endPoint.x - startPoint.x) / 2F,
-        y = endPoint.y,
-    )
-    path.cubicTo(
-        x1 = firstControlPoint.x,
-        y1 = firstControlPoint.y,
-        x2 = secondControlPoint.x,
-        y2 = secondControlPoint.y,
-        x3 = endPoint.x,
-        y3 = endPoint.y,
-    )
-}
+data class HighlightablePoint(
+    val offset: Offset, val value: String, val date: String
+)
 
