@@ -37,7 +37,7 @@ data class ChartDimensions(
 )
 
 @Composable
-fun WeightChart(
+fun LineChart(
     chartViewModel: ChartBaseVM,
     chartState: ChartState = chartViewModel.chartState,
     lineColor: Color = MaterialTheme.colors.primaryVariant,

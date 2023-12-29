@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -20,16 +21,17 @@ fun IconBuilder(
     id: Int,
     contentDescription: String,
     testTag: String,
-    onClick: () -> Unit
+    color: Color = MaterialTheme.colors.primaryVariant,
+    onClick: (() -> Unit)? = null,
 ) {
     Image(
         painter = painterResource(id = id),
         contentDescription = contentDescription,
         modifier = Modifier
-            .clickable { onClick() }
+            .clickable { if (onClick !== null) onClick() }
             .testTag(testTag)
             .then(modifier),
-        colorFilter = ColorFilter.tint(MaterialTheme.colors.primaryVariant),
+        colorFilter = ColorFilter.tint(color),
         contentScale = ContentScale.Inside,
         alignment = Alignment.Center
     )
