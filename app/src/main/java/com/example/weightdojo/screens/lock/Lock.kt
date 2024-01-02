@@ -1,6 +1,9 @@
 package com.example.weightdojo.screens.lock
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,13 +58,16 @@ fun Lock(
         promptText = "Enter passcode",
         leftOfZeroCustomBtn = if (canUseBiometrics && config.bioEnabled) {
             {
-                IconBuilder(
-                    id = R.drawable.fingerprint,
-                    contentDescription = "Bring up fingerprint access",
-                    testTag = "Fingerprint",
-                    modifier = it
-                ) {
-                    lockViewModel.declineBiometrics(false)
+                Box(modifier = Modifier
+                    .clickable {
+                        lockViewModel.declineBiometrics(false)
+                    }
+                    .then(it)) {
+                    IconBuilder(
+                        id = R.drawable.fingerprint,
+                        contentDescription = "Bring up fingerprint access",
+                        testTag = "Fingerprint",
+                    )
                 }
             }
         } else {

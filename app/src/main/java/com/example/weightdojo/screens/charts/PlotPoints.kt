@@ -1,11 +1,9 @@
-package com.example.valuedojo.screens.charts
+package com.example.weightdojo.screens.charts
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import com.example.weightdojo.database.dao.ChartData
-import com.example.weightdojo.screens.charts.ChartDimensions
-import com.example.weightdojo.screens.charts.HighlightablePoint
 import com.example.weightdojo.utils.returnNeatDate
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -13,7 +11,8 @@ import kotlin.math.floor
 fun plotPoints(
     data: List<ChartData>,
     chartDimensions: ChartDimensions,
-    points: List<MutableState<HighlightablePoint?>>
+    points: List<MutableState<HighlightablePoint?>>,
+    upperLowerBound: Int
 ): PlotPointsDTO {
 
     var lastPoint: Offset? = null
@@ -34,8 +33,8 @@ fun plotPoints(
             continue
         }
 
-        max = ceil((row.max + 10) / 10) * 10
-        min = floor((row.min - 10) / 10) * 10
+        max = ceil((row.max + upperLowerBound) / upperLowerBound) * upperLowerBound
+        min = floor((row.min - upperLowerBound) / upperLowerBound) * upperLowerBound
 
         if (min < 0) min = 0F
 
@@ -62,7 +61,7 @@ fun plotPoints(
         points[index].value =
             HighlightablePoint(
                 offset = Offset(x, y),
-                value = row.value.toInt().toString() + " kg",
+                value = row.value.toInt().toString(),
                 date = returnNeatDate(row.date)
             )
     }

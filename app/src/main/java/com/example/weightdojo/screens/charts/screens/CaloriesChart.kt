@@ -16,5 +16,10 @@ fun CaloriesChart(
         }
     ),
 ) {
-    LineChart(chartViewModel = chartViewModel)
+    LineChart(
+        chartViewModel = chartViewModel,
+        upperLowerBound = 100,
+        title = "Calories",
+        unit = "kcal"
+    )
 }

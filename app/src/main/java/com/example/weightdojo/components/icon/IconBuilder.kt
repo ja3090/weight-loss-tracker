@@ -22,13 +22,11 @@ fun IconBuilder(
     contentDescription: String,
     testTag: String,
     color: Color = MaterialTheme.colors.primaryVariant,
-    onClick: (() -> Unit)? = null,
 ) {
     Image(
         painter = painterResource(id = id),
         contentDescription = contentDescription,
         modifier = Modifier
-            .clickable { if (onClick !== null) onClick() }
             .testTag(testTag)
             .then(modifier),
         colorFilter = ColorFilter.tint(color),

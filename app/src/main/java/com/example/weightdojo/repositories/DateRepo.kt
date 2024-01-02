@@ -31,7 +31,7 @@ open class DateRepoImpl(
     override fun getEarliestDate(): LocalDate {
         val row = chartDao.getEarliestWeightDate()
 
-        return row.date
+        return row.date ?: LocalDate.now().minusDays(6L)
     }
     override fun getDataByMonth(dates: List<Date>): List<ChartData> {
         chartDao.insertDateRange(dates)

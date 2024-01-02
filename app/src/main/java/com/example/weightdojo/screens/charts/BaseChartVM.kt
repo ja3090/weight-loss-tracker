@@ -2,10 +2,8 @@ package com.example.weightdojo.screens.charts
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.repositories.WeightDateRepoImpl
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +45,7 @@ enum class TimePeriods {
     }
 }
 
-abstract class ChartBaseVM(
+abstract class BaseChartVM(
     open val database: AppDatabase,
     open val dateRepo: DateRepository,
     val timePeriod: TimePeriods = TimePeriods.ONE_WEEK
@@ -107,8 +105,10 @@ abstract class ChartBaseVM(
 
                 val dateDifference = Period.between(earliestDate, LocalDate.now())
 
+                val largerDifference = dateDifference.months > 2 || dateDifference.years > 0
+
                 val increment: (date: LocalDate) -> LocalDate =
-                    if (dateDifference.months > 2 || dateDifference.years > 0) {
+                    if (largerDifference) {
                         { date -> date.plusMonths(1L) }
                     } else {
                         { date -> date.plusDays(1L) }
@@ -119,7 +119,11 @@ abstract class ChartBaseVM(
                     increment = increment
                 )
 
-                return dateRepo.getDataByMonth(dateRange)
+                return if (largerDifference) {
+                    dateRepo.getDataByMonth(dateRange)
+                } else {
+                    dateRepo.getData(dateRange)
+                }
             }
         }
     }
@@ -146,9 +150,9 @@ abstract class ChartBaseVM(
 class WeightChartViewModel(
     override val database: AppDatabase,
     override val dateRepo: DateRepository = WeightDateRepoImpl(database.weightChartDao())
-) : ChartBaseVM(database = database, dateRepo = dateRepo)
+) : BaseChartVM(database = database, dateRepo = dateRepo)
 
 class CalorieChartViewModel(
     override val database: AppDatabase,
     override val dateRepo: DateRepository = CalorieDateRepoImpl(database.calorieChartDao())
-) : ChartBaseVM(database = database, dateRepo = dateRepo)
+) : BaseChartVM(database = database, dateRepo = dateRepo)

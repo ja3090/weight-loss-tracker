@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.lock
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.weightdojo.database.AppDatabase

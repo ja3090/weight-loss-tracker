@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.main
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
@@ -13,7 +14,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 enum class Screens {
-    LockFirstTime, Lock, Home, Entries, Settings, Charts
+    LockFirstTime, Lock, Home, Settings, Charts, AddWeight
 }
 
 data class MainState(
@@ -54,6 +55,7 @@ class MainViewModel(
     }
 
     init {
+
         runBlocking {
             val config = repo.getConfig()
             val startDest = getStartDest(config)

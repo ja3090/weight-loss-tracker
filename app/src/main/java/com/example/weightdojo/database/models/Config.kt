@@ -8,7 +8,7 @@ import com.example.weightdojo.utils.WeightUnits
 
 
 @Entity(tableName = "config")
-data class Config (
+data class Config(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "weight_unit", defaultValue = "KG") val weightUnit: WeightUnits,
     @ColumnInfo(name = "calorie_unit", defaultValue = "KCAL") val calorieUnit: CalorieUnits,
@@ -16,7 +16,11 @@ data class Config (
     @ColumnInfo(name = "passcode_enabled") val passcodeEnabled: Boolean,
     @ColumnInfo(name = "password_hash") val passwordHash: ByteArray,
     @ColumnInfo(name = "salt") val salt: ByteArray,
-    @ColumnInfo(name = "bio_enabled") val bioEnabled: Boolean
+    @ColumnInfo(name = "bio_enabled") val bioEnabled: Boolean,
+    @ColumnInfo(name = "age") val age: Int?,
+    @ColumnInfo(name = "sex") val sex: Sex?,
+    @ColumnInfo(name = "height") val height: Float?,
+    @ColumnInfo(name = "tdee") val tdee: Int?,
 ) {
 //    override fun equals(other: Any?): Boolean {
 //        if (other !is ByteArray) return false
@@ -28,4 +32,8 @@ data class Config (
 //        result = 31 * result + salt.contentHashCode()
 //        return result
 //    }
+}
+
+enum class Sex {
+    Male, Female
 }

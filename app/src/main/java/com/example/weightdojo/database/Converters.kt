@@ -3,6 +3,7 @@ package com.example.weightdojo.database
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
+import com.example.weightdojo.database.models.Sex
 import com.example.weightdojo.utils.CalorieUnits
 import com.example.weightdojo.utils.WeightUnits
 import java.time.LocalDate
@@ -20,6 +21,10 @@ class Converters {
 
     @TypeConverter
     fun fromCalorieUnit(unit: CalorieUnits) = unit.name
+    @TypeConverter
+    fun fromSex(sex: Sex) = sex.name
+    @TypeConverter
+    fun toSex(sex: String) = enumValueOf<Sex>(sex)
 
     @TypeConverter
     fun fromDate(date: LocalDate): String {

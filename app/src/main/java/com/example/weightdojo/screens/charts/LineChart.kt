@@ -24,7 +24,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
-import com.example.valuedojo.screens.charts.plotPoints
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
@@ -38,7 +37,10 @@ data class ChartDimensions(
 
 @Composable
 fun LineChart(
-    chartViewModel: ChartBaseVM,
+    chartViewModel: BaseChartVM,
+    upperLowerBound: Int,
+    title: String,
+    unit: String,
     chartState: ChartState = chartViewModel.chartState,
     lineColor: Color = MaterialTheme.colors.primaryVariant,
 ) {
@@ -57,13 +59,14 @@ fun LineChart(
     }
 
     val (line, shape, min, max) = remember(chartState.data, dimensions, points) {
-        plotPoints(chartState.data, dimensions, points)
+        plotPoints(chartState.data, dimensions, points, upperLowerBound)
     }
 
     val textMeasurer = rememberTextMeasurer()
 
     val textStyle = TextStyle(
-        color = MaterialTheme.colors.primary.copy(0.25f), fontSize = 12.sp
+        color = MaterialTheme.colors.primary.copy(0.25f),
+        fontSize = 12.sp
     )
 
     Column(
@@ -76,7 +79,9 @@ fun LineChart(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Heading(
-                text = highlightedDataPoint?.value ?: "Weight Chart"
+                text = if (highlightedDataPoint?.value != null) {
+                    highlightedDataPoint?.value + " " + unit
+                } else title
             )
             TextDefault(
                 text = highlightedDataPoint?.date ?: returnNeatDate(LocalDate.now()),

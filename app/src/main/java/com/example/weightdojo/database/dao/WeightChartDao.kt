@@ -56,7 +56,7 @@ interface WeightChartDao: ChartDao {
 }
 
 data class EarliestDate(
-    val date: LocalDate
+    val date: LocalDate?
 )
 
 data class ChartData(

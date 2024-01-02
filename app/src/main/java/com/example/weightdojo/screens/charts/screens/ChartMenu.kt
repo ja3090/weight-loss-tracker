@@ -20,15 +20,19 @@ import com.example.weightdojo.R
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.screens.charts.Charts
+import com.example.weightdojo.ui.CustomColors
 import com.example.weightdojo.ui.Sizing
 
 @Composable
 fun ChartMenu(navigateTo: (chartScreen: Charts) -> Unit) {
-    Column {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         Row(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -45,7 +49,7 @@ fun ChartMenu(navigateTo: (chartScreen: Charts) -> Unit) {
                     id = R.drawable.weight,
                     contentDescription = "Weight chart",
                     testTag = "WEIGHT_CHART",
-                    color = Color(0xffF13030)
+                    color = CustomColors.Blue
                 )
                 TextDefault(text = Charts.Weight.name)
             }
@@ -64,7 +68,7 @@ fun ChartMenu(navigateTo: (chartScreen: Charts) -> Unit) {
                     id = R.drawable.food,
                     contentDescription = "Calories chart",
                     testTag = "CALORIES_CHART",
-                    color = Color(0xff008DD5)
+                    color = CustomColors.Red
                 )
                 TextDefault(text = Charts.Calories.name)
             }

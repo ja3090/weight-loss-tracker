@@ -19,7 +19,7 @@ class DayRepositoryImpl(
         val day = dayDao.getDays(date)
 
         if (day == null) {
-            val id = dayDao.insert(date)
+            dayDao.insert(date)
 
             return dayDao.getDays(date) as DayWithWeightAndMeals
         }

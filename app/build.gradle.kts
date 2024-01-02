@@ -79,7 +79,7 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
-    val navVersion = "2.7.5"
+    val navVersion = "2.7.6"
 
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation ("androidx.navigation:navigation-fragment-ktx:$navVersion")

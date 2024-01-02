@@ -1,6 +1,7 @@
 package com.example.weightdojo.components.keypad
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -107,8 +108,8 @@ fun Keypad(
                         .background(MaterialTheme.colors.secondary)
                         .fillMaxSize()
                         .weight(1f)
-                        .aspectRatio(1f),
-                    onClick = delete,
+                        .aspectRatio(1f)
+                        .clickable { delete() },
                     testTag = TestTags.DELETE_BUTTON.name
                 )
                 KeypadButton(
@@ -125,8 +126,8 @@ fun Keypad(
                         .background(MaterialTheme.colors.secondary)
                         .fillMaxSize()
                         .weight(1f)
-                        .aspectRatio(1f),
-                    onClick = { submit() },
+                        .aspectRatio(1f)
+                        .clickable { submit() },
                     testTag = "Submit",
                 )
             }

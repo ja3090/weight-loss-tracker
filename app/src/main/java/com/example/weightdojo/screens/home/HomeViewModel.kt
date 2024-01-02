@@ -13,12 +13,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
-enum class Screens {
-    LockFirstTime, Lock, Home, Entries, Settings, Graphs
-}
 
 data class HomeState(
-    var day: DayWithWeightAndMeals? = null
+    var day: DayWithWeightAndMeals? = null,
+    var showAddModal: Boolean = false
 )
 
 class HomeViewModel(
@@ -33,6 +31,10 @@ class HomeViewModel(
 
     init {
         getAndSetDay()
+    }
+
+    fun showModal(show: Boolean) {
+        state = state.copy(showAddModal = show)
     }
 
     fun getAndSetDay(date: LocalDate? = null) {

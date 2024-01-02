@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.weightdojo.components.CustomDivider
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
 
@@ -54,10 +55,8 @@ fun StatsDisplay() {
                 ) {
                     TextDefault(text = "1500kcal")
                 }
-                Divider(
-                    color = MaterialTheme.colors.primaryVariant,
-                    thickness = 1.dp,
-                    modifier = Modifier.padding(horizontal = Sizing.paddings.small)
+                CustomDivider(
+                    modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
                 )
                 Row(
                     modifier = Modifier

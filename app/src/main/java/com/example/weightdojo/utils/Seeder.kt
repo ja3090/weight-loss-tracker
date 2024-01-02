@@ -25,10 +25,14 @@ class Seeder(
         }
     }
 
-    private fun seedDb() {
+    private fun deleteAll() {
         database.mealDao()._DELETE_ALL()
         database.weightDao()._DELETE_ALL()
         database.dayDao()._DELETE_ALL()
+    }
+
+    private fun seedDb() {
+        deleteAll()
 
         val date = LocalDate.now()
 
