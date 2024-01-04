@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -29,17 +30,18 @@ fun MainScreen(
     navHostController: NavHostController = rememberNavController(),
     mainViewModel: MainViewModel = viewModel(
         factory = VMFactory.build {
-            MainViewModel(MyApp.appModule.database)
+            MainViewModel(MyApp.appModule.database, MyApp.appModule.configSessionCache)
         }
     ),
     config: Config? = mainViewModel.state.config,
 ) {
+    if (mainViewModel.state.startDestination == null) return
+
     fun navigateTo(screen: Screens) {
         when (screen) {
             Screens.Home -> navHostController.navigate(Screens.Home.name)
             Screens.Charts -> navHostController.navigate(Screens.Charts.name)
             Screens.Settings -> navHostController.navigate(Screens.Settings.name)
-            Screens.AddWeight -> navHostController.navigate(Screens.AddWeight.name)
             else -> {
                 throw Error("Lock screens aren't intended to be navigable")
             }
@@ -61,6 +63,7 @@ fun MainScreen(
                 .fillMaxSize(),
             navController = navHostController,
             startDestination = Screens.Home.name
+//            startDestination = mainViewModel.state.startDestination?.name ?: Screens.Lock.name
         ) {
             composable(route = Screens.LockFirstTime.name) {
                 LockFirstTime(
@@ -88,8 +91,6 @@ fun MainScreen(
             }
             composable(route = Screens.Home.name) {
                 Home(
-                    currentDate = mainViewModel.state.currentDate,
-                    dateSetter = mainViewModel::setDate,
                     navigateTo = ::navigateTo
                 )
             }
@@ -97,9 +98,6 @@ fun MainScreen(
                 ChartScreen()
             }
             composable(route = Screens.Settings.name) {
-                Text(text = "Settings")
-            }
-            composable(route = Screens.AddWeight.name) {
                 Text(text = "Settings")
             }
         }

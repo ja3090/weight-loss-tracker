@@ -28,5 +28,5 @@ data class DayWithWeightAndMeals(
         parentColumn = "id",
         entityColumn = "day_id"
     )
-    val weight: Weight?
+    val weight: Weight?,
 )

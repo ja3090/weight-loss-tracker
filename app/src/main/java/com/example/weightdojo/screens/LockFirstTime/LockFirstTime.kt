@@ -3,6 +3,8 @@ package com.example.weightdojo.screens.lockfirsttime
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,7 +23,7 @@ fun LockFirstTime(
     onSubmitRedirect: () -> Unit,
     lockFirstTimeVM: LockFirstTimeViewModel = viewModel(
         factory = VMFactory.build {
-            LockFirstTimeViewModel(MyApp.appModule.database)
+            LockFirstTimeViewModel(MyApp.appModule.database, MyApp.appModule.configSessionCache)
         }
     ),
     context: FragmentActivity,
@@ -60,35 +62,44 @@ fun LockFirstTime(
             }
         }
     }
-
-    Keypad(
-        keyClick = lockFirstTimeVM::addInput,
-        delete = lockFirstTimeVM::delete,
-        submit = ::onSubmit,
-        inputValue = getInputValue(),
-        promptText = getPromptText(),
-        leftOfZeroCustomBtn = if (state.confirmingPasscode) {
-            {
+    Dialog(
+        onDismissRequest = { },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        )
+    ) {
+        Keypad(
+            keyClick = lockFirstTimeVM::addInput,
+            delete = lockFirstTimeVM::delete,
+            submit = ::onSubmit,
+            inputValue = getInputValue(),
+            promptText = getPromptText(),
+            leftOfZeroCustomBtn = if (state.confirmingPasscode) {
+                {
+                    KeypadButton(
+                        text = "Back",
+                        onClick = lockFirstTimeVM::goBack,
+                        modifier = it
+                    )
+                }
+            } else {
+                null
+            },
+            rightOfZeroCustomBtn = {
                 KeypadButton(
-                    text = "Back",
-                    onClick = lockFirstTimeVM::goBack,
-                    modifier = it
-                )
+                    text = "Cancel",
+                    modifier = it,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primaryVariant
+                ) {
+                    println("")
+                }
             }
-        } else {
-            null
-        },
-        rightOfZeroCustomBtn = {
-            KeypadButton(
-                text = "Cancel",
-                modifier = it,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.primaryVariant
-            ) {
-                println("")
-            }
-        }
-    )
+        )
+    }
+
 
     if (state.loading) {
         Loading()

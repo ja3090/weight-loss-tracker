@@ -28,21 +28,19 @@ import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.screens.home.addmodal.AddModal
+import com.example.weightdojo.screens.home.statsdisplay.StatsDisplay
 import com.example.weightdojo.screens.main.Screens
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.VMFactory
-import java.time.LocalDate
 import kotlin.random.Random
 
 @SuppressLint("NewApi")
 @Composable
 fun Home(
-    currentDate: LocalDate,
-    dateSetter: (date: LocalDate) -> Unit,
     navigateTo: (screen: Screens) -> Unit,
-    homeViewModel: HomeViewModel  = viewModel(
+    homeViewModel: HomeViewModel = viewModel(
         factory = VMFactory.build {
-            HomeViewModel(MyApp.appModule.database, currentDate)
+            HomeViewModel(MyApp.appModule.database)
         }
     ),
     homeState: HomeState = homeViewModel.state
@@ -69,12 +67,16 @@ fun Home(
         }
 
         if (homeState.showAddModal) {
-            AddModal(onDismiss = homeViewModel::showModal, navigateTo = navigateTo)
+            AddModal(
+                onDismiss = homeViewModel::showModal,
+                navigateTo = navigateTo,
+                dayData = homeState.day
+            )
         }
 
-        DayPicker(todayFullDate = currentDate, dateSetter = dateSetter)
+        DayPicker(todayFullDate = homeState.currentDate, dateSetter = homeViewModel::getAndSetDay)
 
-        StatsDisplay()
+        StatsDisplay(day = homeState.day)
         Box(
             modifier = Modifier
                 .clip(

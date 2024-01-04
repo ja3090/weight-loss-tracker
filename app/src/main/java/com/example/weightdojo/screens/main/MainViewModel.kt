@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.main
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
@@ -9,9 +8,7 @@ import com.example.weightdojo.repositories.ConfigRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import com.example.weightdojo.utils.ConfigSessionCache
 
 enum class Screens {
     LockFirstTime, Lock, Home, Settings, Charts, AddWeight
@@ -20,33 +17,18 @@ enum class Screens {
 data class MainState(
     var config: Config? = null,
     var authenticated: Boolean = false,
-    var destination: Enum<Screens> = Screens.Home,
-    var currentDate: LocalDate,
-    var currentDateAsString: String,
+    var startDestination: Enum<Screens>? = null,
 )
 
 class MainViewModel(
     private val database: AppDatabase,
+    private val configSessionCache: ConfigSessionCache,
     private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
-    private val userTimezone = ZoneId.systemDefault()
-    private val userDate = LocalDate.now(userTimezone)
-    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     var state by mutableStateOf(
-        MainState(
-            currentDate = userDate,
-            currentDateAsString = userDate.format(dateFormat)
-        )
+        MainState()
     )
-
-    private fun formatDate(date: LocalDate): String {
-        return date.format(dateFormat)
-    }
-
-    fun setDate(date: LocalDate) {
-        state = state.copy(currentDate = date, currentDateAsString = formatDate(date))
-    }
 
     private fun getStartDest(config: Config?): Enum<Screens> {
         return if (config == null) Screens.LockFirstTime
@@ -55,13 +37,18 @@ class MainViewModel(
     }
 
     init {
+        var config = configSessionCache.getActiveSession()
 
-        runBlocking {
-            val config = repo.getConfig()
-            val startDest = getStartDest(config)
+        if (config == null) {
 
-            state = state.copy(config = config, destination = startDest)
+            runBlocking {
+                config = repo.getConfig()
+            }
         }
+
+        val startDest = getStartDest(config)
+
+        state = state.copy(config = config, startDestination = startDest)
     }
 
     fun setAuthenticated(boolean: Boolean) {

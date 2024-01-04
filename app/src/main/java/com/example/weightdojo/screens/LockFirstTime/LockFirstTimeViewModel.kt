@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.lockfirsttime
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.*
@@ -8,6 +9,7 @@ import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.repositories.ConfigRepository
 import com.example.weightdojo.repositories.ConfigRepositoryImpl
+import com.example.weightdojo.utils.ConfigSessionCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -23,6 +25,7 @@ data class LockFirstTimeState(
 
 open class LockFirstTimeViewModel(
     private val database: AppDatabase,
+    private val configSessionCache: ConfigSessionCache,
     private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())
@@ -58,7 +61,8 @@ open class LockFirstTimeViewModel(
             state = state.copy(enteringPasscode = false, confirmingPasscode = true)
         }
 
-        val confirmFinished = state.confirmingPasscode && state.secondEnter.length == PASSCODE_LENGTH
+        val confirmFinished =
+            state.confirmingPasscode && state.secondEnter.length == PASSCODE_LENGTH
 
         val matches = state.firstEnter == state.secondEnter
 
@@ -69,7 +73,7 @@ open class LockFirstTimeViewModel(
         state = state.copy(confirmingPasscode = false, enteringPasscode = true, secondEnter = "")
     }
 
-     suspend fun submitConfig(bioEnabled: Boolean): Boolean {
+    suspend fun submitConfig(bioEnabled: Boolean): Boolean {
         withContext(Dispatchers.Main) {
             state = state.copy(loading = true)
         }
@@ -80,6 +84,18 @@ open class LockFirstTimeViewModel(
 
         withContext(Dispatchers.Main) {
             state = state.copy(loading = true)
+        }
+
+        if (success) {
+            val config = viewModelScope.async(Dispatchers.IO) {
+                return@async repo.getConfig()
+            }.await()
+
+            if (config != null) {
+                configSessionCache.saveSession(config)
+            } else {
+                Log.e("sessionCacheError", "Config is null")
+            }
         }
 
         return success
