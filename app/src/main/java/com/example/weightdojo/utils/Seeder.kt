@@ -1,7 +1,7 @@
 package com.example.weightdojo.utils
 
 import com.example.weightdojo.database.AppDatabase
-import com.example.weightdojo.database.models.DayWithWeightAndMeals
+import com.example.weightdojo.database.models.DayWithMeals
 import com.example.weightdojo.repositories.MealRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
@@ -27,7 +27,6 @@ class Seeder(
 
     private fun deleteAll() {
         database.mealDao()._DELETE_ALL()
-        database.weightDao()._DELETE_ALL()
         database.dayDao()._DELETE_ALL()
     }
 
@@ -62,19 +61,17 @@ class Seeder(
         val dao = database.dayDao()
 
         dao.insert(date)
-        val row = dao.getDays(date) as DayWithWeightAndMeals
+        val row = dao.getDays(date) as DayWithMeals
 
         return DayDTO(date = date, id = row.day.id)
     }
 
     private fun enterWeight(day: DayDTO) {
-        val dao = database.weightDao()
+        val dao = database.dayDao()
 
-        dao.insertWeightEntry(
+        dao.setWeight(
             dayId = day.id,
             weight = Random.nextInt(60, 80).toFloat(),
-            date = day.date,
-            weightUnit = if (Random.nextFloat() > 0.5f) WeightUnits.KG else WeightUnits.LBS
         )
     }
 

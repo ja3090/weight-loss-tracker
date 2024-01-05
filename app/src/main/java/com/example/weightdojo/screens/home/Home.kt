@@ -68,7 +68,7 @@ fun Home(
 
         if (homeState.showAddModal) {
             AddModal(
-                onDismiss = homeViewModel::showModal,
+                showModal = homeViewModel::showModal,
                 navigateTo = navigateTo,
                 dayData = homeState.day
             )
@@ -76,7 +76,7 @@ fun Home(
 
         DayPicker(todayFullDate = homeState.currentDate, dateSetter = homeViewModel::getAndSetDay)
 
-        StatsDisplay(day = homeState.day)
+        StatsDisplay(day = homeState.day, mostRecentWeight = homeState.mostRecentWeight)
         Box(
             modifier = Modifier
                 .clip(

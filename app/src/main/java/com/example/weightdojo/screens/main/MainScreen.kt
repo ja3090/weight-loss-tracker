@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.main
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -62,8 +61,8 @@ fun MainScreen(
                 .padding(it)
                 .fillMaxSize(),
             navController = navHostController,
-            startDestination = Screens.Home.name
-//            startDestination = mainViewModel.state.startDestination?.name ?: Screens.Lock.name
+//            startDestination = Screens.Home.name
+            startDestination = mainViewModel.state.startDestination?.name ?: Screens.Lock.name
         ) {
             composable(route = Screens.LockFirstTime.name) {
                 LockFirstTime(

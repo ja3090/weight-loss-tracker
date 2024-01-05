@@ -18,15 +18,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.CustomDivider
-import com.example.weightdojo.database.models.DayWithWeightAndMeals
+import com.example.weightdojo.database.models.DayWithMeals
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.ConfigSessionCache
+import com.example.weightdojo.utils.calculateTdee
 import com.example.weightdojo.utils.statsDisplayHelper
 
 @Composable
 fun StatsDisplay(
     configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
-    day: DayWithWeightAndMeals?
+    day: DayWithMeals?,
+    mostRecentWeight: Float?
 ) {
     val config = configSessionCache.getActiveSession()
 
@@ -68,7 +70,15 @@ fun StatsDisplay(
                         .aspectRatio(1f),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Widget(stat = stats.tdee, statTitle = "TDEE", modifier = Modifier.weight(1f))
+                    Widget(
+                        stat = calculateTdee(
+                            config?.age,
+                            config?.sex,
+                            config?.height,
+                            mostRecentWeight,
+                            config?.weightUnit
+                        ) ?: "-", statTitle = "TDEE", modifier = Modifier.weight(1f)
+                    )
                     Widget(
                         stat = stats.weight,
                         statTitle = "Weight",

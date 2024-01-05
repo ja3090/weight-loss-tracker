@@ -7,9 +7,11 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.database.AppDatabase
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.repositories.ConfigRepository
 import com.example.weightdojo.repositories.ConfigRepositoryImpl
 import com.example.weightdojo.utils.ConfigSessionCache
+import com.example.weightdojo.utils.SessionCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -25,7 +27,7 @@ data class LockFirstTimeState(
 
 open class LockFirstTimeViewModel(
     private val database: AppDatabase,
-    private val configSessionCache: ConfigSessionCache,
+    private val configSessionCache: SessionCache<Config>,
     private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())

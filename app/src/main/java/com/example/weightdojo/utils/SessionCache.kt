@@ -8,7 +8,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 interface SessionCache <T> {
 
-    fun saveSession(session: T)
+    fun saveSession(session: T?)
 
     fun getActiveSession(): T?
 
@@ -25,7 +25,7 @@ class ConfigSessionCache (
 
     private val adapter = moshi.adapter(Config::class.java)
 
-    override fun saveSession(session: Config) {
+    override fun saveSession(session: Config?) {
         sharedPreferences.edit()
             .putString("config", adapter.toJson(session))
             .apply()

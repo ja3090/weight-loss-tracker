@@ -2,7 +2,9 @@ package com.example.weightdojo.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Update
 import com.example.weightdojo.database.models.Config
+import com.example.weightdojo.database.models.Sex
 
 @Dao
 interface ConfigDao {
@@ -11,7 +13,7 @@ interface ConfigDao {
                 "ORDER BY id " +
                 "LIMIT 1"
     )
-    suspend fun getConfig(): Config?
+    fun getConfig(): Config?
 
     @Query(
         "INSERT INTO config " +
@@ -24,4 +26,11 @@ interface ConfigDao {
         salt: ByteArray,
         bioEnabled: Boolean
     )
+
+    @Query(
+        "UPDATE config " +
+        "SET age = :age, height = :height, sex = :sex " +
+        "WHERE id = :id "
+    )
+    fun setConfigExtraOptions(age: Int?, height: Float?, sex: Sex?, id: Long)
 }

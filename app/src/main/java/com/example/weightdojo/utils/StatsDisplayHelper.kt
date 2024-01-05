@@ -2,7 +2,7 @@ package com.example.weightdojo.utils
 
 import com.example.weightdojo.AppConfig
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.database.models.DayWithWeightAndMeals
+import com.example.weightdojo.database.models.DayWithMeals
 
 data class Stats(
     val calorieUnit: String,
@@ -13,21 +13,21 @@ data class Stats(
     val calories: String
 )
 
-fun statsDisplayHelper(config: Config?, day: DayWithWeightAndMeals?): Stats {
+fun statsDisplayHelper(config: Config?, day: DayWithMeals?): Stats {
     val calorieUnit = config?.calorieUnit ?: AppConfig.internalDefaultCalorieUnit
 
-    val weightUnit = config?.weightUnit?.name ?: "Kg"
+    val weightUnit = config?.weightUnit?.name ?: "KG"
 
     val goalWeight = if (config?.goalWeight !== null) {
         config.goalWeight.toInt().toString() + " " + weightUnit
     } else "-"
 
-    val weight = if (day?.weight?.weight !== null) {
-        day.weight.weight.toInt().toString() + " " + weightUnit
+    val weight = if (day?.day?.weight !== null) {
+        day.day.weight.toInt().toString() + " " + weightUnit
     } else "-"
 
     val tdee = if (config?.tdee !== null) {
-        config.tdee.toString() + calorieUnit.name
+        config.tdee.toString()  + " " + calorieUnit.name
     } else "-"
 
     val calories = if (day?.day?.totalCalories !== null) {

@@ -13,10 +13,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d("session", MyApp.appModule.configSessionCache.getActiveSession().toString())
-        Log.d("currentDate", MyApp.appModule.currentDate.toString())
-        Log.d("currentDateAsString", MyApp.appModule.currentDateAsString)
-
         if (AppConfig.seedDatabase) {
             val seeder = Seeder(MyApp.appModule.database)
 

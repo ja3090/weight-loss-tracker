@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.home.addmodal
+package com.example.weightdojo.screens.home.addmodal.addweight
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,18 +17,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.screens.home.addmodal.addweight.validateInput
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun WeightInput(weight: String, weightUnit: String, weightSetter: (newWeight: String) -> Unit) {
+fun WeightInput(weight: String?, weightUnit: String, weightSetter: (newWeight: String) -> Unit) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(Sizing.cornerRounding))
             .background(MaterialTheme.colors.background)
-            .padding(Sizing.paddings.medium)
     ) {
         TextField(
-            value = weight,
+            value = weight ?: "",
             onValueChange = {
                 val passes = validateInput(it)
 
@@ -40,6 +40,7 @@ fun WeightInput(weight: String, weightUnit: String, weightSetter: (newWeight: St
                 backgroundColor = Color.Transparent
             ),
             modifier = Modifier
+                .padding(Sizing.paddings.small)
                 .wrapContentWidth()
                 .widthIn(min = 10.dp),
             trailingIcon = { TextDefault(text = weightUnit) },

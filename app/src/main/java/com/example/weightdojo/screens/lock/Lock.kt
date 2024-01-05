@@ -15,9 +15,6 @@ import com.example.weightdojo.components.Loading
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.keypad.Keypad
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.screens.home.addmodal.Initial
-import com.example.weightdojo.screens.home.addmodal.SetWeight
-import com.example.weightdojo.screens.home.addmodal.SubModals
 import com.example.weightdojo.utils.Biometrics
 import com.example.weightdojo.utils.VMFactory
 import kotlinx.coroutines.async

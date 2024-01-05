@@ -22,12 +22,12 @@ interface WeightChartDao: ChartDao {
                 "      MAX(weight) as max, " +
                 "      MIN(weight) as min " +
                 "    FROM" +
-                "      weight" +
+                "      day" +
                 "    WHERE" +
                 "      date BETWEEN :from AND :to" +
                 "  ) " +
                 "SELECT date.date, weight as value, max, min FROM date, max_min_weights mw " +
-                "LEFT JOIN weight ON date.date = weight.date " +
+                "LEFT JOIN day ON date.date = day.date " +
                 "WHERE date.date BETWEEN :from AND :to "
     )
     override fun getRangeByDay(from: LocalDate, to: LocalDate): List<ChartData>
@@ -40,7 +40,7 @@ interface WeightChartDao: ChartDao {
                 "        FROM " +
                 "        date d " +
                 "        LEFT JOIN " +
-                "        weight w ON strftime('%m-%Y', d.date) = strftime('%m-%Y', w.date) " +
+                "        day w ON strftime('%m-%Y', d.date) = strftime('%m-%Y', w.date) " +
                 "        GROUP BY " +
                 "        strftime('%m-%Y', d.date) " +
                 "     ), " +
@@ -51,7 +51,7 @@ interface WeightChartDao: ChartDao {
     )
     override fun getRangeByMonth(): List<ChartData>
 
-    @Query("SELECT MIN(date) as date FROM weight")
+    @Query("SELECT MIN(date) as date FROM day")
     override fun getEarliestWeightDate(): EarliestDate
 }
 

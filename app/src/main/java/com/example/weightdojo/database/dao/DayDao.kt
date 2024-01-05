@@ -4,7 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import com.example.weightdojo.database.models.DayWithWeightAndMeals
+import com.example.weightdojo.database.models.Day
+import com.example.weightdojo.database.models.DayWithMeals
 import java.time.LocalDate
 
 @Dao
@@ -14,14 +15,14 @@ interface DayDao {
         "SELECT * FROM day " +
                 "WHERE date = :date"
     )
-    fun getDays(date: LocalDate): DayWithWeightAndMeals?
+    fun getDays(date: LocalDate): DayWithMeals?
 
     @Transaction
     @Query(
         "SELECT * FROM day " +
                 "WHERE id = :id"
     )
-    fun getDayById(id: Long): DayWithWeightAndMeals
+    fun getDayById(id: Long): DayWithMeals
 
     @Query("INSERT INTO day ('date') VALUES (:date)")
     fun insert(date: LocalDate)
@@ -37,4 +38,19 @@ interface DayDao {
                 "WHERE id = :dayId"
     )
     fun setCalorieStats(calAvg: Float, proAvg: Float, fatAvg: Float, carbAvg: Float, dayId: Long)
+
+    @Query(
+        "UPDATE day " +
+                "SET weight = :weight " +
+                "WHERE id = :dayId"
+    )
+    fun setWeight(weight: Float, dayId: Long)
+
+    @Query(
+        "SELECT * FROM day " +
+        "WHERE weight IS NOT NULL " +
+        "ORDER BY date DESC " +
+        "LIMIT 1 "
+    )
+    fun getMostRecentWeight(): Day?
 }

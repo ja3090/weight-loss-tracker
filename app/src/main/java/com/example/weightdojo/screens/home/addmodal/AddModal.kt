@@ -1,12 +1,12 @@
 package com.example.weightdojo.screens.home.addmodal
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Dialog
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.DialogProperties
-import com.example.weightdojo.database.models.DayWithWeightAndMeals
+import com.example.weightdojo.database.models.DayWithMeals
+import com.example.weightdojo.screens.home.addmodal.addweight.AddWeight
 import com.example.weightdojo.screens.main.Screens
 
 enum class SubModals {
@@ -15,9 +15,9 @@ enum class SubModals {
 
 @Composable
 fun AddModal(
-    onDismiss: (show: Boolean) -> Unit,
+    showModal: (show: Boolean) -> Unit,
     navigateTo: (screen: Screens) -> Unit,
-    dayData: DayWithWeightAndMeals?
+    dayData: DayWithMeals?
 ) {
     var currentSubModal by remember {
         mutableStateOf(SubModals.Initial)
@@ -28,14 +28,14 @@ fun AddModal(
     }
 
     Dialog(
-        onDismissRequest = { onDismiss(false) },
+        onDismissRequest = { showModal(false) },
         properties = DialogProperties(
             usePlatformDefaultWidth = false
         )
     ) {
         when (currentSubModal) {
             SubModals.Initial -> Initial(::setCurrentSubModal)
-            SubModals.SetWeight -> SetWeight(dayData = dayData)
+            SubModals.SetWeight -> AddWeight(dayData = dayData, showModal = showModal)
         }
     }
 }

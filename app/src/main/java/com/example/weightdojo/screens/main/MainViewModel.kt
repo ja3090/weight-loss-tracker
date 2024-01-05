@@ -37,14 +37,13 @@ class MainViewModel(
     }
 
     init {
-        var config = configSessionCache.getActiveSession()
+        var config: Config?
 
-        if (config == null) {
-
-            runBlocking {
-                config = repo.getConfig()
-            }
+        runBlocking {
+            config = repo.getConfig()
         }
+
+        configSessionCache.saveSession(config)
 
         val startDest = getStartDest(config)
 
