@@ -10,15 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.core.text.isDigitsOnly
 import com.example.weightdojo.components.Input
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun WeightInput(weight: String?, weightUnit: String, weightSetter: (newWeight: String) -> Unit) {
+fun AgeInput(extraOptions: ExtraOptions) {
     Column(
         modifier = Modifier
-//            .padding(bottom = Sizing.paddings.medium)
+            .padding(bottom = Sizing.paddings.medium)
             .clip(RoundedCornerShape(Sizing.cornerRounding))
             .background(MaterialTheme.colors.background),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -26,19 +27,20 @@ fun WeightInput(weight: String?, weightUnit: String, weightSetter: (newWeight: S
     ) {
 
         TextDefault(
-            text = "Weight",
+            text = "Age",
             modifier = Modifier
                 .padding(top = Sizing.paddings.small)
         )
         Input(
-            inputValue = weight ?: "",
+            inputValue = if (extraOptions.age == null) "" else extraOptions.age.toString(),
             onValueChange = {
-                val passes = validateInput(it)
-
-                if (passes) weightSetter(it)
+                if ((it.isDigitsOnly() && it.count() <= 2) || it.isEmpty()) {
+                    extraOptions.age = it
+                }
             },
-            trailingIcon = { TextDefault(text = weightUnit) },
+            trailingIcon = {},
             placeholder = {}
         )
+
     }
 }

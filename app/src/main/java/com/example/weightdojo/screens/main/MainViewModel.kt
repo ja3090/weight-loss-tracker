@@ -11,13 +11,13 @@ import androidx.lifecycle.ViewModel
 import com.example.weightdojo.utils.ConfigSessionCache
 
 enum class Screens {
-    LockFirstTime, Lock, Home, Settings, Charts, AddWeight
+    LockFirstTime, Lock, Home, Settings, Charts
 }
 
 data class MainState(
     var config: Config? = null,
     var authenticated: Boolean = false,
-    var startDestination: Enum<Screens>? = null,
+    var startDestination: Screens? = null,
 )
 
 class MainViewModel(
@@ -30,7 +30,7 @@ class MainViewModel(
         MainState()
     )
 
-    private fun getStartDest(config: Config?): Enum<Screens> {
+    private fun getStartDest(config: Config?): Screens {
         return if (config == null) Screens.LockFirstTime
         else if (config.passcodeEnabled) Screens.Lock
         else Screens.Home

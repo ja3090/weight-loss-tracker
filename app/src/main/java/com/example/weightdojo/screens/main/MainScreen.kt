@@ -1,11 +1,14 @@
 package com.example.weightdojo.screens.main
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
@@ -23,6 +26,8 @@ import com.example.weightdojo.screens.lock.Lock
 import com.example.weightdojo.screens.lockfirsttime.LockFirstTime
 import com.example.weightdojo.utils.VMFactory
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.*
+import androidx.navigation.NavController
 
 @Composable
 fun MainScreen(
@@ -36,6 +41,8 @@ fun MainScreen(
 ) {
     if (mainViewModel.state.startDestination == null) return
 
+    val currentRoute = remember { mutableStateOf(Screens.Home.name) }
+
     fun navigateTo(screen: Screens) {
         when (screen) {
             Screens.Home -> navHostController.navigate(Screens.Home.name)
@@ -45,6 +52,8 @@ fun MainScreen(
                 throw Error("Lock screens aren't intended to be navigable")
             }
         }
+
+        currentRoute.value = screen.name
     }
 
     val context = LocalContext.current as FragmentActivity
@@ -52,7 +61,10 @@ fun MainScreen(
     Scaffold(
         containerColor = MaterialTheme.colors.secondary,
         bottomBar = {
-            BottomBarNav(navigateTo = ::navigateTo)
+            BottomBarNav(
+                navigateTo = ::navigateTo,
+                currentScreen = currentRoute.value
+            )
         }
     ) {
 

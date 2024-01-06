@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
+import com.example.weightdojo.components.Input
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Sex
 import com.example.weightdojo.ui.Sizing
@@ -34,129 +35,14 @@ import com.example.weightdojo.screens.home.addmodal.addweight.height.HeightInput
 @Composable
 fun ConfigOptions(extraOptions: ExtraOptions) {
 
-    Row(
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .widthIn(min = 50.dp)
-                .padding(Sizing.paddings.medium)
-                .clip(RoundedCornerShape(Sizing.cornerRounding))
-                .background(
-                    if (extraOptions.sex == Sex.Male) {
-                        MaterialTheme.colors.primaryVariant
-                    } else {
-                        MaterialTheme.colors.background
-                    }
-                )
-                .border(
-                    width = 2.dp,
-                    color = if (extraOptions.sex == Sex.Male) {
-                        MaterialTheme.colors.primaryVariant
-                    } else {
-                        Color.Transparent
-                    }, shape = RoundedCornerShape(8.dp)
-                )
-                .clickable {
-                    if (extraOptions.sex == Sex.Male) {
-                        extraOptions.sex = null
-                    } else {
-                        extraOptions.sex = Sex.Male
-                    }
-                },
-        ) {
-
-            TextDefault(
-                text = "Male",
-                modifier = Modifier
-                    .padding(Sizing.paddings.medium)
-                    .widthIn(min = 80.dp),
-                color = if (extraOptions.sex == Sex.Male) {
-                    MaterialTheme.colors.background
-                } else {
-                    MaterialTheme.colors.primary
-                }
-            )
-        }
-        Box(
-            modifier = Modifier
-                .padding(Sizing.paddings.medium)
-                .clip(RoundedCornerShape(Sizing.cornerRounding))
-                .background(
-                    if (extraOptions.sex == Sex.Female) {
-                        MaterialTheme.colors.primaryVariant
-                    } else {
-                        MaterialTheme.colors.background
-                    }
-                )
-                .border(
-                    width = 2.dp,
-                    color = if (extraOptions.sex == Sex.Female) {
-                        MaterialTheme.colors.primaryVariant
-                    } else {
-                        Color.Transparent
-                    },
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .clickable {
-                    if (extraOptions.sex == Sex.Female) {
-                        extraOptions.sex = null
-                    } else {
-                        extraOptions.sex = Sex.Female
-                    }
-                },
-        ) {
-            TextDefault(
-                text = "Female",
-                modifier = Modifier
-                    .padding(Sizing.paddings.medium)
-                    .widthIn(min = 80.dp),
-                color = if (extraOptions.sex == Sex.Female) {
-                    MaterialTheme.colors.background
-                } else {
-                    MaterialTheme.colors.primary
-                }
-            )
-        }
-    }
+    SexOptions(extraOptions = extraOptions)
 
     Column(
         modifier = Modifier
             .padding(bottom = Sizing.paddings.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .padding(bottom = Sizing.paddings.medium)
-                .clip(RoundedCornerShape(Sizing.cornerRounding))
-                .background(MaterialTheme.colors.background),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-
-            TextDefault(
-                text = "Age",
-                modifier = Modifier
-                    .padding(top = Sizing.paddings.small)
-            )
-            TextField(
-                value = if (extraOptions.age == null) "" else extraOptions.age.toString(),
-                onValueChange = {
-                    if ((it.isDigitsOnly() && it.count() <= 2) || it.isEmpty()) {
-                        extraOptions.age = it
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = MaterialTheme.colors.primary, backgroundColor = Color.Transparent
-                ),
-                modifier = Modifier
-                    .padding(Sizing.paddings.small)
-                    .wrapContentWidth(),
-                textStyle = TextStyle(textAlign = TextAlign.Center)
-            )
-
-        }
+        AgeInput(extraOptions = extraOptions)
 
         HeightInput(extraOptions = extraOptions)
     }

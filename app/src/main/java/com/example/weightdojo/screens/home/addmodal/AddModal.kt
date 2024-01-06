@@ -29,9 +29,9 @@ fun AddModal(
 
     Dialog(
         onDismissRequest = { showModal(false) },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        )
+//        properties = DialogProperties(
+//            usePlatformDefaultWidth = false
+//        )
     ) {
         when (currentSubModal) {
             SubModals.Initial -> Initial(::setCurrentSubModal)

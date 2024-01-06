@@ -66,12 +66,17 @@ fun AddWeight(
 
     Column(
         modifier = Modifier
+            .clip(RoundedCornerShape(Sizing.cornerRounding))
             .background(MaterialTheme.colors.secondary)
             .verticalScroll(rememberScrollState())
-            .clip(RoundedCornerShape(Sizing.cornerRounding))
     ) {
-        Heading(text = "Set Weight")
-        CustomDivider(tinted = false)
+        Column {
+            Heading(
+                text = "Set Weight",
+                modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
+            )
+            CustomDivider(tinted = false)
+        }
 
         Column(
             modifier = Modifier

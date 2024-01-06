@@ -2,7 +2,6 @@ package com.example.weightdojo.screens.home.addmodal.addweight.height
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
@@ -16,13 +15,12 @@ import androidx.compose.ui.text.style.TextAlign
 import com.example.weightdojo.screens.home.addmodal.addweight.ExtraOptions
 import com.example.weightdojo.ui.Sizing
 import androidx.compose.runtime.*
-import androidx.compose.ui.unit.dp
+import com.example.weightdojo.components.Input
 import com.example.weightdojo.components.text.TextDefault
 
 @Composable
 fun Inches(
-    extraOptions: ExtraOptions,
-    heightInputOptions: HeightInputOptions
+    extraOptions: ExtraOptions, heightInputOptions: HeightInputOptions
 ) {
     var feet by remember { mutableStateOf("") }
     var inches by remember { mutableStateOf("") }
@@ -37,7 +35,7 @@ fun Inches(
     fun validateInches(new: String): Boolean {
         if (new.startsWith("0")) return false
         if (!new.all { it.isDigit() }) return false
-        return new.isEmpty()|| new.toInt() <= 11
+        return new.isEmpty() || new.toInt() <= 11
     }
 
     val setExtraOptions = {
@@ -52,8 +50,8 @@ fun Inches(
     setExtraOptions()
 
     Row {
-        TextField(
-            value = feet,
+        Input(
+            inputValue = feet,
             onValueChange = {
                 val passes = validateFeet(it)
 
@@ -61,20 +59,14 @@ fun Inches(
                     feet = it
                 }
             },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary, backgroundColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .padding(Sizing.paddings.small),
-            textStyle = TextStyle(textAlign = TextAlign.Center),
             trailingIcon = {
                 TextDefault(text = "FT")
-            }
+            },
+            placeholder = {},
+            modifier = Modifier.weight(1f)
         )
-        TextField(
-            value = inches,
+        Input(
+            inputValue = inches,
             onValueChange = {
                 val passes = validateInches(it)
 
@@ -82,18 +74,11 @@ fun Inches(
                     inches = it
                 }
             },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary, backgroundColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .padding(Sizing.paddings.small),
-            textStyle = TextStyle(textAlign = TextAlign.Center),
             trailingIcon = {
                 HeightOptions(heightInputOptions)
             },
-            maxLines = 1
+            placeholder = {},
+            modifier = Modifier.weight(1f)
         )
     }
 }
