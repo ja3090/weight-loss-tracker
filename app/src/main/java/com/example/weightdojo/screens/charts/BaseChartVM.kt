@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.charts
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,10 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import androidx.compose.runtime.*
-import com.example.weightdojo.database.dao.ChartData
 import com.example.weightdojo.database.models.Date
+import com.example.weightdojo.datatransferobjects.ChartData
 import com.example.weightdojo.repositories.CalorieDateRepoImpl
-import com.example.weightdojo.repositories.DateRepository
+import com.example.weightdojo.repositories.ChartRepository
 import kotlinx.coroutines.withContext
 import java.time.Period
 
@@ -47,7 +46,7 @@ enum class TimePeriods {
 
 abstract class BaseChartVM(
     open val database: AppDatabase,
-    open val dateRepo: DateRepository,
+    open val dateRepo: ChartRepository,
     val timePeriod: TimePeriods = TimePeriods.ONE_WEEK
 ) : ViewModel() {
 
@@ -149,10 +148,10 @@ abstract class BaseChartVM(
 
 class WeightChartViewModel(
     override val database: AppDatabase,
-    override val dateRepo: DateRepository = WeightDateRepoImpl(database.weightChartDao())
+    override val dateRepo: ChartRepository = WeightDateRepoImpl(database.weightChartDao())
 ) : BaseChartVM(database = database, dateRepo = dateRepo)
 
 class CalorieChartViewModel(
     override val database: AppDatabase,
-    override val dateRepo: DateRepository = CalorieDateRepoImpl(database.calorieChartDao())
+    override val dateRepo: ChartRepository = CalorieDateRepoImpl(database.calorieChartDao())
 ) : BaseChartVM(database = database, dateRepo = dateRepo)

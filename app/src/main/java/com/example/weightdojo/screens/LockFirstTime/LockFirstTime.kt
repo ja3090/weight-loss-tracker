@@ -81,7 +81,9 @@ fun LockFirstTime(
                     KeypadButton(
                         text = "Back",
                         onClick = lockFirstTimeVM::goBack,
-                        modifier = it
+                        modifier = it,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.primaryVariant
                     )
                 }
             } else {

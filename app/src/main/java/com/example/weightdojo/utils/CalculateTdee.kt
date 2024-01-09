@@ -3,9 +3,9 @@ package com.example.weightdojo.utils
 import com.example.weightdojo.database.models.Sex
 
 fun calculateTdee(
-    age: Int?, sex: Sex?, height: Float?, weight: Float?, weightUnit: WeightUnits?
+    age: Int?, sex: Sex?, height: Float?, weight: Float?, calorieUnit: CalorieUnits?
 ): String? {
-    if (age == null || sex == null || height == null || weight == null || weightUnit == null) {
+    if (age == null || sex == null || height == null || weight == null || calorieUnit == null) {
         return null
     }
 
@@ -14,7 +14,7 @@ fun calculateTdee(
 
         val tdee = bmr * 1.2
 
-        return tdee.toInt().toString() + " " + weightUnit.name
+        return tdee.toInt().toString() + " " + calorieUnit.name
     }
 
     if (sex == Sex.Female) {
@@ -22,7 +22,7 @@ fun calculateTdee(
 
         val tdee = bmr * 1.2
 
-        return tdee.toInt().toString() + " " + weightUnit.name
+        return tdee.toInt().toString() + " " + calorieUnit.name
     }
 
     return null

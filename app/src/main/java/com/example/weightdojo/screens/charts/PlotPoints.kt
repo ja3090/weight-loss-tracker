@@ -3,7 +3,7 @@ package com.example.weightdojo.screens.charts
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
-import com.example.weightdojo.database.dao.ChartData
+import com.example.weightdojo.datatransferobjects.ChartData
 import com.example.weightdojo.utils.returnNeatDate
 import kotlin.math.ceil
 import kotlin.math.floor

@@ -12,7 +12,8 @@ data class FontSizes(
 
 data class Paddings(
     val medium: Dp = 25.dp,
-    val small: Dp = 15.dp
+    val small: Dp = 15.dp,
+    val extraSmall: Dp = 7.5.dp
 )
 
 class Sizing {

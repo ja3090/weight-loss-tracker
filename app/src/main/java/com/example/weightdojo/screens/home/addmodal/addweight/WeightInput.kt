@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import com.example.weightdojo.components.Input
+import com.example.weightdojo.components.inputs.NumberInput
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
 
@@ -30,7 +30,7 @@ fun WeightInput(weight: String?, weightUnit: String, weightSetter: (newWeight: S
             modifier = Modifier
                 .padding(top = Sizing.paddings.small)
         )
-        Input(
+        NumberInput(
             inputValue = weight ?: "",
             onValueChange = {
                 val passes = validateInput(it)
@@ -38,7 +38,8 @@ fun WeightInput(weight: String?, weightUnit: String, weightSetter: (newWeight: S
                 if (passes) weightSetter(it)
             },
             trailingIcon = { TextDefault(text = weightUnit) },
-            placeholder = {}
+            placeholder = {},
+            leadingIcon = {}
         )
     }
 }

@@ -3,6 +3,7 @@ package com.example.weightdojo.repositories
 import com.example.weightdojo.AppConfig
 import com.example.weightdojo.database.dao.DayDao
 import com.example.weightdojo.database.dao.MealDao
+import com.example.weightdojo.database.models.Meal
 import com.example.weightdojo.utils.CalorieUnit
 import com.example.weightdojo.utils.CalorieUnits
 import java.time.LocalDate
@@ -15,13 +16,15 @@ interface MealRepository {
         totalFat: Float? = null,
         totalCalories: Float,
         totalProtein: Float? = null,
-        calorieUnit: CalorieUnits
-    )
+        calorieUnit: CalorieUnits,
+        name: String,
+    ): Long
+    fun getMealByDayId(dayId: Long): Meal
 }
 
 class MealRepositoryImpl(
     private val mealDao: MealDao,
-    private val dayDao: DayDao? = null
+    private val dayDao: DayDao
 ) : MealRepository {
     override fun insertMeal(
         dayId: Long,
@@ -30,11 +33,10 @@ class MealRepositoryImpl(
         totalFat: Float?,
         totalCalories: Float,
         totalProtein: Float?,
-        calorieUnit: CalorieUnits
-    ) {
-        if (dayDao == null) throw Error("You must inject DayDao if you intend to use this function")
-
-        mealDao.insertMealEntry(
+        calorieUnit: CalorieUnits,
+        name: String,
+    ): Long {
+        return mealDao.handleMealInsert(
             dayId = dayId,
             date = date,
             totalCarbohydrates = totalCarbohydrates,
@@ -44,17 +46,11 @@ class MealRepositoryImpl(
                 value = totalCalories
             ),
             totalProtein = totalProtein,
-            calorieUnit = calorieUnit
+            name = name
         )
+    }
 
-        val averages = mealDao.getNutritionAverages(dayId)
-
-        dayDao.setCalorieStats(
-            calAvg = averages.calAvg,
-            proAvg = averages.proAvg,
-            fatAvg = averages.fatAvg,
-            carbAvg = averages.carbAvg,
-            dayId = dayId
-        )
+    override fun getMealByDayId(dayId: Long): Meal {
+        return mealDao.getMealByDayId(dayId)
     }
 }

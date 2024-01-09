@@ -87,4 +87,7 @@ dependencies {
 
     implementation("com.squareup.moshi:moshi:1.14.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+
+    val fakerVersion = "1.15.0"
+    implementation("io.github.serpro69:kotlin-faker:$fakerVersion")
 }

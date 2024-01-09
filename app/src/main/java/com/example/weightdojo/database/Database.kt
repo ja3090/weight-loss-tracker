@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import com.example.weightdojo.database.dao.CalorieChartDao
 import com.example.weightdojo.database.dao.ConfigDao
 import com.example.weightdojo.database.dao.DayDao
+import com.example.weightdojo.database.dao.IngredientDao
 import com.example.weightdojo.database.dao.MealDao
 import com.example.weightdojo.database.dao.WeightChartDao
 import com.example.weightdojo.database.models.Config
@@ -27,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun mealDao(): MealDao
     abstract fun calorieChartDao(): CalorieChartDao
     abstract fun weightChartDao(): WeightChartDao
+    abstract fun ingredientDao(): IngredientDao
 }
 
 class Database {

@@ -2,20 +2,20 @@ package com.example.weightdojo.repositories
 
 import com.example.weightdojo.database.dao.CalorieChartDao
 import com.example.weightdojo.database.dao.ChartDao
-import com.example.weightdojo.database.dao.ChartData
 import com.example.weightdojo.database.dao.WeightChartDao
 import com.example.weightdojo.database.models.Date
+import com.example.weightdojo.datatransferobjects.ChartData
 import java.time.LocalDate
 
-interface DateRepository {
+interface ChartRepository {
     fun getData(dates: List<Date>): List<ChartData>
     fun getDataByMonth(dates: List<Date>): List<ChartData>
     fun getEarliestDate(): LocalDate
 }
 
-open class DateRepoImpl(
+open class ChartRepoImpl(
     open val chartDao: ChartDao
-) : DateRepository {
+) : ChartRepository {
     override fun getData(dates: List<Date>): List<ChartData> {
         val from = dates[0].date
         val to = dates[dates.size - 1].date
@@ -46,8 +46,8 @@ open class DateRepoImpl(
 
 class WeightDateRepoImpl(
     override val chartDao: WeightChartDao
-) : DateRepoImpl(chartDao)
+) : ChartRepoImpl(chartDao)
 
 class CalorieDateRepoImpl(
     override val chartDao: CalorieChartDao
-) : DateRepoImpl(chartDao)
+) : ChartRepoImpl(chartDao)

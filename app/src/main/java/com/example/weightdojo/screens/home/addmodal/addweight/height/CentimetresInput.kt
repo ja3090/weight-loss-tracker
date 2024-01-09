@@ -1,7 +1,7 @@
 package com.example.weightdojo.screens.home.addmodal.addweight.height
 
 import androidx.compose.runtime.Composable
-import com.example.weightdojo.components.Input
+import com.example.weightdojo.components.inputs.NumberInput
 import com.example.weightdojo.screens.home.addmodal.addweight.ExtraOptions
 import com.example.weightdojo.screens.home.addmodal.addweight.validateInput
 
@@ -9,7 +9,7 @@ import com.example.weightdojo.screens.home.addmodal.addweight.validateInput
 fun Centimetres(
     extraOptions: ExtraOptions, heightInputOptions: HeightInputOptions
 ) {
-    Input(
+    NumberInput(
         inputValue = if (extraOptions.height == null) "" else extraOptions.height.toString(),
         onValueChange = {
             val passes = validateInput(it)
@@ -18,5 +18,8 @@ fun Centimetres(
         },
         trailingIcon = {
             HeightOptions(heightInputOptions)
-        }, placeholder = {})
+        },
+        placeholder = {},
+        leadingIcon = {}
+    )
 }

@@ -46,7 +46,7 @@ fun DayPicker(
             Modifier
                 .horizontalScroll(offset),
         ) {
-            LaunchedEffect(Unit) {
+            LaunchedEffect(todayFullDate) {
                 launch {
                     offset.animateScrollTo(
                         offset.maxValue / 2
@@ -69,7 +69,13 @@ fun DayPicker(
                             .clickable { dateSetter(thisButtonDate) }
                             .padding(horizontal = 10.dp)
                             .clip(shape = RoundedCornerShape(Sizing.cornerRounding))
-                            .background(if (today) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.background)
+                            .background(
+                                if (today) {
+                                    MaterialTheme.colors.primaryVariant
+                                } else {
+                                    MaterialTheme.colors.background
+                                }
+                            )
                             .width(50.dp)
                             .height(100.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,

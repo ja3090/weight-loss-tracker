@@ -20,7 +20,6 @@ data class Config(
     @ColumnInfo(name = "age") val age: Int?,
     @ColumnInfo(name = "sex") val sex: Sex?,
     @ColumnInfo(name = "height") val height: Float?,
-    @ColumnInfo(name = "tdee") val tdee: Int?,
 ) {
 //    override fun equals(other: Any?): Boolean {
 //        if (other !is ByteArray) return false

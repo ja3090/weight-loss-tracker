@@ -80,7 +80,6 @@ fun MainScreen(
                 LockFirstTime(
                     onSubmitRedirect = {
                         mainViewModel.viewModelScope.launch {
-//                        mainViewModel.setAuthenticated(true)
                             navHostController.navigate(Screens.Home.name)
                         }
                     },

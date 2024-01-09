@@ -24,7 +24,7 @@ fun Widget(modifier: Modifier = Modifier, stat: String, statTitle: String) {
         TextDefault(
             text = statTitle,
             modifier = Modifier.padding(bottom = Sizing.paddings.small),
-            color = MaterialTheme.colors.primaryVariant
+            color = MaterialTheme.colors.primary.copy(0.5f)
         )
         TextDefault(text = stat)
     }

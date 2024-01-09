@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.core.text.isDigitsOnly
-import com.example.weightdojo.components.Input
+import com.example.weightdojo.components.inputs.NumberInput
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
 
@@ -31,7 +31,7 @@ fun AgeInput(extraOptions: ExtraOptions) {
             modifier = Modifier
                 .padding(top = Sizing.paddings.small)
         )
-        Input(
+        NumberInput(
             inputValue = if (extraOptions.age == null) "" else extraOptions.age.toString(),
             onValueChange = {
                 if ((it.isDigitsOnly() && it.count() <= 2) || it.isEmpty()) {
@@ -39,7 +39,8 @@ fun AgeInput(extraOptions: ExtraOptions) {
                 }
             },
             trailingIcon = {},
-            placeholder = {}
+            placeholder = {},
+            leadingIcon = {}
         )
 
     }

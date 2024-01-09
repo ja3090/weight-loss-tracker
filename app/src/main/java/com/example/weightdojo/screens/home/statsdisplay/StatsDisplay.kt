@@ -27,12 +27,12 @@ import com.example.weightdojo.utils.statsDisplayHelper
 @Composable
 fun StatsDisplay(
     configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
-    day: DayWithMeals?,
+    dayData: DayWithMeals?,
     mostRecentWeight: Float?
 ) {
     val config = configSessionCache.getActiveSession()
 
-    val stats = statsDisplayHelper(config, day)
+    val stats = statsDisplayHelper(config, dayData)
 
     Box(
         modifier = Modifier
@@ -76,7 +76,7 @@ fun StatsDisplay(
                             config?.sex,
                             config?.height,
                             mostRecentWeight,
-                            config?.weightUnit
+                            config?.calorieUnit
                         ) ?: "-", statTitle = "TDEE", modifier = Modifier.weight(1f)
                     )
                     Widget(

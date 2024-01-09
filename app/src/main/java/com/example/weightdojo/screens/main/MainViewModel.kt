@@ -22,7 +22,7 @@ data class MainState(
 
 class MainViewModel(
     private val database: AppDatabase,
-    private val configSessionCache: ConfigSessionCache,
+    configSessionCache: ConfigSessionCache,
     private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
 

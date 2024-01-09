@@ -1,16 +1,13 @@
 package com.example.weightdojo.screens.charts
 
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import com.example.weightdojo.database.dao.ChartData
+import com.example.weightdojo.datatransferobjects.ChartData
 import java.time.format.DateTimeFormatter
 import kotlin.math.floor
-import kotlin.math.round
 
 fun DrawScope.xAxes(
     data: List<ChartData>,

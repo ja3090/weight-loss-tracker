@@ -4,6 +4,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.weightdojo.database.models.Date
+import com.example.weightdojo.datatransferobjects.ChartData
+import com.example.weightdojo.datatransferobjects.EarliestDate
 import java.time.LocalDate
 
 @Dao

@@ -1,38 +1,34 @@
 package com.example.weightdojo.screens.home
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.R
-import com.example.weightdojo.components.CustomDivider
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.screens.home.addmodal.AddModal
+import com.example.weightdojo.screens.home.caloriesdisplay.CaloriesDisplay
 import com.example.weightdojo.screens.home.statsdisplay.StatsDisplay
 import com.example.weightdojo.screens.main.Screens
 import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.ConfigSessionCache
 import com.example.weightdojo.utils.VMFactory
-import kotlin.random.Random
 
 @SuppressLint("NewApi")
 @Composable
@@ -43,8 +39,12 @@ fun Home(
             HomeViewModel(MyApp.appModule.database)
         }
     ),
-    homeState: HomeState = homeViewModel.state
+    homeState: HomeState = homeViewModel.state,
+    configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
+    config: Config? = configSessionCache.getActiveSession()
 ) {
+    val weightUnit = config?.calorieUnit?.name ?: AppConfig.internalDefaultWeightUnit.name
+
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
         Row(
@@ -70,49 +70,14 @@ fun Home(
             AddModal(
                 showModal = homeViewModel::showModal,
                 navigateTo = navigateTo,
-                dayData = homeState.day
+                dayData = homeState.dayData
             )
         }
 
         DayPicker(todayFullDate = homeState.currentDate, dateSetter = homeViewModel::getAndSetDay)
 
-        StatsDisplay(day = homeState.day, mostRecentWeight = homeState.mostRecentWeight)
-        Box(
-            modifier = Modifier
-                .clip(
-                    shape = RoundedCornerShape(
-                        Sizing.cornerRounding,
-                        Sizing.cornerRounding,
-                        0.dp,
-                        0.dp
-                    )
-                )
-                .background(color = MaterialTheme.colors.background)
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        StatsDisplay(dayData = homeState.dayData, mostRecentWeight = homeState.mostRecentWeight)
 
-                Heading(text = "Meals")
-                CustomDivider(
-                    modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
-                )
-                repeat(3) {
-                    val randomKcal = (it + 1) * Random.nextInt(500)
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Sizing.paddings.medium),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        TextDefault(text = "Meal #$it")
-                        TextDefault(text = randomKcal.toString() + "kcal")
-                    }
-                }
-            }
-        }
+        CaloriesDisplay(meals = homeState.dayData?.meals, weightUnit = weightUnit)
     }
 }

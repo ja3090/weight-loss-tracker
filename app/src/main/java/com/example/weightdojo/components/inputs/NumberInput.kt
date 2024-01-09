@@ -1,9 +1,8 @@
-package com.example.weightdojo.components
+package com.example.weightdojo.components.inputs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,19 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.helper.widget.MotionPlaceholder
-import com.example.weightdojo.components.text.TextDefault
-import com.example.weightdojo.screens.home.addmodal.addweight.validateInput
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun Input(
+fun NumberInput(
     inputValue: String,
     onValueChange: (new: String) -> Unit,
     trailingIcon: @Composable () -> Unit,
     placeholder: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -41,7 +37,7 @@ fun Input(
         TextField(
             value = inputValue,
             onValueChange = onValueChange,
-            leadingIcon = {},
+            leadingIcon = leadingIcon,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = MaterialTheme.colors.primary,
@@ -49,7 +45,7 @@ fun Input(
             ),
             modifier = Modifier
                 .padding(Sizing.paddings.small)
-                .wrapContentWidth()
+//                .wrapContentWidth()
                 .align(Alignment.Center),
             trailingIcon = trailingIcon,
             placeholder = placeholder,

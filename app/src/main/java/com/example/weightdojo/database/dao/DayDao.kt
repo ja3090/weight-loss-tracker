@@ -6,18 +6,31 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.weightdojo.database.models.Day
 import com.example.weightdojo.database.models.DayWithMeals
+import com.example.weightdojo.datatransferobjects.NutritionTotals
 import java.time.LocalDate
 
 @Dao
 interface DayDao {
     @Transaction
+    fun getDay(date: LocalDate): DayWithMeals {
+        var day = getDayByDate(date)
+
+        if (day == null) {
+            insert(date)
+            day = getDayByDate(date)
+        }
+
+        day as DayWithMeals
+
+        return day
+    }
+
     @Query(
         "SELECT * FROM day " +
                 "WHERE date = :date"
     )
-    fun getDays(date: LocalDate): DayWithMeals?
+    fun getDayByDate(date: LocalDate): DayWithMeals?
 
-    @Transaction
     @Query(
         "SELECT * FROM day " +
                 "WHERE id = :id"
@@ -30,14 +43,6 @@ interface DayDao {
     @Deprecated("Used for testing purposes. Do not use anywhere")
     @Query("DELETE FROM day")
     fun _DELETE_ALL()
-
-    @Query(
-        "UPDATE day " +
-                "SET total_calories = :calAvg, total_protein = :proAvg, " +
-                "total_fat = :fatAvg, total_carbohydrates = :carbAvg " +
-                "WHERE id = :dayId"
-    )
-    fun setCalorieStats(calAvg: Float, proAvg: Float, fatAvg: Float, carbAvg: Float, dayId: Long)
 
     @Query(
         "UPDATE day " +

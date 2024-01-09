@@ -68,17 +68,16 @@ fun Lock(
             promptText = "Enter passcode",
             leftOfZeroCustomBtn = if (canUseBiometrics && config.bioEnabled) {
                 {
-                    Box(modifier = Modifier
-                        .clickable {
-                            lockViewModel.declineBiometrics(false)
-                        }
-                        .then(it)) {
-                        IconBuilder(
-                            id = R.drawable.fingerprint,
-                            contentDescription = "Bring up fingerprint access",
-                            testTag = "Fingerprint",
-                        )
-                    }
+                    IconBuilder(
+                        id = R.drawable.fingerprint,
+                        contentDescription = "Bring up fingerprint access",
+                        testTag = "Fingerprint",
+                        modifier = Modifier
+                            .clickable {
+                                lockViewModel.declineBiometrics(false)
+                            }
+                            .then(it)
+                    )
                 }
             } else {
                 null

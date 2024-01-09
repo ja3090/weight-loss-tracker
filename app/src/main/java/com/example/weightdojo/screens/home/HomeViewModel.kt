@@ -16,7 +16,7 @@ import java.time.LocalDate
 
 
 data class HomeState(
-    var day: DayWithMeals? = null,
+    var dayData: DayWithMeals? = null,
     var showAddModal: Boolean = false,
     var currentDate: LocalDate = MyApp.appModule.currentDate,
     var mostRecentWeight: Float? = null
@@ -49,7 +49,7 @@ class HomeViewModel(
 
                     return@async Pair(
                         row,
-                        row.day.weight ?: repo.getMostRecentDay()
+                        row.day.weight ?: repo.getMostRecentWeight()
                     )
                 } catch (e: Exception) {
                     throw Error(e)
@@ -58,7 +58,7 @@ class HomeViewModel(
 
             withContext(Dispatchers.Main) {
                 state = state.copy(
-                    day = day,
+                    dayData = day,
                     currentDate = dateToUse,
                     mostRecentWeight = mostRecentWeight
                 )
