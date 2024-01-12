@@ -2,7 +2,7 @@ package com.example.weightdojo.utils
 
 import com.example.weightdojo.AppConfig
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.database.models.DayWithMeals
+import com.example.weightdojo.datatransferobjects.DayData
 
 data class Stats(
     val calorieUnit: String,
@@ -12,7 +12,7 @@ data class Stats(
     val calories: String
 )
 
-fun statsDisplayHelper(config: Config?, dayData: DayWithMeals?): Stats {
+fun statsDisplayHelper(config: Config?, dayData: DayData?): Stats {
     val calorieUnit = config?.calorieUnit ?: AppConfig.internalDefaultCalorieUnit
     val weightUnit = config?.weightUnit?.name ?: "KG"
     val weight = dayData?.day?.weight

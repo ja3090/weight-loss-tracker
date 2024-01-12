@@ -23,10 +23,11 @@ import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Meal
+import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun CaloriesDisplay(meals: List<Meal>?, weightUnit: String) {
+fun CaloriesDisplay(meals: List<MealData>?, weightUnit: String) {
     Box(
         modifier = Modifier
             .clip(

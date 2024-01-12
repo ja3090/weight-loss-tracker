@@ -1,11 +1,14 @@
 package com.example.weightdojo.screens.home.addmodal.addweight.height
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.weightdojo.screens.home.addmodal.addweight.ExtraOptions
 import androidx.compose.runtime.*
-import com.example.weightdojo.components.inputs.NumberInput
+import androidx.compose.ui.text.input.KeyboardType
+import com.example.weightdojo.components.inputs.Input
+import com.example.weightdojo.components.inputs.InputArgs
 import com.example.weightdojo.components.text.TextDefault
 
 @Composable
@@ -40,22 +43,25 @@ fun Inches(
     setExtraOptions()
 
     Row {
-        NumberInput(
-            inputValue = feet,
-            onValueChange = {
-                val passes = validateFeet(it)
+        Input(
+            InputArgs(
+                inputValue = feet,
+                onValueChange = {
+                    val passes = validateFeet(it)
 
-                if (passes) {
-                    feet = it
-                }
-            },
-            trailingIcon = {
-                TextDefault(text = "FT")
-            },
-            placeholder = {},
-            modifier = Modifier.weight(1f)
+                    if (passes) {
+                        feet = it
+                    }
+                },
+                trailingIcon = {
+                    TextDefault(text = "FT")
+                },
+                placeholder = {},
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal)
+            )
         )
-        NumberInput(
+        Input(InputArgs(
             inputValue = inches,
             onValueChange = {
                 val passes = validateInches(it)
@@ -68,7 +74,8 @@ fun Inches(
                 HeightOptions(heightInputOptions)
             },
             placeholder = {},
-            modifier = Modifier.weight(1f)
-        )
+            modifier = Modifier.weight(1f),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal)
+        ))
     }
 }

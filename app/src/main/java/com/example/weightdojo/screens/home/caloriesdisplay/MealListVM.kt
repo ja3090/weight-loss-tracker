@@ -3,56 +3,97 @@ package com.example.weightdojo.screens.home.caloriesdisplay
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.weightdojo.database.models.Ingredient
-import com.example.weightdojo.database.models.Meal
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.database.AppDatabase
-import com.example.weightdojo.database.dao.IngredientDao
+import com.example.weightdojo.datatransferobjects.CalorieEntryForEditing
+import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
+import com.example.weightdojo.datatransferobjects.IngredientState
+import com.example.weightdojo.datatransferobjects.MealData
+import com.example.weightdojo.repositories.CalorieRepo
+import com.example.weightdojo.repositories.CalorieRepoImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class MealListState(
-    val activeMeal: Meal? = null,
-    val ingredientList: List<Ingredient>? = null
+    val activeMeal: MealData? = null,
+    val ingredientList: List<CalorieEntryIngredients>? = null,
+    val isEditing: Boolean = false,
+    val ingredientListAsState: List<IngredientState>? = null
 )
 
 class MealListVM(
     val database: AppDatabase,
-    private val ingredientDao: IngredientDao = database.ingredientDao()
-): ViewModel() {
+    private val calorieRepo: CalorieRepo = CalorieRepoImpl(database)
+) : ViewModel() {
 
     var state by mutableStateOf(MealListState())
 
-    fun setActive(meal: Meal) {
-        if (meal.uid == state.activeMeal?.uid) {
+    fun setActive(meal: MealData) {
+        if (meal.mealId == state.activeMeal?.mealId) {
             removeActive()
             return
         }
 
-        if (meal.hasIngredients) {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    getIngredients(meal)
-                } catch (e: Exception) {
-                    Log.e("error", e.message.toString())
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getIngredients(meal)
+            } catch (e: Exception) {
+                Log.e("error", e.message.toString())
             }
-        } else {
-            state = state.copy(activeMeal = meal, ingredientList = null)
         }
     }
 
-    private suspend fun getIngredients(meal: Meal) {
-        val ingredients = ingredientDao.getIngredients(meal.uid)
+    fun setIngredientsAsState(ingredientId: Long, newState: IngredientState) {
+        val updatedList = state.ingredientListAsState?.map {
+            if (it.calorieId == ingredientId) {
+                newState
+            } else it
+        }
+
+        state = state.copy(ingredientListAsState = updatedList)
+    }
+
+    fun showIngredientListAsState(dayId: Long, mealId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getDetailedIngredients(dayId = dayId, mealId = mealId)
+            } catch (e: Exception) {
+                Log.e("error", e.message.toString())
+            }
+        }
+    }
+
+    private suspend fun getDetailedIngredients(dayId: Long, mealId: Long) {
+        val detailedIngredients =
+            calorieRepo.getIngredientsDetailedView(dayId = dayId, mealId = mealId)
 
         withContext(Dispatchers.Main) {
-            state = state.copy(ingredientList = ingredients, activeMeal = meal)
+            state = state.copy(ingredientListAsState = detailedIngredients, isEditing = true)
         }
     }
 
-    fun removeActive() {
-        state = state.copy(activeMeal = null, ingredientList = null)
+    private suspend fun getIngredients(meal: MealData) {
+        val ingredients =
+            calorieRepo.getIngredientsForDayAndMeal(dayId = meal.dayId, mealId = meal.mealId)
+
+        withContext(Dispatchers.Main) {
+            state = state.copy(
+                ingredientList = ingredients,
+                activeMeal = meal,
+                isEditing = false,
+                ingredientListAsState = null
+            )
+        }
+    }
+
+    private fun removeActive() {
+        state = state.copy(
+            activeMeal = null,
+            ingredientList = null,
+            isEditing = false,
+            ingredientListAsState = null
+        )
     }
 }

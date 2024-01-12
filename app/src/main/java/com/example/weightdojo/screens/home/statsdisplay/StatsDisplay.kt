@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.CustomDivider
-import com.example.weightdojo.database.models.DayWithMeals
+import com.example.weightdojo.datatransferobjects.DayData
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.ConfigSessionCache
 import com.example.weightdojo.utils.calculateTdee
@@ -27,7 +27,7 @@ import com.example.weightdojo.utils.statsDisplayHelper
 @Composable
 fun StatsDisplay(
     configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
-    dayData: DayWithMeals?,
+    dayData: DayData?,
     mostRecentWeight: Float?
 ) {
     val config = configSessionCache.getActiveSession()

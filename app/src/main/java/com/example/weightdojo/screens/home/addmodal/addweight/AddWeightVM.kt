@@ -10,26 +10,18 @@ import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.database.models.DayWithMeals
 import com.example.weightdojo.database.models.Sex
+import com.example.weightdojo.datatransferobjects.DayData
 import com.example.weightdojo.repositories.SetWeightRepo
 import com.example.weightdojo.repositories.SetWeightRepoImpl
 import com.example.weightdojo.utils.ConfigSessionCache
 import com.example.weightdojo.utils.WeightUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import java.lang.Error
-
-//data class AddWeightState(
-//    val weight: Float?,
-//    val extraOptions: ExtraOptions,
-//    val error: String? = null
-//)
 
 class AddWeightVM(
     private val database: AppDatabase = MyApp.appModule.database,
-    private val dayData: DayWithMeals?,
+    private val dayData: DayData?,
     private val setWeightRepo: SetWeightRepo = SetWeightRepoImpl(
         dayDao = database.dayDao(),
         configDao = database.configDao()
@@ -37,10 +29,6 @@ class AddWeightVM(
     private val configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
     private val config: Config? = configSessionCache.getActiveSession()
 ) : ViewModel() {
-//    var addWeightState by mutableStateOf(AddWeightState(
-//        initialWeight(dayData),
-//        ExtraOptions(config)
-//    ))
 
     var weight by mutableStateOf(initialWeight(dayData))
 

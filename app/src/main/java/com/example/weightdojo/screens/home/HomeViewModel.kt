@@ -6,7 +6,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.MyApp
-import com.example.weightdojo.database.models.DayWithMeals
+import com.example.weightdojo.database.models.Day
+import com.example.weightdojo.datatransferobjects.DayData
 import com.example.weightdojo.repositories.DayRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -16,7 +17,7 @@ import java.time.LocalDate
 
 
 data class HomeState(
-    var dayData: DayWithMeals? = null,
+    var dayData: DayData? = null,
     var showAddModal: Boolean = false,
     var currentDate: LocalDate = MyApp.appModule.currentDate,
     var mostRecentWeight: Float? = null
@@ -43,7 +44,7 @@ class HomeViewModel(
         val dateToUse = if (date !== null) date else state.currentDate
 
         viewModelScope.launch(Dispatchers.IO) {
-            val (day, mostRecentWeight) = async {
+            val (dayData, mostRecentWeight) = async {
                 try {
                     val row = repo.getDay(dateToUse)
 
@@ -58,7 +59,7 @@ class HomeViewModel(
 
             withContext(Dispatchers.Main) {
                 state = state.copy(
-                    dayData = day,
+                    dayData = dayData,
                     currentDate = dateToUse,
                     mostRecentWeight = mostRecentWeight
                 )

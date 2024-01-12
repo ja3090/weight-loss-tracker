@@ -9,20 +9,11 @@ import java.time.LocalDate
 
 @Entity("day")
 data class Day(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "date") val date: LocalDate,
-    @ColumnInfo(name = "weight") val weight: Float?,
-    @ColumnInfo(name = "total_carbohydrates") val totalCarbohydrates: Float?,
-    @ColumnInfo(name = "total_protein") val totalProtein: Float?,
-    @ColumnInfo(name = "total_fat") val totalFat: Float?,
-    @ColumnInfo(name = "total_calories") val totalCalories: Float?,
-)
-
-data class DayWithMeals(
-    @Embedded val day: Day,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "day_id"
-    )
-    val meals: List<Meal>?,
+    @ColumnInfo(name = "weight") val weight: Float? = null,
+    @ColumnInfo(name = "total_carbohydrates") val totalCarbohydrates: Float? = null,
+    @ColumnInfo(name = "total_protein") val totalProtein: Float? = null,
+    @ColumnInfo(name = "total_fat") val totalFat: Float? = null,
+    @ColumnInfo(name = "total_calories") val totalCalories: Float? = null,
 )

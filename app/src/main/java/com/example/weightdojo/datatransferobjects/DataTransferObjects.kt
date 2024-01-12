@@ -1,5 +1,6 @@
 package com.example.weightdojo.datatransferobjects
 
+import com.example.weightdojo.database.models.Day
 import java.time.LocalDate
 
 data class EarliestDate(
@@ -13,17 +14,38 @@ data class ChartData(
     val value: Float?,
 )
 
-data class NutritionTotals(
-    val totalCalories: Float?,
-    val totalCarbohydrates: Float?,
-    val totalProtein: Float?,
-    val totalFat: Float?
+data class DayData(
+    val day: Day,
+    val meals: List<MealData>?
 )
 
-data class NutritionTotalsIngredients(
+data class MealData(
     val totalCalories: Float,
-    val totalCarbohydrates: Float?,
-    val totalProtein: Float?,
-    val totalFat: Float?,
+    val mealId: Long,
+    val mealName: String,
     val dayId: Long
+)
+
+data class CalorieEntryIngredients(
+    val totalCalories: Float,
+    val caloriesId: Long,
+    val name: String,
+)
+
+data class CalorieEntryForEditing(
+    val calorieId: Long,
+    val name: String,
+    val caloriesPer100: Float,
+    val grams: Float
+)
+
+
+enum class Marked { DELETE, EDIT }
+
+data class IngredientState(
+    var markedFor: Marked = Marked.EDIT,
+    val calorieId: Long,
+    val name: String,
+    val caloriesPer100: Float,
+    val grams: Float
 )

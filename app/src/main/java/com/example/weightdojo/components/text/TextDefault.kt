@@ -21,7 +21,8 @@ fun TextDefault(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = Sizing.font.default,
     textAlign: TextAlign = TextAlign.Center,
-    fontStyle: FontStyle = FontStyle.Normal
+    fontStyle: FontStyle = FontStyle.Normal,
+    textDecoration: TextDecoration = TextDecoration.None
 ) {
     Text(
         modifier = modifier,
@@ -31,6 +32,7 @@ fun TextDefault(
         color = color,
         fontSize = fontSize,
         textAlign = textAlign,
-        fontStyle = fontStyle
+        fontStyle = fontStyle,
+        textDecoration = textDecoration
     )
 }

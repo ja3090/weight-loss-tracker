@@ -1,10 +1,10 @@
 package com.example.weightdojo.utils
 
-import android.util.Log
 import com.example.weightdojo.database.AppDatabase
-import com.example.weightdojo.database.models.DayWithMeals
-import com.example.weightdojo.repositories.IngredientRepositoryImpl
-import com.example.weightdojo.repositories.MealRepositoryImpl
+import com.example.weightdojo.database.models.Calorie
+import com.example.weightdojo.database.models.Day
+import com.example.weightdojo.database.models.Ingredient
+import com.example.weightdojo.database.models.Meal
 import io.github.serpro69.kfaker.Faker
 import io.github.serpro69.kfaker.faker
 import kotlinx.coroutines.runBlocking
@@ -20,9 +20,23 @@ class Seeder(
     private val database: AppDatabase,
     private val faker: Faker = faker { }
 ) {
+    private lateinit var mealIds: List<Long>
+    private lateinit var ingredients: List<Ingredient>
+
+    private fun randomMeal(): Long {
+        return mealIds[Random.nextInt(0, mealIds.size - 1)]
+    }
+
+    private fun randomIngredient(): Ingredient {
+        return ingredients[Random.nextInt(0, ingredients.size - 1)]
+    }
+
     fun execute() {
         runBlocking {
             try {
+                deleteAll()
+                mealIds = createMeals()
+                ingredients = createIngredients()
                 seedDb()
             } catch (e: Exception) {
                 throw Error(e)
@@ -31,14 +45,47 @@ class Seeder(
     }
 
     private fun deleteAll() {
+        database.calorieDao()._DELETE_ALL()
         database.ingredientDao()._DELETE_ALL()
         database.mealDao()._DELETE_ALL()
         database.dayDao()._DELETE_ALL()
     }
 
-    private fun seedDb() {
-        deleteAll()
+    private fun createIngredients(): List<Ingredient> {
+        val createdIngredients = mutableListOf<Ingredient>()
 
+        for (i in 0 until 16) {
+            val ingredient = Ingredient(
+                    name = faker.food.ingredients(),
+                    carbohydratesPer100 = randomOrNull(20, 100),
+                    proteinPer100 = randomOrNull(20, 100),
+                    fatPer100 = randomOrNull(20, 100),
+                    caloriesPer100 = random(),
+                )
+
+            val id = database.ingredientDao().insertIngredient(ingredient)
+
+            createdIngredients.add(ingredient.copy(id = id))
+        }
+
+        return createdIngredients
+    }
+
+    private fun createMeals(): List<Long> {
+        val mealIds = mutableListOf<Long>()
+
+        for (i in 0 until 16) {
+            val id = database.mealDao().insertMealEntry(Meal(
+                name = faker.food.dish()
+            ))
+
+            mealIds.add(id)
+        }
+
+        return mealIds
+    }
+
+    private fun seedDb() {
         val date = LocalDate.now()
 
         var currentDate = date.minusYears(1L)
@@ -53,11 +100,10 @@ class Seeder(
             val numberOfMeals = Random.nextInt(1, 5)
 
             enterWeight(day)
-//            if (counter % 3 == 0 || counter % 4 == 0) enterWeight(day)
-            for (i in 0..numberOfMeals) {
-                enterMeal(day)
-            }
 
+            for (i in 0..numberOfMeals) {
+                enterIngredientMealCross(day)
+            }
 
             currentDate = currentDate.plusDays(1L)
             counter++
@@ -68,10 +114,9 @@ class Seeder(
     private fun enterDay(date: LocalDate): DayDTO {
         val dao = database.dayDao()
 
-        dao.insert(date)
-        val row = dao.getDay(date)
+        val id = dao.insert(Day(date = date))
 
-        return DayDTO(date = date, id = row.day.id)
+        return DayDTO(date = date, id = id)
     }
 
     private fun enterWeight(day: DayDTO) {
@@ -83,44 +128,25 @@ class Seeder(
         )
     }
 
-    private fun enterMeal(day: DayDTO) {
-        val mealRepo = MealRepositoryImpl(database.mealDao(), database.dayDao())
+    private fun enterIngredientMealCross(day: DayDTO) {
+        val randomNoOfIngredients = Random.nextInt(1, 5)
+        val mealId = randomMeal()
 
-        val id = mealRepo.insertMeal(
-            dayId = day.id,
-            date = day.date,
-            totalCarbohydrates = randomOrNull(40, 100),
-            totalFat = randomOrNull(44, 100),
-            totalProtein = randomOrNull(40, 105),
-            totalCalories = random(),
-            calorieUnit = if (Random.nextFloat() > 0.5f) CalorieUnits.KCAL else CalorieUnits.KJ,
-            name = faker.food.dish()
-        )
+        for (i in 1 until randomNoOfIngredients) {
+            val ingredient = randomIngredient()
+            val grams = random(10, 100)
 
-        if (Random.nextFloat() < 0.5f) {
-            enterIngredients(id)
-        }
-    }
-
-    private fun enterIngredients(mealId: Long) {
-        val ingredientRepo = IngredientRepositoryImpl(database.ingredientDao())
-
-        val numberOfIngredients = Random.nextInt(3, 9)
-
-        for (i in 0 until numberOfIngredients) {
-
-            val calories = random(50, 150)
-            val carbs = randomOrNull(20, 100)
-            val protein = randomOrNull(20, 100)
-            val fat = randomOrNull(20, 100)
-
-            ingredientRepo.insertIngredient(
-                name = faker.food.ingredients(),
-                carbs = carbs,
-                calories = calories,
-                protein = protein,
-                fat = fat,
-                mealId = mealId
+            database.calorieDao().calorieInsertionHandler(
+                Calorie(
+                    totalCalories = (grams / 100) * ingredient.caloriesPer100,
+                    totalFat = randomOrNull(20, 100),
+                    totalProtein = randomOrNull(20, 100),
+                    totalCarbohydrates = randomOrNull(20, 100),
+                    grams = grams,
+                    dayId = day.id,
+                    mealId = mealId,
+                    ingredientId = ingredient.id
+                )
             )
         }
     }

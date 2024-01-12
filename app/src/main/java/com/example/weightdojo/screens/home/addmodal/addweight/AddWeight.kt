@@ -24,7 +24,7 @@ import com.example.weightdojo.components.CustomDivider
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.database.models.DayWithMeals
+import com.example.weightdojo.datatransferobjects.DayData
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.ConfigSessionCache
 import com.example.weightdojo.utils.VMFactory
@@ -42,7 +42,7 @@ fun validateInput(newText: String): Boolean {
     return newText.all { it.isDigit() || it == '.' }
 }
 
-fun initialWeight(dayData: DayWithMeals?): String {
+fun initialWeight(dayData: DayData?): String {
     return if (dayData == null) ""
     else if (dayData.day.weight == null) ""
     else dayData.day.weight.toString()
@@ -52,7 +52,7 @@ fun initialWeight(dayData: DayWithMeals?): String {
 fun AddWeight(
     configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
     config: Config? = configSessionCache.getActiveSession(),
-    dayData: DayWithMeals?,
+    dayData: DayData?,
     addWeightVM: AddWeightVM = viewModel(factory = VMFactory.build {
         AddWeightVM(database = MyApp.appModule.database, dayData = dayData)
     }),

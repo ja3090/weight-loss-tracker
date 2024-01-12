@@ -53,6 +53,6 @@ interface CalorieChartDao: ChartDao {
     )
     override fun getRangeByMonth(): List<ChartData>
 
-    @Query("SELECT MIN(date) as date FROM meal")
+    @Query("SELECT MIN(date) as date FROM day ")
     override fun getEarliestWeightDate(): EarliestDate
 }
