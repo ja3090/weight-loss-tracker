@@ -35,7 +35,6 @@ fun AddModal(
         when (currentSubModal) {
             SubModals.Initial -> Initial(::setCurrentSubModal)
             SubModals.AddWeight -> AddWeight(dayData = dayData, showModal = showModal)
-            SubModals.AddWeight -> AddWeight(dayData = dayData, showModal = showModal)
             SubModals.AddCalories -> AddCalories()
         }
     }

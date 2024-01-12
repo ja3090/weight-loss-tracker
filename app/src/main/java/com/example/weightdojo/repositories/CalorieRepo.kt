@@ -10,6 +10,7 @@ import com.example.weightdojo.datatransferobjects.IngredientState
 interface CalorieRepo {
     fun getIngredientsForDayAndMeal(dayId: Long, mealId: Long): List<CalorieEntryIngredients>?
     fun getIngredientsDetailedView(dayId: Long, mealId: Long): List<IngredientState>?
+    fun updateIngredients(dayId: Long, ingredients: List<IngredientState>)
 }
 
 class CalorieRepoImpl(
@@ -31,6 +32,10 @@ class CalorieRepoImpl(
         val rows = calorieDao.getCalorieIngredientsDetailed(dayId = dayId, mealId = mealId)
 
         return generateListState(rows)
+    }
+
+    override fun updateIngredients(dayId: Long, ingredients: List<IngredientState>) {
+        calorieDao.calorieEntryUpdateHandler(dayId, ingredients)
     }
 
     private fun generateListState(

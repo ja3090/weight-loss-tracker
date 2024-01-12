@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.CustomDivider
+import com.example.weightdojo.components.SaveButton
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Config
@@ -91,24 +92,31 @@ fun AddWeight(
             )
 
             ConfigOptions(extraOptions = addWeightVM.extraOptions)
+//
+//            Box(modifier = Modifier
+//                .clip(
+//                    RoundedCornerShape(Sizing.cornerRounding)
+//                )
+//                .background(MaterialTheme.colors.primaryVariant)
+//                .clickable {
+//                    addWeightVM.viewModelScope.launch(Dispatchers.IO) {
+//                        val success = addWeightVM.submit()
+//
+//                        if (success) showModal(false)
+//                    }
+//                }) {
+//                TextDefault(
+//                    text = "Save",
+//                    color = MaterialTheme.colors.background,
+//                    modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp)
+//                )
+//            }
+            SaveButton {
+                addWeightVM.viewModelScope.launch(Dispatchers.IO) {
+                    val success = addWeightVM.submit()
 
-            Box(modifier = Modifier
-                .clip(
-                    RoundedCornerShape(Sizing.cornerRounding)
-                )
-                .background(MaterialTheme.colors.primaryVariant)
-                .clickable {
-                    addWeightVM.viewModelScope.launch(Dispatchers.IO) {
-                        val success = addWeightVM.submit()
-
-                        if (success) showModal(false)
-                    }
-                }) {
-                TextDefault(
-                    text = "Save",
-                    color = MaterialTheme.colors.background,
-                    modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp)
-                )
+                    if (success) showModal(false)
+                }
             }
         }
     }

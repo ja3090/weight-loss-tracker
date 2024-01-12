@@ -24,11 +24,41 @@ data class MealListState(
 )
 
 class MealListVM(
-    val database: AppDatabase,
-    private val calorieRepo: CalorieRepo = CalorieRepoImpl(database)
+    val database: AppDatabase, private val calorieRepo: CalorieRepo = CalorieRepoImpl(database)
 ) : ViewModel() {
 
     var state by mutableStateOf(MealListState())
+
+    fun makeEdits() {
+        val dayId = state.activeMeal?.dayId
+        val updatedIngredients = state.ingredientListAsState
+
+        if (dayId == null || updatedIngredients == null) {
+            Log.e(
+                "Submission error",
+                "required arguments to submit calorie entry not available"
+            )
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                submitEdits(dayId, updatedIngredients)
+            } catch (e: Exception) {
+                Log.e("Transaction error", e.message.toString())
+            }
+        }
+    }
+
+    private suspend fun submitEdits(
+        dayId: Long, ingredients: List<IngredientState>
+    ) {
+        calorieRepo.updateIngredients(dayId, ingredients)
+
+        withContext(Dispatchers.Main) {
+            removeActive()
+        }
+    }
 
     fun setActive(meal: MealData) {
         if (meal.mealId == state.activeMeal?.mealId) {

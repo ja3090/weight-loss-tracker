@@ -65,7 +65,8 @@ fun MealList(
                 activeMeal = activeMeal,
                 ingredientListAsState = mealListViewModel.state.ingredientListAsState,
                 showIngredientListAsState = mealListViewModel::showIngredientListAsState,
-                ingredientListSetter = mealListViewModel::setIngredientsAsState
+                ingredientListSetter = mealListViewModel::setIngredientsAsState,
+                updateData = mealListViewModel::makeEdits
             )
         }
     }

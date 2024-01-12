@@ -8,8 +8,10 @@ import com.example.weightdojo.DEPRECATED_MESSAGE
 import com.example.weightdojo.database.models.Calorie
 import com.example.weightdojo.datatransferobjects.CalorieEntryForEditing
 import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
+import com.example.weightdojo.datatransferobjects.IngredientState
+import com.example.weightdojo.datatransferobjects.Marked
 
-const val WARNING_MESSAGE = "For internal use only. Please use calorieInsertionHandler"
+const val WARNING_MESSAGE = "Only for internal or testing use"
 
 @Dao
 interface CalorieDao {
@@ -56,6 +58,37 @@ interface CalorieDao {
                 "WHERE calorie.day_id = :dayId AND meal_id = :mealId"
     )
     fun getCalorieIngredientsDetailed(dayId: Long, mealId: Long): List<CalorieEntryForEditing>?
+
+    @Transaction
+    fun calorieEntryUpdateHandler(dayId: Long, ingredientStates: List<IngredientState>) {
+        for (entry in ingredientStates) {
+            if (entry.markedFor == Marked.DELETE || entry.grams == 0f) {
+                deleteCalorieEntry(entry.calorieId)
+            }
+            else updateCalorieEntry(
+                calorieId = entry.calorieId,
+                grams = entry.grams,
+                totalCalories = (entry.grams / 100) * entry.caloriesPer100
+            )
+        }
+
+        updateDay(dayId)
+    }
+
+    @Deprecated(WARNING_MESSAGE)
+    @Query(
+        "UPDATE calorie " +
+                "SET grams = :grams, total_calories = :totalCalories " +
+                "WHERE id = :calorieId "
+    )
+    fun updateCalorieEntry(calorieId: Long, grams: Float, totalCalories: Float)
+
+    @Deprecated(WARNING_MESSAGE)
+    @Query(
+        "DELETE FROM calorie " +
+            "WHERE id = :calorieId "
+    )
+    fun deleteCalorieEntry(calorieId: Long)
 
     @Deprecated(WARNING_MESSAGE)
     @Insert

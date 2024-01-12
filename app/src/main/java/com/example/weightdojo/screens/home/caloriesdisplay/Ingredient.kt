@@ -41,7 +41,7 @@ fun Ingredient(
             } else TextDecoration.None
         )
         TextDefault(
-            text = "${totalCalories.toInt()} $weightUnit",
+            text = "${if (markedForDeletion) 0 else totalCalories.toInt()} $weightUnit",
             fontSize = Sizing.font.default * 0.9
         )
     }

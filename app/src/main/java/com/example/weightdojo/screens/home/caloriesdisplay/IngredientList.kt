@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.weightdojo.R
+import com.example.weightdojo.components.SaveButton
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
 import com.example.weightdojo.datatransferobjects.IngredientState
@@ -30,7 +31,8 @@ fun IngredientList(
     weightUnit: String,
     isEditing: Boolean,
     showIngredientListAsState: (dayId: Long, mealId: Long) -> Unit,
-    ingredientListSetter: (caloriesId: Long, newState: IngredientState) -> Unit
+    ingredientListSetter: (caloriesId: Long, newState: IngredientState) -> Unit,
+    updateData: () -> Unit
 ) {
 
     Column(
@@ -97,6 +99,17 @@ fun IngredientList(
                         .fillMaxSize()
                         .padding(Sizing.paddings.medium),
                 )
+            }
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Sizing.paddings.medium),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                SaveButton {
+                    updateData()
+                }
             }
         }
     }
