@@ -18,21 +18,24 @@ import androidx.compose.ui.unit.dp
 import com.example.weightdojo.R
 import com.example.weightdojo.components.SaveButton
 import com.example.weightdojo.components.icon.IconBuilder
-import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
+import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.totalGramsNonNull
 
 @Composable
 fun IngredientList(
     activeMeal: MealData,
-    ingredientList: List<CalorieEntryIngredients>?,
+    ingredientList: List<Ingredient>?,
     ingredientListAsState: List<IngredientState>?,
     weightUnit: String,
     isEditing: Boolean,
     showIngredientListAsState: (dayId: Long, mealId: Long) -> Unit,
     ingredientListSetter: (caloriesId: Long, newState: IngredientState) -> Unit,
-    updateData: () -> Unit
+    updateData: () -> Unit,
+    closeList: () -> Unit
 ) {
 
     Column(
@@ -62,7 +65,7 @@ fun IngredientList(
                 Ingredient(
                     name = it.name,
                     weightUnit = weightUnit,
-                    totalCalories = it.totalCalories
+                    totalCalories = totalGramsNonNull(it.grams, it.caloriesPer100)
                 )
             }
         }
@@ -101,15 +104,24 @@ fun IngredientList(
                 )
             }
         } else {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = Sizing.paddings.medium),
-                horizontalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SaveButton {
                     updateData()
                 }
+                TextDefault(
+                    text = "Cancel",
+                    modifier = Modifier
+                    .padding(
+                        vertical = Sizing.paddings.small,
+                        horizontal = Sizing.paddings.medium
+                    )
+                    .clickable { closeList() }
+                )
             }
         }
     }

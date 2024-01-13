@@ -28,13 +28,13 @@ interface DayDao {
     }
 
     @Query(
-    "SELECT SUM(calorie.total_calories) as totalCalories, meal_id as mealId, " +
-            "meal.name as mealName, day_id as dayId " +
+    "SELECT meal.total_calories as totalCalories, " +
+            "meal.name as mealName, " +
+            "meal.id as mealId, " +
+            "day.id as dayId " +
             "FROM day " +
-            "JOIN calorie ON calorie.day_id = day.id " +
-            "JOIN meal ON calorie.meal_id = meal.id " +
-            "WHERE day.id = :dayId " +
-            "GROUP BY calorie.meal_id "
+            "JOIN meal ON day.id = meal.day_id " +
+            "WHERE day.id = :dayId "
     )
     fun getMeals(dayId: Long): List<MealData>?
 

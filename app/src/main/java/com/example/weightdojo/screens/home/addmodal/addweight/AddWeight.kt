@@ -92,25 +92,6 @@ fun AddWeight(
             )
 
             ConfigOptions(extraOptions = addWeightVM.extraOptions)
-//
-//            Box(modifier = Modifier
-//                .clip(
-//                    RoundedCornerShape(Sizing.cornerRounding)
-//                )
-//                .background(MaterialTheme.colors.primaryVariant)
-//                .clickable {
-//                    addWeightVM.viewModelScope.launch(Dispatchers.IO) {
-//                        val success = addWeightVM.submit()
-//
-//                        if (success) showModal(false)
-//                    }
-//                }) {
-//                TextDefault(
-//                    text = "Save",
-//                    color = MaterialTheme.colors.background,
-//                    modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp)
-//                )
-//            }
             SaveButton {
                 addWeightVM.viewModelScope.launch(Dispatchers.IO) {
                     val success = addWeightVM.submit()

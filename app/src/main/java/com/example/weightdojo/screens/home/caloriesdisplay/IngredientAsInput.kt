@@ -72,7 +72,7 @@ fun IngredientAsInput(
                 }
 
                 setter(
-                    ingredientsAsState.calorieId,
+                    ingredientsAsState.ingredientId,
                     newState
                 )
 
@@ -138,7 +138,7 @@ fun IngredientAsInput(
 
                     if (passes) {
                         setter(
-                            ingredientsAsState.calorieId,
+                            ingredientsAsState.ingredientId,
                             ingredientsAsState.copy(
                                 grams = if (it.isEmpty()) 0f else it.toFloat()
                             )

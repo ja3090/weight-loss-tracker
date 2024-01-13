@@ -6,7 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "meal_template")
 data class MealTemplate(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "meal_id") val mealId: Long,
-    @ColumnInfo(name = "ingredient_id") val ingredientId: Long
+    @PrimaryKey(autoGenerate = true) val mealTemplateId: Long = 0,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "total_carbohydrates") val totalCarbohydrates: Float?,
+    @ColumnInfo(name = "total_protein") val totalProtein: Float?,
+    @ColumnInfo(name = "total_fat") val totalFat: Float?,
+    @ColumnInfo(name = "total_calories") val totalCalories: Float?,
 )
