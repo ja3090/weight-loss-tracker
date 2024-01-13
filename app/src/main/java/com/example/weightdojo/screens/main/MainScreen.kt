@@ -1,6 +1,7 @@
 package com.example.weightdojo.screens.main
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
@@ -43,17 +44,30 @@ fun MainScreen(
 
     val currentRoute = remember { mutableStateOf(Screens.Home.name) }
 
-    fun navigateTo(screen: Screens) {
+    fun navigateTo(screen: Screens? = null) {
+        val previousScreen = navHostController.previousBackStackEntry?.destination?.route
+
+        val validPreviousScreen = when (previousScreen) {
+            Screens.Home.name -> true
+            Screens.Charts.name -> true
+            Screens.Settings.name -> true
+            else -> false
+        }
+
+        if (!validPreviousScreen && screen == null) return
+
+        val nextScreen = screen?.name ?: previousScreen ?: Screens.Home.name
+
         when (screen) {
             Screens.Home -> navHostController.navigate(Screens.Home.name)
             Screens.Charts -> navHostController.navigate(Screens.Charts.name)
             Screens.Settings -> navHostController.navigate(Screens.Settings.name)
             else -> {
-                throw Error("Lock screens aren't intended to be navigable")
+                navHostController.navigate(nextScreen)
             }
         }
 
-        currentRoute.value = screen.name
+        currentRoute.value = nextScreen
     }
 
     val context = LocalContext.current as FragmentActivity
@@ -105,9 +119,14 @@ fun MainScreen(
                 )
             }
             composable(route = Screens.Charts.name) {
-                ChartScreen()
+                ChartScreen(
+                    homeNavigateTo = ::navigateTo
+                )
             }
             composable(route = Screens.Settings.name) {
+                BackHandler {
+                    navigateTo()
+                }
                 Text(text = "Settings")
             }
         }

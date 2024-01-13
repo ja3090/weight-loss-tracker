@@ -1,6 +1,7 @@
 package com.example.weightdojo.screens.main
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +25,7 @@ import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun BottomBarNav(navigateTo: (screen: Screens) -> Unit, currentScreen: String?) {
+fun BottomBarNav(navigateTo: (screen: Screens?) -> Unit, currentScreen: String?) {
     Column {
         CustomDivider()
         Row(

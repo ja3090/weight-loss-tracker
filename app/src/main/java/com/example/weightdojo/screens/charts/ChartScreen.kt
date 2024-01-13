@@ -2,6 +2,7 @@ package com.example.weightdojo.screens.charts
 
 import android.app.Activity
 import android.graphics.drawable.BitmapDrawable
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -25,13 +26,18 @@ import com.example.weightdojo.screens.charts.screens.ChartMenu
 import com.example.weightdojo.screens.charts.screens.WeightChart
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import com.example.weightdojo.screens.main.Screens
 
 enum class Charts { Calories, Weight, Menu }
 
 @Composable
 fun ChartScreen(
     navigator: NavHostController = rememberNavController(),
+    homeNavigateTo: (screen: Screens?) -> Unit
 ) {
+    BackHandler {
+        homeNavigateTo(null)
+    }
 
     fun navigateTo(chartScreens: Charts) {
         when (chartScreens) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
@@ -30,7 +31,10 @@ fun MealList(
 ) {
 
     val activeMeal = mealListViewModel.state.activeMeal
-    val ingredientList = mealListViewModel.state.ingredientList
+
+    LaunchedEffect(meals) {
+        mealListViewModel.removeActive()
+    }
 
     meals?.map {
         Row(
@@ -57,7 +61,7 @@ fun MealList(
             )
         }
 
-        if (it.mealId == mealListViewModel.state.activeMeal?.mealId && activeMeal !== null) {
+        if (activeMeal !== null && it.mealId == activeMeal.mealId) {
             IngredientList(
                 ingredientList = mealListViewModel.state.ingredientList,
                 weightUnit = weightUnit,
@@ -66,7 +70,8 @@ fun MealList(
                 ingredientListAsState = mealListViewModel.state.ingredientListAsState,
                 showIngredientListAsState = mealListViewModel::showIngredientListAsState,
                 ingredientListSetter = mealListViewModel::setIngredientsAsState,
-                updateData = mealListViewModel::makeEdits
+                updateData = mealListViewModel::makeEdits,
+                closeList = mealListViewModel::removeActive
             )
         }
     }

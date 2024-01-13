@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.weightdojo.R
 import com.example.weightdojo.components.SaveButton
 import com.example.weightdojo.components.icon.IconBuilder
+import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.MealData
@@ -32,7 +33,8 @@ fun IngredientList(
     isEditing: Boolean,
     showIngredientListAsState: (dayId: Long, mealId: Long) -> Unit,
     ingredientListSetter: (caloriesId: Long, newState: IngredientState) -> Unit,
-    updateData: () -> Unit
+    updateData: () -> Unit,
+    closeList: () -> Unit
 ) {
 
     Column(
@@ -101,15 +103,24 @@ fun IngredientList(
                 )
             }
         } else {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = Sizing.paddings.medium),
-                horizontalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SaveButton {
                     updateData()
                 }
+                TextDefault(
+                    text = "Cancel",
+                    modifier = Modifier
+                    .padding(
+                        vertical = Sizing.paddings.small,
+                        horizontal = Sizing.paddings.medium
+                    )
+                    .clickable { closeList() }
+                )
             }
         }
     }

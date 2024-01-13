@@ -1,6 +1,7 @@
 package com.example.weightdojo.screens.home
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +34,7 @@ import com.example.weightdojo.utils.VMFactory
 @SuppressLint("NewApi")
 @Composable
 fun Home(
-    navigateTo: (screen: Screens) -> Unit,
+    navigateTo: (screen: Screens?) -> Unit,
     homeViewModel: HomeViewModel = viewModel(
         factory = VMFactory.build {
             HomeViewModel(MyApp.appModule.database)
@@ -44,6 +45,10 @@ fun Home(
     config: Config? = configSessionCache.getActiveSession()
 ) {
     val weightUnit = config?.calorieUnit?.name ?: AppConfig.internalDefaultWeightUnit.name
+
+    BackHandler {
+        navigateTo(null)
+    }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 

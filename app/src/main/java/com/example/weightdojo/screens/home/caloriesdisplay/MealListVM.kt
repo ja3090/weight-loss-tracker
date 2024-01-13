@@ -118,7 +118,7 @@ class MealListVM(
         }
     }
 
-    private fun removeActive() {
+    fun removeActive() {
         state = state.copy(
             activeMeal = null,
             ingredientList = null,
