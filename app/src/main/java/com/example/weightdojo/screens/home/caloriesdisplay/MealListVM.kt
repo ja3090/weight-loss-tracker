@@ -6,44 +6,46 @@ import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.database.AppDatabase
-import com.example.weightdojo.datatransferobjects.CalorieEntryForEditing
-import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
+import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.MealData
-import com.example.weightdojo.repositories.CalorieRepo
-import com.example.weightdojo.repositories.CalorieRepoImpl
+import com.example.weightdojo.repositories.IngredientRepository
+import com.example.weightdojo.repositories.IngredientRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 data class MealListState(
     val activeMeal: MealData? = null,
-    val ingredientList: List<CalorieEntryIngredients>? = null,
+    val ingredientList: List<Ingredient>? = null,
     val isEditing: Boolean = false,
     val ingredientListAsState: List<IngredientState>? = null
 )
 
 class MealListVM(
-    val database: AppDatabase, private val calorieRepo: CalorieRepo = CalorieRepoImpl(database)
+    val database: AppDatabase,
+    private val ingredientRepo: IngredientRepository = IngredientRepositoryImpl(
+        database.ingredientDao()
+    )
 ) : ViewModel() {
 
     var state by mutableStateOf(MealListState())
 
     fun makeEdits() {
         val dayId = state.activeMeal?.dayId
+        val mealId = state.activeMeal?.mealId
         val updatedIngredients = state.ingredientListAsState
 
-        if (dayId == null || updatedIngredients == null) {
+        if (dayId == null || updatedIngredients == null || mealId == null) {
             Log.e(
-                "Submission error",
-                "required arguments to submit calorie entry not available"
+                "Submission error", "required arguments to submit calorie entry not available"
             )
             return
         }
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                submitEdits(dayId, updatedIngredients)
+                submitEdits(dayId, updatedIngredients, mealId)
             } catch (e: Exception) {
                 Log.e("Transaction error", e.message.toString())
             }
@@ -51,9 +53,9 @@ class MealListVM(
     }
 
     private suspend fun submitEdits(
-        dayId: Long, ingredients: List<IngredientState>
+        dayId: Long, ingredients: List<IngredientState>, mealId: Long
     ) {
-        calorieRepo.updateIngredients(dayId, ingredients)
+        ingredientRepo.updateIngredients(ingredients, mealId, dayId)
 
         withContext(Dispatchers.Main) {
             removeActive()
@@ -77,7 +79,7 @@ class MealListVM(
 
     fun setIngredientsAsState(ingredientId: Long, newState: IngredientState) {
         val updatedList = state.ingredientListAsState?.map {
-            if (it.calorieId == ingredientId) {
+            if (it.ingredientId == ingredientId) {
                 newState
             } else it
         }
@@ -96,8 +98,14 @@ class MealListVM(
     }
 
     private suspend fun getDetailedIngredients(dayId: Long, mealId: Long) {
-        val detailedIngredients =
-            calorieRepo.getIngredientsDetailedView(dayId = dayId, mealId = mealId)
+        val detailedIngredients = state.ingredientList?.map {
+            IngredientState(
+                caloriesPer100 = it.caloriesPer100,
+                ingredientId = it.id,
+                name = it.name,
+                grams = it.grams
+            )
+        }
 
         withContext(Dispatchers.Main) {
             state = state.copy(ingredientListAsState = detailedIngredients, isEditing = true)
@@ -105,8 +113,7 @@ class MealListVM(
     }
 
     private suspend fun getIngredients(meal: MealData) {
-        val ingredients =
-            calorieRepo.getIngredientsForDayAndMeal(dayId = meal.dayId, mealId = meal.mealId)
+        val ingredients = ingredientRepo.getIngredientsByMealId(mealId = meal.mealId)
 
         withContext(Dispatchers.Main) {
             state = state.copy(

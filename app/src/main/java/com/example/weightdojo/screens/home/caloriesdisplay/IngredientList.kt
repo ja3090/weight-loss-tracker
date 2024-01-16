@@ -19,15 +19,16 @@ import com.example.weightdojo.R
 import com.example.weightdojo.components.SaveButton
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.text.TextDefault
-import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
+import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.totalGramsNonNull
 
 @Composable
 fun IngredientList(
     activeMeal: MealData,
-    ingredientList: List<CalorieEntryIngredients>?,
+    ingredientList: List<Ingredient>?,
     ingredientListAsState: List<IngredientState>?,
     weightUnit: String,
     isEditing: Boolean,
@@ -64,7 +65,7 @@ fun IngredientList(
                 Ingredient(
                     name = it.name,
                     weightUnit = weightUnit,
-                    totalCalories = it.totalCalories
+                    totalCalories = totalGramsNonNull(it.grams, it.caloriesPer100)
                 )
             }
         }

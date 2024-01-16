@@ -57,7 +57,7 @@ fun MealList(
             }
             TextDefault(
                 modifier = Modifier.padding(Sizing.paddings.medium),
-                text = "${it.totalCalories.toInt()} $weightUnit",
+                text = "${(it.totalCalories ?: 0).toInt()} $weightUnit",
             )
         }
 
