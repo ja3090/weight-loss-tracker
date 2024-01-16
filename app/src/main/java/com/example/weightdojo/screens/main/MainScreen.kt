@@ -29,6 +29,7 @@ import com.example.weightdojo.utils.VMFactory
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun MainScreen(
@@ -42,7 +43,7 @@ fun MainScreen(
 ) {
     if (mainViewModel.state.startDestination == null) return
 
-    val currentRoute = remember { mutableStateOf(Screens.Home.name) }
+    val currentRoute by navHostController.currentBackStackEntryAsState()
 
     fun navigateTo(screen: Screens? = null) {
         val previousScreen = navHostController.previousBackStackEntry?.destination?.route
@@ -66,8 +67,6 @@ fun MainScreen(
                 navHostController.navigate(nextScreen)
             }
         }
-
-        currentRoute.value = nextScreen
     }
 
     val context = LocalContext.current as FragmentActivity
@@ -77,7 +76,7 @@ fun MainScreen(
         bottomBar = {
             BottomBarNav(
                 navigateTo = ::navigateTo,
-                currentScreen = currentRoute.value
+                currentScreen = currentRoute?.destination?.route
             )
         }
     ) {

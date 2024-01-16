@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import com.example.weightdojo.components.text.TextDefault
-import com.example.weightdojo.datatransferobjects.CalorieEntryIngredients
 import com.example.weightdojo.ui.Sizing
 
 @Composable
