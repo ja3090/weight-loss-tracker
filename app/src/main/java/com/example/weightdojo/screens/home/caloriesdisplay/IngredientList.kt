@@ -32,7 +32,7 @@ fun IngredientList(
     ingredientListAsState: List<IngredientState>?,
     weightUnit: String,
     isEditing: Boolean,
-    showIngredientListAsState: (dayId: Long, mealId: Long) -> Unit,
+    showIngredientListAsState: () -> Unit,
     ingredientListSetter: (caloriesId: Long, newState: IngredientState) -> Unit,
     updateData: () -> Unit,
     closeList: () -> Unit
@@ -55,9 +55,7 @@ fun IngredientList(
         if (isEditing) {
             ingredientListAsState?.map {
                 IngredientAsInput(
-                    ingredientsAsState = it,
-                    weightUnit = weightUnit,
-                    setter = ingredientListSetter
+                    ingredientsAsState = it, weightUnit = weightUnit, setter = ingredientListSetter
                 )
             }
         } else {
@@ -72,8 +70,7 @@ fun IngredientList(
 
         if (!isEditing) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
@@ -82,12 +79,7 @@ fun IngredientList(
                     contentDescription = "edit",
                     testTag = "EDIT_BUTTON",
                     modifier = Modifier
-                        .clickable {
-                            showIngredientListAsState(
-                                activeMeal.dayId,
-                                activeMeal.mealId
-                            )
-                        }
+                        .clickable { showIngredientListAsState() }
                         .weight(1f)
                         .fillMaxSize()
                         .padding(Sizing.paddings.medium),
@@ -113,15 +105,11 @@ fun IngredientList(
                 SaveButton {
                     updateData()
                 }
-                TextDefault(
-                    text = "Cancel",
-                    modifier = Modifier
+                TextDefault(text = "Cancel", modifier = Modifier
                     .padding(
-                        vertical = Sizing.paddings.small,
-                        horizontal = Sizing.paddings.medium
+                        vertical = Sizing.paddings.small, horizontal = Sizing.paddings.medium
                     )
-                    .clickable { closeList() }
-                )
+                    .clickable { closeList() })
             }
         }
     }

@@ -108,7 +108,6 @@ fun Keypad(
                         .background(MaterialTheme.colors.secondary)
                         .fillMaxSize()
                         .weight(1f)
-                        .aspectRatio(1f)
                         .clickable { delete() },
                     testTag = TestTags.DELETE_BUTTON.name
                 )
@@ -126,7 +125,6 @@ fun Keypad(
                         .background(MaterialTheme.colors.secondary)
                         .fillMaxSize()
                         .weight(1f)
-                        .aspectRatio(1f)
                         .clickable { submit() },
                     testTag = "Submit",
                 )

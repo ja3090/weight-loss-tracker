@@ -87,17 +87,17 @@ class MealListVM(
         state = state.copy(ingredientListAsState = updatedList)
     }
 
-    fun showIngredientListAsState(dayId: Long, mealId: Long) {
+    fun showIngredientListAsState() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                getDetailedIngredients(dayId = dayId, mealId = mealId)
+                getDetailedIngredients()
             } catch (e: Exception) {
                 Log.e("error", e.message.toString())
             }
         }
     }
 
-    private suspend fun getDetailedIngredients(dayId: Long, mealId: Long) {
+    private suspend fun getDetailedIngredients() {
         val detailedIngredients = state.ingredientList?.map {
             IngredientState(
                 caloriesPer100 = it.caloriesPer100,

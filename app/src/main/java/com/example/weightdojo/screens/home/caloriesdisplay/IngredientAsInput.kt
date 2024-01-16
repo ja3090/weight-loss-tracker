@@ -105,6 +105,9 @@ fun IngredientAsInput(
             weightUnit = weightUnit,
             markedForDeletion = ingredientsAsState.markedFor == Marked.DELETE
         )
+
+        if (ingredientsAsState.markedFor == Marked.DELETE) return
+
         Row(
             modifier = Modifier
                 .padding(horizontal = Sizing.paddings.medium)
@@ -118,8 +121,6 @@ fun IngredientAsInput(
                 fontSize = Sizing.font.default * 0.8
             )
         }
-
-        if (ingredientsAsState.markedFor == Marked.DELETE) return
 
         Row(
             modifier = Modifier
