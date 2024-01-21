@@ -21,27 +21,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.CustomDivider
-import com.example.weightdojo.components.SaveButton
+import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.datatransferobjects.DayData
+import com.example.weightdojo.screens.home.addmodal.ModalFrame
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.ConfigSessionCache
 import com.example.weightdojo.utils.VMFactory
 import com.example.weightdojo.utils.WeightUnits
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
-fun validateInput(newText: String): Boolean {
-    if (newText.isEmpty()) return true
-    if (newText.count() > 6) return false
-    if (newText.startsWith("0")) return false
-    if (newText.contains('.') && newText.startsWith(".")) return false
-    if (newText.count { it == '.' } > 1) return false
-
-    return newText.all { it.isDigit() || it == '.' }
-}
 
 fun initialWeight(dayData: DayData?): String {
     return if (dayData == null) ""
@@ -64,20 +55,7 @@ fun AddWeight(
         else -> AppConfig.internalDefaultWeightUnit.name
     }
 
-    Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(Sizing.cornerRounding))
-            .background(MaterialTheme.colors.secondary)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Column {
-            Heading(
-                text = "Set Weight",
-                modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
-            )
-            CustomDivider(tinted = false)
-        }
-
+    ModalFrame(title = "Add Weight") {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,7 +70,7 @@ fun AddWeight(
             )
 
             ConfigOptions(extraOptions = addWeightVM.extraOptions)
-            SaveButton {
+            CustomButton(buttonName = "Save") {
                 addWeightVM.viewModelScope.launch(Dispatchers.IO) {
                     val success = addWeightVM.submit()
 

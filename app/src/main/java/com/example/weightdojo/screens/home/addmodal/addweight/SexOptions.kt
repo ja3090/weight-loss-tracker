@@ -6,8 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,19 +28,36 @@ import com.example.weightdojo.ui.Sizing
 @Composable
 fun SexOptions(extraOptions: ExtraOptions) {
     Row(
-        horizontalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom
     ) {
-        Button(sex = Sex.Male, extraOptions = extraOptions, modifier = Modifier.weight(1f))
-        Button(sex = Sex.Female, extraOptions = extraOptions, modifier = Modifier.weight(1f))
+        Button(
+            sex = Sex.Male,
+            extraOptions = extraOptions,
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(1.5f)
+                .padding(end = Sizing.paddings.medium)
+        )
+        Button(
+            sex = Sex.Female,
+            extraOptions = extraOptions,
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(1.5f)
+                .padding(start = Sizing.paddings.medium)
+        )
     }
 }
 
 @Composable
 fun Button(sex: Sex, extraOptions: ExtraOptions, modifier: Modifier = Modifier) {
     Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
+            .padding(vertical = Sizing.paddings.medium)
             .then(modifier)
-            .padding(Sizing.paddings.small)
             .clip(RoundedCornerShape(Sizing.cornerRounding))
             .background(
                 if (extraOptions.sex == sex) {
@@ -60,14 +81,12 @@ fun Button(sex: Sex, extraOptions: ExtraOptions, modifier: Modifier = Modifier) 
                     extraOptions.sex = sex
                 }
             },
-        contentAlignment = Alignment.Center
     ) {
 
         TextDefault(
             text = sex.name,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(Sizing.paddings.medium),
+                .align(Alignment.Center),
             color = if (extraOptions.sex == sex) {
                 MaterialTheme.colors.background
             } else {

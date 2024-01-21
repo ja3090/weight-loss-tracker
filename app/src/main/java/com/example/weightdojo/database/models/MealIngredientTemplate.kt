@@ -13,11 +13,11 @@ data class MealIngredientTemplate(
 )
 
 data class MealTemplateWithIngredients(
-    @Embedded val ingredients: List<IngredientTemplate>,
+    @Embedded val mealTemplate: MealTemplate,
     @Relation(
         parentColumn = "mealTemplateId",
         entityColumn = "ingredientTemplateId",
         associateBy = Junction(MealIngredientTemplate::class)
     )
-    val mealTemplate: MealTemplate
+    val ingredients: List<IngredientTemplate>,
 )

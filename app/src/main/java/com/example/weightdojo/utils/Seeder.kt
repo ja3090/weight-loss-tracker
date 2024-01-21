@@ -15,11 +15,6 @@ data class DayDTO(
     val id: Long
 )
 
-data class FakeMeal(
-    val mealId: Long,
-    val ingredients: List<Ingredient>
-)
-
 class Seeder(
     private val database: AppDatabase,
     private val faker: Faker = faker { }
@@ -50,13 +45,16 @@ class Seeder(
         for (i in 1 until 5) {
             val grams = random(20, 100)
             val calsPer100 = random(200, 500)
+            val fatPer100 = random(20, 50)
+            val proteinPer100 = random(20, 50)
+            val carbsPer100 = random(20, 50)
 
             val ingredient = Ingredient(
                 name = faker.food.ingredients(),
-                carbohydratesPer100 = totalGramsNullable(grams, randomOrNull()),
-                proteinPer100 = totalGramsNullable(grams, randomOrNull()),
-                fatPer100 = totalGramsNullable(grams, randomOrNull()),
-                caloriesPer100 = totalGramsNonNull(grams, calsPer100),
+                carbohydratesPer100 = totalGrams(grams, carbsPer100),
+                proteinPer100 = totalGrams(grams, fatPer100),
+                fatPer100 = totalGrams(grams, proteinPer100),
+                caloriesPer100 = totalGrams(grams, calsPer100),
                 mealId = mealId,
                 grams = grams
             )
@@ -97,7 +95,7 @@ class Seeder(
                 val mealId = createMeals(day.id)
                 createIngredients(mealId, day.id)
 
-                if (counter % 15 == 0) database.mealTemplateDao().handleTemplateInsertion(mealId)
+                if (counter % 15 == 0) database.seedMealTemplateDao().handleTemplateInsertion(mealId)
             }
 
             currentDate = currentDate.plusDays(1L)

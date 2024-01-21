@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.datatransferobjects.IngredientState
+import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.repositories.IngredientRepository
 import com.example.weightdojo.repositories.IngredientRepositoryImpl
@@ -38,7 +39,8 @@ class MealListVM(
 
         if (dayId == null || updatedIngredients == null || mealId == null) {
             Log.e(
-                "Submission error", "required arguments to submit calorie entry not available"
+                "Submission error",
+                "required arguments to submit calorie entry not available"
             )
             return
         }
@@ -77,10 +79,10 @@ class MealListVM(
         }
     }
 
-    fun setIngredientsAsState(ingredientId: Long, newState: IngredientState) {
+    fun changeGrams(stateId: Long, grams: Float) {
         val updatedList = state.ingredientListAsState?.map {
-            if (it.ingredientId == ingredientId) {
-                newState
+            if (it.ingredientId == stateId) {
+                it.copy(grams = grams)
             } else it
         }
 
@@ -97,13 +99,28 @@ class MealListVM(
         }
     }
 
+    fun deleteIngredient(toDelete: IngredientState) {
+        val markedFor = if (toDelete.markedFor == Marked.DELETE) Marked.EDIT else Marked.DELETE
+
+        val updatedList = state.ingredientListAsState?.map {
+            if (it === toDelete) {
+                it.copy(markedFor = markedFor)
+            } else it
+        }
+
+        state = state.copy(ingredientListAsState = updatedList)
+    }
+
     private suspend fun getDetailedIngredients() {
         val detailedIngredients = state.ingredientList?.map {
             IngredientState(
                 caloriesPer100 = it.caloriesPer100,
                 ingredientId = it.id,
                 name = it.name,
-                grams = it.grams
+                grams = it.grams,
+                carbsPer100 = it.carbohydratesPer100,
+                fatPer100 = it.fatPer100,
+                proteinPer100 = it.proteinPer100
             )
         }
 

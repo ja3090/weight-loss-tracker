@@ -16,6 +16,7 @@ import com.example.weightdojo.components.inputs.Input
 import com.example.weightdojo.components.inputs.InputArgs
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.validateInput
 
 @Composable
 fun WeightInput(weight: String?, weightUnit: String, weightSetter: (newWeight: String) -> Unit) {

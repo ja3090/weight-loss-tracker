@@ -18,31 +18,22 @@ import com.example.weightdojo.ui.Sizing
 
 @Composable
 fun Initial(setCurrentSubModal: (subModal: SubModals) -> Unit) {
-
-    Column(
-        modifier = Modifier
-            .padding(horizontal = Sizing.paddings.medium)
-            .clip(RoundedCornerShape(Sizing.cornerRounding))
-            .background(MaterialTheme.colors.secondary)
-    ) {
-        Heading(
-            text = "Add",
-            modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
-        )
-        CustomDivider(tinted = false)
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .clickable { setCurrentSubModal(SubModals.AddWeight) }) {
+    ModalFrame(title = "Add") {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { setCurrentSubModal(SubModals.AddWeight) }
+        ) {
             TextDefault(
                 text = "Weight",
                 modifier = Modifier
                     .padding(Sizing.paddings.medium),
             )
         }
-        CustomDivider()
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { setCurrentSubModal(SubModals.AddCalories) }
         ) {
             TextDefault(
                 text = "Calories",

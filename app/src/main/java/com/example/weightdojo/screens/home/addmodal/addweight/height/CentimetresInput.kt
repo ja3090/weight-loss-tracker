@@ -6,7 +6,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.example.weightdojo.components.inputs.Input
 import com.example.weightdojo.components.inputs.InputArgs
 import com.example.weightdojo.screens.home.addmodal.addweight.ExtraOptions
-import com.example.weightdojo.screens.home.addmodal.addweight.validateInput
+import com.example.weightdojo.utils.validateInput
 
 @Composable
 fun Centimetres(

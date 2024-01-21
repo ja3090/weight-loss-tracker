@@ -20,18 +20,19 @@ import com.example.weightdojo.ui.Sizing
 data class InputArgs(
     val inputValue: String,
     val onValueChange: (new: String) -> Unit,
-    val trailingIcon: @Composable () -> Unit,
+    val trailingIcon: (@Composable () -> Unit)? = null,
     val placeholder: @Composable () -> Unit,
     val modifier: Modifier = Modifier,
     val leadingIcon: (@Composable () -> Unit)? = null,
-    val keyboardOptions: KeyboardOptions
+    val keyboardOptions: KeyboardOptions,
+    val textStyle: TextStyle = TextStyle(textAlign = TextAlign.Center)
 )
 
 @Composable
 fun Input(
     inputArgs: InputArgs
 ) {
-    val (inputValue, onValueChange, trailingIcon, placeholder, modifier, leadingIcon, keyboardOptions) = inputArgs
+    val (inputValue, onValueChange, trailingIcon, placeholder, modifier, leadingIcon, keyboardOptions, textStyle) = inputArgs
 
     Box(
         modifier = Modifier
@@ -45,15 +46,14 @@ fun Input(
             leadingIcon = leadingIcon,
             keyboardOptions = keyboardOptions,
             colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.primary,
-                backgroundColor = Color.Transparent
+                textColor = MaterialTheme.colors.primary, backgroundColor = Color.Transparent
             ),
             modifier = Modifier
                 .padding(Sizing.paddings.small)
                 .align(Alignment.Center),
             trailingIcon = trailingIcon,
             placeholder = placeholder,
-            textStyle = TextStyle(textAlign = TextAlign.Center)
+            textStyle = textStyle
         )
     }
 }

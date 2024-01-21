@@ -10,14 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
-fun SaveButton(onClick: () -> Unit) {
+fun CustomButton(buttonName: String, onClick: () -> Unit) {
     Box(modifier = Modifier
         .clip(
             RoundedCornerShape(Sizing.cornerRounding)
@@ -26,7 +23,7 @@ fun SaveButton(onClick: () -> Unit) {
         .clickable(onClick = onClick)
     ) {
         TextDefault(
-            text = "Save",
+            text = buttonName,
             color = MaterialTheme.colors.background,
             modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp)
         )

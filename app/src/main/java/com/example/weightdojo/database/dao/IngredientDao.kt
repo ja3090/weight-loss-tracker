@@ -8,9 +8,6 @@ import androidx.room.Transaction
 import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
-import com.example.weightdojo.datatransferobjects.Totals
-import com.example.weightdojo.utils.totalGramsNonNull
-import com.example.weightdojo.utils.totalGramsNullable
 
 @Dao
 interface IngredientDao {

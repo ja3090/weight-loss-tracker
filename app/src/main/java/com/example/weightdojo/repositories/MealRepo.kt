@@ -8,4 +8,6 @@ interface MealRepository {
 class MealRepositoryImpl(
     private val mealDao: MealDao,
 ) : MealRepository {
+
+    fun handleInsert() {}
 }

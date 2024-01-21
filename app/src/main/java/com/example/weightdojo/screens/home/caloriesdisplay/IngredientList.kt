@@ -15,27 +15,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.R
-import com.example.weightdojo.components.SaveButton
+import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.icon.IconBuilder
+import com.example.weightdojo.components.inputs.IngredientAsInput
 import com.example.weightdojo.components.text.TextDefault
-import com.example.weightdojo.database.models.Ingredient
-import com.example.weightdojo.datatransferobjects.IngredientState
-import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.ui.Sizing
-import com.example.weightdojo.utils.totalGramsNonNull
+import com.example.weightdojo.utils.totalGrams
 
 @Composable
 fun IngredientList(
-    activeMeal: MealData,
-    ingredientList: List<Ingredient>?,
-    ingredientListAsState: List<IngredientState>?,
     weightUnit: String,
-    isEditing: Boolean,
-    showIngredientListAsState: () -> Unit,
-    ingredientListSetter: (caloriesId: Long, newState: IngredientState) -> Unit,
-    updateData: () -> Unit,
-    closeList: () -> Unit
+    mealListVM: MealListVM = viewModel(),
+    state: MealListState = mealListVM.state,
 ) {
 
     Column(
@@ -52,23 +46,35 @@ fun IngredientList(
             .background(MaterialTheme.colors.secondary)
     ) {
 
-        if (isEditing) {
-            ingredientListAsState?.map {
+        if (state.isEditing) {
+            state.ingredientListAsState?.map { ingredientAsState ->
                 IngredientAsInput(
-                    ingredientsAsState = it, weightUnit = weightUnit, setter = ingredientListSetter
+                    ingredientState = ingredientAsState,
+                    weightUnit = weightUnit,
+                    onValueChange = {
+                        val passes = it.isEmpty() || it.isDigitsOnly()
+
+                        if (passes) {
+                            mealListVM.changeGrams(
+                                ingredientAsState.ingredientId,
+                                if (it.isEmpty()) 0f else it.toFloat()
+                            )
+                        }
+                    },
+                    onConfirmDelete = mealListVM::deleteIngredient
                 )
             }
         } else {
-            ingredientList?.map {
+            state.ingredientList?.map {
                 Ingredient(
                     name = it.name,
                     weightUnit = weightUnit,
-                    totalCalories = totalGramsNonNull(it.grams, it.caloriesPer100)
+                    totalCalories = totalGrams(it.grams, it.caloriesPer100)
                 )
             }
         }
 
-        if (!isEditing) {
+        if (!state.isEditing) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -79,7 +85,7 @@ fun IngredientList(
                     contentDescription = "edit",
                     testTag = "EDIT_BUTTON",
                     modifier = Modifier
-                        .clickable { showIngredientListAsState() }
+                        .clickable { mealListVM.showIngredientListAsState() }
                         .weight(1f)
                         .fillMaxSize()
                         .padding(Sizing.paddings.medium),
@@ -102,14 +108,15 @@ fun IngredientList(
                     .padding(vertical = Sizing.paddings.medium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SaveButton {
-                    updateData()
+                CustomButton(buttonName = "Save") {
+                    mealListVM.makeEdits()
                 }
                 TextDefault(text = "Cancel", modifier = Modifier
                     .padding(
-                        vertical = Sizing.paddings.small, horizontal = Sizing.paddings.medium
+                        vertical = Sizing.paddings.small,
+                        horizontal = Sizing.paddings.medium
                     )
-                    .clickable { closeList() })
+                    .clickable { mealListVM.removeActive() })
             }
         }
     }
