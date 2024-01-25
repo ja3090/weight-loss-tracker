@@ -38,10 +38,21 @@ interface IngredientDao {
 
     @Query(
         "UPDATE ingredient " +
-        "SET grams = :grams " +
-        "WHERE id = :id "
+                "SET grams = :grams," +
+                "calories_per_100g = :caloriesPer100, " +
+                "carbohydrates_per_100g = :carbsPer100, " +
+                "fat_per_100g = :fatPer100, " +
+                "protein_per_100g = :proteinPer100 " +
+                "WHERE id = :id "
     )
-    fun updateIngredient(grams: Float, id: Long)
+    fun updateIngredient(
+        grams: Float,
+        caloriesPer100: Float,
+        carbsPer100: Float,
+        fatPer100: Float,
+        proteinPer100: Float,
+        id: Long
+    )
 
     @Query(
         "DELETE FROM ingredient " +
@@ -71,6 +82,10 @@ interface IngredientDao {
                 updateIngredient(
                     id = entry.ingredientId,
                     grams = entry.grams,
+                    proteinPer100 = entry.proteinPer100,
+                    carbsPer100 = entry.carbsPer100,
+                    fatPer100 = entry.fatPer100,
+                    caloriesPer100 = entry.caloriesPer100
                 )
             }
         }

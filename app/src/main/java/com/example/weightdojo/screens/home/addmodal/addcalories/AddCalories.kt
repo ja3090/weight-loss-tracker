@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.screens.home.HomeViewModel
+import com.example.weightdojo.screens.home.addmodal.AddModalVm
 import com.example.weightdojo.screens.home.addmodal.ModalFrame
 import com.example.weightdojo.screens.home.addmodal.addcalories.addnewmeal.AddNewMeal
 import com.example.weightdojo.screens.home.addmodal.addcalories.searchingredienttemplates.SearchIngredientTemplates
@@ -18,14 +20,25 @@ fun AddCalories(
     addCaloriesVm: AddCaloriesVm = viewModel(factory = VMFactory.build {
         AddCaloriesVm(database = MyApp.appModule.database, dayId = dayId)
     }),
-    state: AddCaloriesState = addCaloriesVm.stateHandler.state
+    state: AddCaloriesState = addCaloriesVm.stateHandler.state,
+    addModalVm: AddModalVm = viewModel()
 ) {
 
-    ModalFrame(title = state.currentSubModal.toString()) {
+    ModalFrame(title = state.currentSubModal.toString(), onBack = {
         when (state.currentSubModal) {
-            SubModals.AddMealTemplate -> SearchMealTemplates()
-            SubModals.MealCreation -> AddNewMeal()
-            SubModals.AddIngredientTemplate -> SearchIngredientTemplates()
+            AddCalsSubModals.AddMealTemplate -> addModalVm.backToInitial()
+            AddCalsSubModals.AddIngredientTemplate -> addCaloriesVm.stateHandler.moveToSubModal(
+                AddCalsSubModals.MealCreation
+            )
+            AddCalsSubModals.MealCreation -> addCaloriesVm.stateHandler.moveToSubModal(
+                AddCalsSubModals.AddMealTemplate
+            )
+        }
+    }) {
+        when (state.currentSubModal) {
+            AddCalsSubModals.AddMealTemplate -> SearchMealTemplates()
+            AddCalsSubModals.MealCreation -> AddNewMeal()
+            AddCalsSubModals.AddIngredientTemplate -> SearchIngredientTemplates()
         }
     }
 }

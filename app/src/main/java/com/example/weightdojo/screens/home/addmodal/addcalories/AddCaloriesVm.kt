@@ -9,11 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.example.weightdojo.database.models.IngredientTemplate
-import com.example.weightdojo.datatransferobjects.ConvertTemplates
-import com.example.weightdojo.datatransferobjects.IngredientState
-import com.example.weightdojo.datatransferobjects.Marked
-import com.example.weightdojo.datatransferobjects.MealState
+import com.example.weightdojo.database.models.Meal
+import com.example.weightdojo.repositories.MealRepository
+import com.example.weightdojo.repositories.MealRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -23,7 +21,8 @@ import kotlinx.coroutines.withContext
 class AddCaloriesVm(
     private val database: AppDatabase,
     private val dayId: Long?,
-    private val mealTemplateRepo: MealTemplateRepo = MealTemplateRepoImpl(database.mealTemplateDao())
+    private val mealTemplateRepo: MealTemplateRepo = MealTemplateRepoImpl(database.mealTemplateDao()),
+    private val mealRepository: MealRepository = MealRepositoryImpl(database.mealDao())
 ) : ViewModel() {
     var stateHandler by mutableStateOf(AddCaloriesStateHandler(dayId = dayId))
 
@@ -54,8 +53,52 @@ class AddCaloriesVm(
         }
     }
 
+    suspend fun overwriteTemplate(): Boolean {
+        val mealState = stateHandler.state.mealState
+
+        if (mealState == null) {
+            Log.e("Error", "mealState is null")
+            return false
+        }
+
+        val mealTemplate = stateHandler.templateConverter.toMealTemplate(mealState, true)
+
+        val res = viewModelScope.async(Dispatchers.IO) {
+            mealTemplateRepo.overwriteTemplate(mealTemplate, stateHandler.state.ingredientList)
+        }
+
+        return res.await().success
+    }
+
+    suspend fun submitMeal(): Boolean {
+        val mealState = stateHandler.state.mealState
+        val dayId = dayId
+
+        if (mealState == null || dayId == null) {
+            Log.e("Error", "one of the required arguments is null")
+            return false
+        }
+        val meal = Meal(
+            name = mealState.name,
+            totalFat = mealState.totalFat,
+            totalProtein = mealState.totalProtein,
+            totalCarbohydrates = mealState.totalCarbohydrates,
+            totalCalories = mealState.totalCalories,
+            dayId = dayId
+        )
+
+        val res = viewModelScope.async(Dispatchers.IO) {
+            mealRepository.handleInsert(
+                mealState = meal,
+                ingredientList = stateHandler.state.ingredientList
+            )
+        }
+
+        return res.await().success
+    }
+
     private suspend fun templateSubmitHandler(overwrite: Boolean): Boolean {
-        return mealTemplateRepo.insertMealTemplate(
+        return mealTemplateRepo.createMealTemplate(
             mealState = stateHandler.state.mealState,
             ingredientStateList = stateHandler.state.ingredientList,
             overwrite = overwrite

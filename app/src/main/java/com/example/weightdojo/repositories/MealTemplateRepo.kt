@@ -1,7 +1,7 @@
 package com.example.weightdojo.repositories
 
 import android.util.Log
-import com.example.weightdojo.database.dao.MealTemplateDao
+import com.example.weightdojo.database.dao.mealtemplate.MealTemplateDao
 import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
@@ -12,18 +12,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 interface MealTemplateRepo {
-    fun getMealTemplateWithIngredients(): List<MealTemplate>
-//    fun getMealTemplateWithIngredientsById(mealTemplateId: Long): MealTemplateWithIngredients
     fun searchMealTemplates(term: String): List<MealTemplate>
-    suspend fun insertMealTemplate(
+    suspend fun createMealTemplate(
         mealState: MealState?,
         ingredientStateList: List<IngredientState>,
         overwrite: Boolean
     ): Boolean
     suspend fun getMealTemplateWithIngredientsById(
-    mealTemplateId: Long,
-    dayId: Long?
+        mealTemplateId: Long,
+        dayId: Long?
     ): RepoResponse<out TemplateState?>
+    suspend fun overwriteTemplate(
+        mealTemplate: MealTemplate,
+        ingredientList: List<IngredientState>
+    ): RepoResponse<Nothing?>
 }
 
 typealias TemplateState = Pair<MealState, List<IngredientState>>
@@ -32,10 +34,6 @@ class MealTemplateRepoImpl(
     private val mealTemplateDao: MealTemplateDao,
     private val templateConverter: ConvertTemplates = ConvertTemplates()
 ) : MealTemplateRepo {
-
-    override fun getMealTemplateWithIngredients(): List<MealTemplate> {
-        return mealTemplateDao.getMealTemplates()
-    }
 
     override fun searchMealTemplates(term: String): List<MealTemplate> {
         return mealTemplateDao.searchMealTemplates(term)
@@ -46,31 +44,42 @@ class MealTemplateRepoImpl(
         dayId: Long?
     ): RepoResponse<out TemplateState?> {
 
-        return CoroutineScope(Dispatchers.IO).async {
-            try {
+        return try {
+            val mealWithIngredients =
+                mealTemplateDao.getMealTemplateWithIngredientsById(mealTemplateId)
 
-                val mealWithIngredients =
-                    mealTemplateDao.getMealTemplateWithIngredientsById(mealTemplateId)
+            val mealIngredientList = templateConverter.makeMealStateAndIngredientList(
+                mealWithIngredients.mealTemplate, mealWithIngredients.ingredients, dayId
+            )
 
-                val (meal, ingredientList) = templateConverter.makeMealState(
-                    mealWithIngredients.mealTemplate, mealWithIngredients.ingredients, dayId
-                )
+            RepoResponse(
+                success = true,
+                data = mealIngredientList
+            )
+        } catch (e: Exception) {
+            RepoResponse(
+                errorMessage = e.message,
+                success = false,
+                data = null
+            )
 
-                return@async RepoResponse(
-                    success = true,
-                    data = Pair(meal, ingredientList)
-                )
-            } catch (e: Exception) {
-                return@async RepoResponse(
-                    errorMessage = e.message,
-                    success = false,
-                    data = null
-                )
-            }
-        }.await()
+        }
     }
 
-    override suspend fun insertMealTemplate(
+    override suspend fun overwriteTemplate(
+        mealTemplate: MealTemplate,
+        ingredientList: List<IngredientState>
+    ): RepoResponse<Nothing?> {
+        return try {
+            mealTemplateDao.updateMealTemplate(mealTemplate, ingredientList)
+
+            RepoResponse(success = true, data = null)
+        } catch (e: Exception) {
+            RepoResponse(success = false, data = null, errorMessage = e.message)
+        }
+    }
+
+    override suspend fun createMealTemplate(
         mealState: MealState?,
         ingredientStateList: List<IngredientState>,
         overwrite: Boolean
@@ -80,10 +89,12 @@ class MealTemplateRepoImpl(
             try {
                 mealState ?: throw Exception("mealState is null")
 
-                mealTemplateDao.handleMealTemplateInsertion(
-                    mealState = mealState,
-                    ingredientList = ingredientStateList,
-                    overwrite = overwrite
+                val ingTemplates =
+                    ingredientStateList.map { templateConverter.toIngredientTemplate(it) }
+
+                mealTemplateDao.createMealTemplate(
+                    mealTemplate = templateConverter.toMealTemplate(mealState, false),
+                    ingredientTemplates = ingTemplates
                 )
 
                 return@async true

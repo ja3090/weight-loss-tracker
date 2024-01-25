@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.home.caloriesdisplay
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,13 +16,15 @@ import com.example.weightdojo.ui.Sizing
 
 @Composable
 fun Ingredient(
+    modifier: Modifier = Modifier,
     totalCalories: Float,
     name: String,
     weightUnit: String,
-    markedForDeletion: Boolean = false
+    markedForDeletion: Boolean = false,
 ) {
     Row(
         modifier = Modifier
+            .then(modifier)
             .fillMaxWidth()
             .padding(
                 horizontal = Sizing.paddings.medium,

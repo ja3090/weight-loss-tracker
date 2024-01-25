@@ -13,26 +13,14 @@ import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.totalGrams
+import com.example.weightdojo.utils.totals
 
 
 @Composable
 fun Stats(ingredientList: List<IngredientState>) {
     val fontSize = Sizing.font.default * 0.85
 
-    val totals = object {
-        var carbs = 0f
-        var fat = 0f
-        var protein = 0f
-        var totalCals = 0f
-    }
-
-    for (ingredient in ingredientList) {
-        if (ingredient.markedFor == Marked.DELETE) continue
-        totals.carbs += totalGrams(ingredient.grams, ingredient.carbsPer100)
-        totals.protein += totalGrams(ingredient.grams, ingredient.proteinPer100)
-        totals.fat += totalGrams(ingredient.grams, ingredient.fatPer100)
-        totals.totalCals += totalGrams(ingredient.grams, ingredient.caloriesPer100)
-    }
+    val totals = totals(ingredientList)
 
     Column(modifier = Modifier.fillMaxWidth()) {
 

@@ -7,7 +7,8 @@ import androidx.compose.ui.unit.sp
 
 data class FontSizes(
     val heading: TextUnit = 25.sp,
-    val default: TextUnit = 14.sp
+    val default: TextUnit = 14.sp,
+    val small: TextUnit = default * 0.8
 )
 
 data class Paddings(

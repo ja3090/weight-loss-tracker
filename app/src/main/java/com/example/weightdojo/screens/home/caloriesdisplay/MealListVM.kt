@@ -55,7 +55,9 @@ class MealListVM(
     }
 
     private suspend fun submitEdits(
-        dayId: Long, ingredients: List<IngredientState>, mealId: Long
+        dayId: Long,
+        ingredients: List<IngredientState>,
+        mealId: Long
     ) {
         ingredientRepo.updateIngredients(ingredients, mealId, dayId)
 
@@ -79,10 +81,11 @@ class MealListVM(
         }
     }
 
-    fun changeGrams(stateId: Long, grams: Float) {
+    fun changeIngredient(ingredient: IngredientState) {
+
         val updatedList = state.ingredientListAsState?.map {
-            if (it.ingredientId == stateId) {
-                it.copy(grams = grams)
+            if (it.internalId == ingredient.internalId) {
+                ingredient
             } else it
         }
 

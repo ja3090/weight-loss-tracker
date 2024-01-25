@@ -13,10 +13,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.R
+import com.example.weightdojo.components.AlertDialog
 import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.inputs.Input
@@ -38,7 +46,7 @@ import kotlinx.coroutines.withContext
 fun AddNewMeal(
     addCaloriesVm: AddCaloriesVm = viewModel(),
     state: AddCaloriesState = addCaloriesVm.stateHandler.state,
-    stateHandler: AddCaloriesStateHandler= addCaloriesVm.stateHandler,
+    stateHandler: AddCaloriesStateHandler = addCaloriesVm.stateHandler,
     homeViewModel: HomeViewModel = viewModel()
 ) {
     suspend fun returnToHome() {
@@ -47,9 +55,20 @@ fun AddNewMeal(
         }
     }
 
+    fun submitHandler() {
+        addCaloriesVm.viewModelScope.launch {
+            val success = addCaloriesVm.submitMeal()
+
+            if (success) returnToHome()
+        }
+    }
+
+    var confirmOverwrite by remember {
+        mutableStateOf(false)
+    }
+
     Column(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Input(
             InputArgs(
@@ -58,8 +77,13 @@ fun AddNewMeal(
                     addCaloriesVm.stateHandler.changeName(it)
                 },
                 keyboardOptions = KeyboardOptions.Default,
-                placeholder = { TextDefault(text = "Meal Name") },
-                modifier = Modifier.fillMaxWidth()
+                placeholder = {
+                    TextDefault(
+                        text = "Meal Name",
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = TextStyle.Default.copy(textAlign = TextAlign.Left)
             )
         )
 
@@ -75,14 +99,8 @@ fun AddNewMeal(
                     weightUnit = "KCAL",
                     onConfirmDelete = stateHandler::deleteIngredient,
                     onValueChange = {
-                        val passes = validateInput(it)
-
-                        if (!passes) return@IngredientAsInput
-
-                        val grams = if (it.isEmpty()) 0F else it.toFloat()
-
-                        stateHandler.changeIngredient(grams, ingredientState)
-                    }
+                        stateHandler.changeIngredient(it)
+                    },
                 )
             }
             Row(
@@ -110,16 +128,45 @@ fun AddNewMeal(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextDefault(text = "Create Template", modifier = Modifier.clickable {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val success = addCaloriesVm.createTemplate()
+            if (state.mealState?.mealTemplateId != 0L) {
+                TextDefault(text = "Overwrite", modifier = Modifier.clickable {
+                    confirmOverwrite = true
 
-                    if (success) returnToHome()
-                }
-            })
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val success = addCaloriesVm.createTemplate()
+
+                        if (success) Log.d("Success", "Successfully created template")
+                    }
+                })
+            } else if (state.mealState.mealTemplateId == 0L) {
+                TextDefault(text = "Create Template", modifier = Modifier.clickable {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val success = addCaloriesVm.createTemplate()
+
+                        if (success) Log.d("Success", "Successfully created template")
+                    }
+                })
+            }
             CustomButton(buttonName = "Save") {
-
+                submitHandler()
             }
         }
+    }
+
+    if (confirmOverwrite) {
+        AlertDialog(
+            onDismissRequest = { confirmOverwrite = false },
+            onReject = { submitHandler() },
+            onConfirmation = {
+                addCaloriesVm.viewModelScope.launch {
+                    addCaloriesVm.overwriteTemplate()
+                }
+            },
+            dialogTitle = "Overwrite Template",
+            dialogText = "You've used a template to create this, " +
+                    "do you want to overwrite it or create a new one?",
+            confirmButtonText = "Overwrite",
+            cancelButtonText = "Create New"
+        )
     }
 }

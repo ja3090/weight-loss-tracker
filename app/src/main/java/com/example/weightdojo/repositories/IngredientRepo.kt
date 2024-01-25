@@ -29,7 +29,9 @@ class IngredientRepositoryImpl(
         ingredientStates: List<IngredientState>, mealId: Long, dayId: Long
     ) {
         ingredientDao.ingredientUpdateHandler(
-            ingredientStates = ingredientStates, mealId = mealId, dayId = dayId
+            ingredientStates = ingredientStates,
+            mealId = mealId,
+            dayId = dayId
         )
     }
 }

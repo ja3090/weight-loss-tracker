@@ -52,14 +52,7 @@ fun IngredientList(
                     ingredientState = ingredientAsState,
                     weightUnit = weightUnit,
                     onValueChange = {
-                        val passes = it.isEmpty() || it.isDigitsOnly()
-
-                        if (passes) {
-                            mealListVM.changeGrams(
-                                ingredientAsState.ingredientId,
-                                if (it.isEmpty()) 0f else it.toFloat()
-                            )
-                        }
+                        mealListVM.changeIngredient(it)
                     },
                     onConfirmDelete = mealListVM::deleteIngredient
                 )

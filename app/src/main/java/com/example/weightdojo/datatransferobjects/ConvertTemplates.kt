@@ -26,7 +26,7 @@ class ConvertTemplates {
         return Pair(meal, ingredientList)
     }
 
-    private fun convertToIngredientList(
+    fun convertToIngredientList(
         ingredients: List<IngredientTemplate>
     ): List<IngredientState> {
         val ingredientList = mutableListOf<IngredientState>()

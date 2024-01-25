@@ -12,9 +12,10 @@ import com.example.weightdojo.database.dao.IngredientDao
 import com.example.weightdojo.database.dao.IngredientTemplateDao
 import com.example.weightdojo.database.dao.MealDao
 import com.example.weightdojo.database.dao.MealIngredientTemplateDao
-import com.example.weightdojo.database.dao.MealTemplateDao
+import com.example.weightdojo.database.dao.mealtemplate.MealTemplateDao
 import com.example.weightdojo.database.dao.WeightChartDao
 import com.example.weightdojo.database.dao.seeder.SeedMealTemplateDao
+import com.example.weightdojo.database.dao.test.TestMealTemplateDao
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.database.models.Date
 import com.example.weightdojo.database.models.Day
@@ -49,6 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun mealIngredientTemplateDao(): MealIngredientTemplateDao
     abstract fun ingredientTemplateDao(): IngredientTemplateDao
     abstract fun seedMealTemplateDao(): SeedMealTemplateDao
+    abstract fun testMealTemplateDao(): TestMealTemplateDao
 }
 
 class Database {

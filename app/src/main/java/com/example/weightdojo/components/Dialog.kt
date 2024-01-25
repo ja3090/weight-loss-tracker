@@ -9,9 +9,12 @@ import com.example.weightdojo.components.text.TextDefault
 @Composable
 fun AlertDialog(
     onDismissRequest: () -> Unit,
+    onReject: () -> Unit = onDismissRequest,
     onConfirmation: () -> Unit,
     dialogTitle: String,
     dialogText: String,
+    confirmButtonText: String = "Confirm",
+    cancelButtonText: String = "Cancel"
 ) {
     AlertDialog(
         title = {
@@ -29,16 +32,16 @@ fun AlertDialog(
                     onConfirmation()
                 }
             ) {
-                TextDefault("Confirm")
+                TextDefault(confirmButtonText)
             }
         },
         dismissButton = {
             TextButton(
                 onClick = {
-                    onDismissRequest()
+                    onReject()
                 }
             ) {
-                TextDefault("Dismiss")
+                TextDefault(cancelButtonText)
             }
         },
         containerColor = MaterialTheme.colors.background

@@ -11,18 +11,25 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.components.CustomDivider
 import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun Initial(setCurrentSubModal: (subModal: SubModals) -> Unit) {
-    ModalFrame(title = "Add") {
+fun Initial(
+    addModalVm: AddModalVm = viewModel(),
+    homeViewModel: HomeViewModel = viewModel()
+) {
+    ModalFrame(
+        title = "Add",
+        onBack = { homeViewModel.showModal(false) }) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { setCurrentSubModal(SubModals.AddWeight) }
+                .clickable { addModalVm.setCurrentAddMenuSubModals(AddMenuSubModals.AddWeight) }
         ) {
             TextDefault(
                 text = "Weight",
@@ -33,7 +40,7 @@ fun Initial(setCurrentSubModal: (subModal: SubModals) -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { setCurrentSubModal(SubModals.AddCalories) }
+                .clickable { addModalVm.setCurrentAddMenuSubModals(AddMenuSubModals.AddCalories) }
         ) {
             TextDefault(
                 text = "Calories",

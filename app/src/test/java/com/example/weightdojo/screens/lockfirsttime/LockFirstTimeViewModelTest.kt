@@ -1,9 +1,14 @@
 package com.example.weightdojo.screens.lockfirsttime
 
+import android.content.Context
+import android.content.SharedPreferences
+import com.example.weightdojo.AppModuleImpl
 import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.repositories.ConfigRepository
+import com.example.weightdojo.utils.ConfigSessionCache
+import com.example.weightdojo.utils.SessionCache
 import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -22,6 +27,7 @@ class TestConfigRepo : ConfigRepository {
 class LockFirstTimeViewModelTest {
     private lateinit var db: AppDatabase
     private lateinit var viewModel: LockFirstTimeViewModel
+    private lateinit var sharedPreferences: SharedPreferences
     private val firstPass = "1234"
     private val secondPass = "4572"
 
@@ -29,9 +35,10 @@ class LockFirstTimeViewModelTest {
     fun init() {
         db = mockk<AppDatabase>()
         val testConfigRepo = TestConfigRepo()
+        sharedPreferences = mockk<SharedPreferences>()
         viewModel = LockFirstTimeViewModel(
             db,
-            testConfigRepo
+            ConfigSessionCache(sharedPreferences)
         )
     }
 

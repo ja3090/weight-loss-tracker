@@ -73,8 +73,6 @@ fun Home(
 
         if (homeState.showAddModal) {
             AddModal(
-                showModal = homeViewModel::showModal,
-                navigateTo = navigateTo,
                 dayData = homeState.dayData
             )
         }

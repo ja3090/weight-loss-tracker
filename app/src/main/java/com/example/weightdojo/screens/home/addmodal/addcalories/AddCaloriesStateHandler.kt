@@ -14,11 +14,11 @@ data class AddCaloriesState(
     val mealState: MealState? = null,
     val ingredientList: List<IngredientState> = listOf(),
     val dayId: Long? = null,
-    val currentSubModal: SubModals = SubModals.AddMealTemplate,
+    val currentSubModal: AddCalsSubModals = AddCalsSubModals.AddMealTemplate,
     val overwriteTemplate: Boolean? = null
 )
 
-enum class SubModals {
+enum class AddCalsSubModals {
     AddMealTemplate {
         override fun toString(): String {
             return "Choose Meal"
@@ -29,11 +29,9 @@ enum class SubModals {
             return "Create Meal"
         }
     },
-
-    //    AddNewIngredient,
     AddIngredientTemplate {
         override fun toString(): String {
-            return "Add Ingredient"
+            return "Add"
         }
     }
 }
@@ -41,16 +39,15 @@ enum class SubModals {
 class AddCaloriesStateHandler(
     private val dayId: Long?
 ) {
-    private val templateConverter = ConvertTemplates()
+    val templateConverter = ConvertTemplates()
 
     var state by mutableStateOf(AddCaloriesState(dayId = dayId))
 
     fun addNewIngredient() {
         val updatedList = state.ingredientList + IngredientState()
 
-        state = state.copy(ingredientList = updatedList, currentSubModal = SubModals.MealCreation)
+        state = state.copy(ingredientList = updatedList, currentSubModal = AddCalsSubModals.MealCreation)
     }
-
     fun changeName(string: String) {
         val mealState = state.mealState
 
@@ -82,18 +79,18 @@ class AddCaloriesStateHandler(
         state = state.copy(
             ingredientList = state.ingredientList + templateConverter.toIngredientState(
                 ingredientTemplate
-            ), currentSubModal = SubModals.MealCreation
+            ), currentSubModal = AddCalsSubModals.MealCreation
         )
     }
 
     fun moveToAddIngredient() {
-        state = state.copy(currentSubModal = SubModals.AddIngredientTemplate)
+        state = state.copy(currentSubModal = AddCalsSubModals.AddIngredientTemplate)
     }
 
-    fun changeIngredient(grams: Float, ingredientState: IngredientState) {
+    fun changeIngredient(ingredientState: IngredientState) {
         val updatedList = state.ingredientList.map {
-            if (it == ingredientState) {
-                it.copy(grams = grams)
+            if (it.internalId == ingredientState.internalId) {
+                ingredientState
             } else it
         }
 
@@ -110,11 +107,11 @@ class AddCaloriesStateHandler(
         state = state.copy(
             mealState = meal,
             ingredientList = ingredientStateList,
-            currentSubModal = SubModals.MealCreation
+            currentSubModal = AddCalsSubModals.MealCreation
         )
     }
 
-    fun moveToSubModal(subModal: SubModals) {
+    fun moveToSubModal(subModal: AddCalsSubModals) {
         state = state.copy(currentSubModal = subModal)
     }
 
@@ -122,7 +119,7 @@ class AddCaloriesStateHandler(
         state = state.copy(
             mealState = mealState,
             ingredientList = ingredientList,
-            currentSubModal = SubModals.MealCreation
+            currentSubModal = AddCalsSubModals.MealCreation
         )
     }
 }

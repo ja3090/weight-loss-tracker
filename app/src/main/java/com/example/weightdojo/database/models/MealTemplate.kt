@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class MealTemplate(
     @PrimaryKey(autoGenerate = true) val mealTemplateId: Long = 0,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "total_carbohydrates") val totalCarbohydrates: Float?,
-    @ColumnInfo(name = "total_protein") val totalProtein: Float?,
-    @ColumnInfo(name = "total_fat") val totalFat: Float?,
-    @ColumnInfo(name = "total_calories") val totalCalories: Float?,
+    @ColumnInfo(name = "total_carbohydrates") val totalCarbohydrates: Float = 0f,
+    @ColumnInfo(name = "total_protein") val totalProtein: Float = 0f,
+    @ColumnInfo(name = "total_fat") val totalFat: Float = 0f,
+    @ColumnInfo(name = "total_calories") val totalCalories: Float = 0f,
 )

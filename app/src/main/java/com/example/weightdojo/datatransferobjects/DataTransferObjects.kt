@@ -1,11 +1,10 @@
 package com.example.weightdojo.datatransferobjects
 
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import com.example.weightdojo.database.models.Day
 import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.database.models.Meal
 import java.time.LocalDate
+import java.util.UUID
 
 data class EarliestDate(
     val date: LocalDate?
@@ -33,6 +32,7 @@ data class MealData(
 enum class Marked { DELETE, EDIT }
 
 data class IngredientState(
+    val internalId: UUID = UUID.randomUUID(),
     var markedFor: Marked = Marked.EDIT,
     val ingredientId: Long = 0,
     val name: String = "",

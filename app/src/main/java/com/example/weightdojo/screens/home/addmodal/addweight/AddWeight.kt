@@ -26,6 +26,7 @@ import com.example.weightdojo.components.text.Heading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.datatransferobjects.DayData
+import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.screens.home.addmodal.ModalFrame
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.ConfigSessionCache
@@ -48,7 +49,7 @@ fun AddWeight(
     addWeightVM: AddWeightVM = viewModel(factory = VMFactory.build {
         AddWeightVM(database = MyApp.appModule.database, dayData = dayData)
     }),
-    showModal: (show: Boolean) -> Unit
+    homeViewModel: HomeViewModel = viewModel()
 ) {
     val weightUnit = when (config?.weightUnit) {
         WeightUnits.LBS -> "LBS"
@@ -74,7 +75,7 @@ fun AddWeight(
                 addWeightVM.viewModelScope.launch(Dispatchers.IO) {
                     val success = addWeightVM.submit()
 
-                    if (success) showModal(false)
+                    if (success) homeViewModel.showModal(false)
                 }
             }
         }

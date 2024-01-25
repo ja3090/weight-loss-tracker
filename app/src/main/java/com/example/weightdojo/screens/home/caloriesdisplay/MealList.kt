@@ -40,22 +40,22 @@ fun MealList(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable { mealListViewModel.setActive(it) },
+                .clickable {
+                    if (mealListViewModel.state.isEditing) {
+                        return@clickable
+                    } else {
+                        mealListViewModel.setActive(it)
+                    }
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-//            Row(
-//                modifier = Modifier.padding(Sizing.paddings.medium),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-                TextDefault(
-                    text = it.mealName,
-                    color = MaterialTheme.colors.primaryVariant,
-                    fontStyle = FontStyle.Italic,
+            TextDefault(
+                text = it.mealName,
+                color = MaterialTheme.colors.primaryVariant,
+                fontStyle = FontStyle.Italic,
                 modifier = Modifier.padding(Sizing.paddings.medium),
-                )
-//            }
+            )
             TextDefault(
                 modifier = Modifier.padding(Sizing.paddings.medium),
                 text = "${(it.totalCalories ?: 0).toInt()} $weightUnit",
@@ -63,7 +63,7 @@ fun MealList(
         }
 
         if (activeMeal !== null && it.mealId == activeMeal.mealId) {
-            IngredientList(weightUnit = weightUnit,)
+            IngredientList(weightUnit = weightUnit)
         }
     }
 }
