@@ -43,6 +43,7 @@ fun LineChart(
     unit: String,
     chartState: ChartState = chartViewModel.chartState,
     lineColor: Color = MaterialTheme.colors.primaryVariant,
+    convertValues: (value: Float) -> Float
 ) {
     if (chartState.data == null || chartState.data.size <= 1) return
 
@@ -59,7 +60,7 @@ fun LineChart(
     }
 
     val (line, shape, min, max) = remember(chartState.data, dimensions, points) {
-        plotPoints(chartState.data, dimensions, points, upperLowerBound)
+        plotPoints(chartState.data, dimensions, points, upperLowerBound, convertValues)
     }
 
     val textMeasurer = rememberTextMeasurer()
@@ -155,7 +156,7 @@ fun LineChart(
                     textStyle = textStyle
                 )
 
-                plotYAxes(min, max, textMeasurer, dimensions, textStyle)
+                plotYAxes(min, max, textMeasurer, dimensions, textStyle, unit)
 
             })
         }

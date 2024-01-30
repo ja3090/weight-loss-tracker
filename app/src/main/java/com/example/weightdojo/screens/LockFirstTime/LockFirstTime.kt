@@ -15,6 +15,7 @@ import com.example.weightdojo.components.keypad.Keypad
 import com.example.weightdojo.components.keypad.KeypadButton
 import com.example.weightdojo.utils.Biometrics
 import com.example.weightdojo.utils.VMFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -23,7 +24,7 @@ fun LockFirstTime(
     onSubmitRedirect: () -> Unit,
     lockFirstTimeVM: LockFirstTimeViewModel = viewModel(
         factory = VMFactory.build {
-            LockFirstTimeViewModel(MyApp.appModule.database, MyApp.appModule.configSessionCache)
+            LockFirstTimeViewModel(MyApp.appModule.configSessionCache)
         }
     ),
     context: FragmentActivity,
@@ -40,7 +41,7 @@ fun LockFirstTime(
     }
 
     suspend fun submit(optInBio: Boolean) {
-        lockFirstTimeVM.viewModelScope.launch {
+        lockFirstTimeVM.viewModelScope.launch(Dispatchers.IO) {
 
             val submitted = async { lockFirstTimeVM.submitConfig(optInBio) }
 
@@ -98,13 +99,9 @@ fun LockFirstTime(
                 ) {
                     println("")
                 }
-            }
+            },
+            isLoading = state.loading
         )
-    }
-
-
-    if (state.loading) {
-        Loading()
     }
 
     if (state.showBiometricDialog) {

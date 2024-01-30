@@ -8,9 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.repositories.ConfigRepository
-import com.example.weightdojo.repositories.ConfigRepositoryImpl
 import com.example.weightdojo.utils.ConfigSessionCache
+import com.example.weightdojo.utils.Hashing
 import com.example.weightdojo.utils.SessionCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,9 +25,7 @@ data class LockFirstTimeState(
 )
 
 open class LockFirstTimeViewModel(
-    private val database: AppDatabase,
     private val configSessionCache: SessionCache<Config>,
-    private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
     var state by mutableStateOf(LockFirstTimeState())
 
@@ -80,26 +77,23 @@ open class LockFirstTimeViewModel(
             state = state.copy(loading = true)
         }
 
-        val success = viewModelScope.async(Dispatchers.IO) {
-            return@async repo.submitConfig(state.secondEnter, bioEnabled)
-        }.await()
+        return try {
+            val hashDetails = Hashing.generateHashDetails(state.secondEnter)
 
-        withContext(Dispatchers.Main) {
-            state = state.copy(loading = true)
+            val config = Config(
+                passcodeEnabled = true,
+                passwordHash = hashDetails.passwordHash,
+                salt = hashDetails.salt,
+                bioEnabled = bioEnabled
+            )
+
+            configSessionCache.saveSession(config)
+
+            true
+        } catch (e: Exception) {
+            Log.e("Error", e.message.toString())
+
+            false
         }
-
-        if (success) {
-            val config = viewModelScope.async(Dispatchers.IO) {
-                return@async repo.getConfig()
-            }.await()
-
-            if (config != null) {
-                configSessionCache.saveSession(config)
-            } else {
-                Log.e("sessionCacheError", "Config is null")
-            }
-        }
-
-        return success
     }
 }

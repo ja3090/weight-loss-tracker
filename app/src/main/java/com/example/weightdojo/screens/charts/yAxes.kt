@@ -16,25 +16,26 @@ fun DrawScope.plotYAxes(
     max: Float,
     textMeasurer: TextMeasurer,
     dimensions: ChartDimensions,
-    textStyle: TextStyle
+    textStyle: TextStyle,
+    unit: String
 ) {
-    if (min <= 0f || max <= 0f || dimensions.width == 0 || dimensions.height == 0) return
-
     val total = max - min
+
+    if (dimensions.width == 0 || dimensions.height == 0 || total == 0F) return
 
     val increment = total / 4
 
     for (i in 1..3) {
         val yValue = dimensions.height - (((i * increment) / total) * dimensions.height)
 
-        val text = ((increment * i) + min).toInt().toString()
+        val text = ((increment * i) + min).toInt().toString() + " $unit"
 
         val size = textMeasurer.measure(text = text, style = textStyle).size
 
         drawText(
             text = text,
             textMeasurer = textMeasurer,
-            topLeft = Offset(dimensions.width.toFloat() - 75F, yValue - (size.height / 2)),
+            topLeft = Offset(dimensions.width.toFloat() - size.width, yValue - (size.height / 2)),
             maxLines = 1,
             style = textStyle
         )

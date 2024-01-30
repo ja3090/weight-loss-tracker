@@ -66,4 +66,8 @@ class HomeViewModel(
             }
         }
     }
+
+    fun refresh() {
+        getAndSetDay(state.currentDate)
+    }
 }

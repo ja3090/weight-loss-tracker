@@ -5,7 +5,7 @@ import com.example.weightdojo.AppConfig
 class WeightUnit {
     companion object {
         fun convert(
-            from: WeightUnits,
+            from: WeightUnits = AppConfig.internalDefaultWeightUnit,
             to: WeightUnits = AppConfig.internalDefaultWeightUnit,
             value: Float
         ): Float {

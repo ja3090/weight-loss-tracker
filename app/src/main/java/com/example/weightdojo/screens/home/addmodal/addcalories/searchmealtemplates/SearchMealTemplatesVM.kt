@@ -11,6 +11,7 @@ import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.repositories.MealTemplateRepo
 import com.example.weightdojo.repositories.MealTemplateRepoImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -46,21 +47,21 @@ class SearchMealTemplatesVM(
         if (term.isEmpty()) {
             state = state.copy(mealTemplates = listOf())
         } else {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    getSearchResults(term)
-                } catch (e: Exception) {
-                    Log.e("Error", e.message.toString())
-                }
+            viewModelScope.launch {
+                getSearchResults(term)
             }
         }
     }
 
     private suspend fun getSearchResults(term: String) {
-        val searchResults = mealTemplateRepo.searchMealTemplates(term)
+        val job = viewModelScope.async(Dispatchers.IO) {
+            mealTemplateRepo.searchMealTemplates(term)
+        }
+
+        val res = job.await()
 
         withContext(Dispatchers.Main) {
-            state = state.copy(mealTemplates = searchResults)
+            state = state.copy(mealTemplates = res.data)
         }
     }
 }

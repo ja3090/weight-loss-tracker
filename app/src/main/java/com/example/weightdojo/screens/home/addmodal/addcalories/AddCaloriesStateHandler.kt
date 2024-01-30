@@ -1,6 +1,5 @@
 package com.example.weightdojo.screens.home.addmodal.addcalories
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,7 +14,7 @@ data class AddCaloriesState(
     val ingredientList: List<IngredientState> = listOf(),
     val dayId: Long? = null,
     val currentSubModal: AddCalsSubModals = AddCalsSubModals.AddMealTemplate,
-    val overwriteTemplate: Boolean? = null
+    val error: String? = null
 )
 
 enum class AddCalsSubModals {
@@ -43,22 +42,17 @@ class AddCaloriesStateHandler(
 
     var state by mutableStateOf(AddCaloriesState(dayId = dayId))
 
+    fun setErrorMessage(error: String?) {
+        state = state.copy(error = error)
+    }
+
     fun addNewIngredient() {
         val updatedList = state.ingredientList + IngredientState()
 
         state = state.copy(ingredientList = updatedList, currentSubModal = AddCalsSubModals.MealCreation)
     }
     fun changeName(string: String) {
-        val mealState = state.mealState
-
-        if (mealState == null) {
-            Log.e(
-                "createTemplateError",
-                "overwriteTemplate is required and is null. " +
-                        "User should be prompted to choose whether this template should be overwritten"
-            )
-            return
-        }
+        val mealState = state.mealState ?: return
 
         state = state.copy(mealState = mealState.copy(name = string))
     }
@@ -121,5 +115,9 @@ class AddCaloriesStateHandler(
             ingredientList = ingredientList,
             currentSubModal = AddCalsSubModals.MealCreation
         )
+    }
+
+    fun reset() {
+        state = AddCaloriesState(dayId = dayId)
     }
 }

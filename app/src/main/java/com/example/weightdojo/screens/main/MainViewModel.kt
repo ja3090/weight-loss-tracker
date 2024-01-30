@@ -1,10 +1,7 @@
 package com.example.weightdojo.screens.main
 
 import androidx.compose.runtime.mutableStateOf
-import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.repositories.ConfigRepository
-import com.example.weightdojo.repositories.ConfigRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
@@ -21,9 +18,7 @@ data class MainState(
 )
 
 class MainViewModel(
-    private val database: AppDatabase,
     configSessionCache: ConfigSessionCache,
-    private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao())
 ) : ViewModel() {
 
     var state by mutableStateOf(
@@ -40,10 +35,8 @@ class MainViewModel(
         var config: Config?
 
         runBlocking {
-            config = repo.getConfig()
+            config = configSessionCache.getActiveSession()
         }
-
-        configSessionCache.saveSession(config)
 
         val startDest = getStartDest(config)
 

@@ -13,21 +13,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.CalorieUnit
+import com.example.weightdojo.utils.CalorieUnits
 import com.example.weightdojo.utils.VMFactory
 
 @Composable
 fun MealList(
     meals: List<MealData>?,
-    weightUnit: String,
     mealListViewModel: MealListVM = viewModel(
         factory = VMFactory.build {
             MealListVM(MyApp.appModule.database)
         }
-    )
+    ),
+    config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
+    calorieUnit: CalorieUnits = config?.calorieUnit ?: AppConfig.internalDefaultCalorieUnit
 ) {
 
     val activeMeal = mealListViewModel.state.activeMeal
@@ -58,12 +63,14 @@ fun MealList(
             )
             TextDefault(
                 modifier = Modifier.padding(Sizing.paddings.medium),
-                text = "${(it.totalCalories ?: 0).toInt()} $weightUnit",
+                text = "${
+                    CalorieUnit.convert(value = it.totalCalories ?: 0f, to = calorieUnit).toInt()
+                } $calorieUnit",
             )
         }
 
         if (activeMeal !== null && it.mealId == activeMeal.mealId) {
-            IngredientList(weightUnit = weightUnit)
+            IngredientList(calorieUnit = calorieUnit)
         }
     }
 }

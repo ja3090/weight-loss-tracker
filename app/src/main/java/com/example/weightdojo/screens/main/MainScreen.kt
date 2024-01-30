@@ -30,13 +30,14 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.weightdojo.screens.settings.Settings
 
 @Composable
 fun MainScreen(
     navHostController: NavHostController = rememberNavController(),
     mainViewModel: MainViewModel = viewModel(
         factory = VMFactory.build {
-            MainViewModel(MyApp.appModule.database, MyApp.appModule.configSessionCache)
+            MainViewModel(MyApp.appModule.configSessionCache)
         }
     ),
     config: Config? = mainViewModel.state.config,
@@ -86,8 +87,7 @@ fun MainScreen(
                 .padding(it)
                 .fillMaxSize(),
             navController = navHostController,
-//            startDestination = Screens.Home.name
-            startDestination = mainViewModel.state.startDestination?.name ?: Screens.Lock.name
+            startDestination = mainViewModel.state.startDestination?.name ?: Screens.Lock.name,
         ) {
             composable(route = Screens.LockFirstTime.name) {
                 LockFirstTime(
@@ -123,10 +123,7 @@ fun MainScreen(
                 )
             }
             composable(route = Screens.Settings.name) {
-                BackHandler {
-                    navigateTo()
-                }
-                Text(text = "Settings")
+                Settings()
             }
         }
     }

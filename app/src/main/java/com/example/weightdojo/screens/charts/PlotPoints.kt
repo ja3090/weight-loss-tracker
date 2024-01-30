@@ -12,7 +12,8 @@ fun plotPoints(
     data: List<ChartData>,
     chartDimensions: ChartDimensions,
     points: List<MutableState<HighlightablePoint?>>,
-    upperLowerBound: Int
+    upperLowerBound: Int,
+    convertValues: (value: Float) -> Float
 ): PlotPointsDTO {
 
     var lastPoint: Offset? = null
@@ -33,8 +34,8 @@ fun plotPoints(
             continue
         }
 
-        max = ceil((row.max + upperLowerBound) / upperLowerBound) * upperLowerBound
-        min = floor((row.min - upperLowerBound) / upperLowerBound) * upperLowerBound
+        max = ceil((convertValues(row.max) + upperLowerBound) / upperLowerBound) * upperLowerBound
+        min = floor((convertValues(row.min) - upperLowerBound) / upperLowerBound) * upperLowerBound
 
         if (min < 0) min = 0F
 
@@ -42,7 +43,7 @@ fun plotPoints(
         val x = ((chartDimensions.width / (data.size - 1)) * index).toFloat()
 
         val y =
-            chartDimensions.height - (chartDimensions.height * ((row.value - min) / total))
+            chartDimensions.height - (chartDimensions.height * ((convertValues(row.value) - min) / total))
 
         if (lastPoint != null) {
             buildCurveLine(line, lastPoint, Offset(x, y))
@@ -61,7 +62,7 @@ fun plotPoints(
         points[index].value =
             HighlightablePoint(
                 offset = Offset(x, y),
-                value = row.value.toInt().toString(),
+                value = convertValues(row.value).toInt().toString(),
                 date = returnNeatDate(row.date)
             )
     }

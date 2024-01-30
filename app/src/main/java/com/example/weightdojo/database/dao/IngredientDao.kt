@@ -1,16 +1,18 @@
 package com.example.weightdojo.database.dao
 
-import android.util.Log
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.weightdojo.database.models.Ingredient
+import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
+import com.example.weightdojo.utils.totals
 
 @Dao
-interface IngredientDao {
+interface IngredientDao : CommonMethods {
     @Query(
         "SELECT * FROM ingredient " +
                 "WHERE meal_id = :mealId"
@@ -23,7 +25,15 @@ interface IngredientDao {
             insertIngredient(ingredient)
         }
 
-        updateMeal(mealId)
+        val total = totals(ingredients)
+
+        updateMeal(
+            id = mealId,
+            totalCarbs = total.carbs,
+            totalProtein = total.protein,
+            totalFat = total.fat,
+            totalCals = total.totalCals
+        )
 
         updateDay(dayId)
     }
@@ -36,23 +46,8 @@ interface IngredientDao {
     @Query("DELETE FROM ingredient")
     fun _DELETE_ALL()
 
-    @Query(
-        "UPDATE ingredient " +
-                "SET grams = :grams," +
-                "calories_per_100g = :caloriesPer100, " +
-                "carbohydrates_per_100g = :carbsPer100, " +
-                "fat_per_100g = :fatPer100, " +
-                "protein_per_100g = :proteinPer100 " +
-                "WHERE id = :id "
-    )
-    fun updateIngredient(
-        grams: Float,
-        caloriesPer100: Float,
-        carbsPer100: Float,
-        fatPer100: Float,
-        proteinPer100: Float,
-        id: Long
-    )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun updateIngredient(ingredient: Ingredient): Long
 
     @Query(
         "DELETE FROM ingredient " +
@@ -79,63 +74,25 @@ interface IngredientDao {
                 deleteIngredient(entry.ingredientId)
                 deleteCounter++
             } else {
-                updateIngredient(
-                    id = entry.ingredientId,
-                    grams = entry.grams,
-                    proteinPer100 = entry.proteinPer100,
-                    carbsPer100 = entry.carbsPer100,
-                    fatPer100 = entry.fatPer100,
-                    caloriesPer100 = entry.caloriesPer100
-                )
+                val ingredient = ConvertTemplates().toIngredient(entry, mealId)
+                updateIngredient(ingredient)
             }
         }
 
         if (deleteCounter == ingredientStates.size) {
-            deleteMeal(mealId)
-        } else {
-            updateMeal(mealId)
+            throw Exception("Please validate that all ingredients being deleted doesn't pass")
         }
 
+        val totals = totals(ingredientStates.filter { it.markedFor !== Marked.DELETE })
 
+        updateMeal(
+            id = mealId,
+            totalCals = totals.totalCals,
+            totalFat = totals.fat,
+            totalProtein = totals.protein,
+            totalCarbs = totals.carbs
+        )
 
         updateDay(dayId)
     }
-
-    @Query(
-        "WITH CalorieTotals AS ( " +
-                "    SELECT SUM(total_carbohydrates) as totalCarbs, " +
-                "     SUM(total_calories) as totalCalories, " +
-                "     SUM(total_fat) as totalFat, " +
-                "     SUM(total_protein) as totalProtein " +
-                "     FROM meal " +
-                "    WHERE meal.day_id = :dayId " +
-                ") " +
-                " " +
-                "UPDATE day " +
-                "SET total_carbohydrates = (SELECT totalCarbs FROM CalorieTotals), " +
-                "total_protein = (SELECT totalProtein FROM CalorieTotals), " +
-                " total_fat = (SELECT totalFat FROM CalorieTotals), " +
-                " total_calories = (SELECT totalCalories FROM CalorieTotals) " +
-                "WHERE id = :dayId"
-    )
-    fun updateDay(dayId: Long)
-
-    @Query(
-        "WITH CalorieTotals AS ( " +
-                "    SELECT SUM((grams / 100) * calories_per_100g) as totalCalories, " +
-                "     SUM((grams / 100) * fat_per_100g) as totalFat, " +
-                "     SUM((grams / 100) * carbohydrates_per_100g) as totalCarbs, " +
-                "     SUM((grams / 100) * protein_per_100g) as totalProtein " +
-                "     FROM ingredient " +
-                "    WHERE ingredient.meal_id = :mealId " +
-                ") " +
-                " " +
-                "UPDATE meal " +
-                "SET total_carbohydrates = (SELECT totalCarbs FROM CalorieTotals), " +
-                "total_protein = (SELECT totalProtein FROM CalorieTotals), " +
-                " total_fat = (SELECT totalFat FROM CalorieTotals), " +
-                " total_calories = (SELECT totalCalories FROM CalorieTotals) " +
-                "WHERE id = :mealId"
-    )
-    fun updateMeal(mealId: Long)
 }

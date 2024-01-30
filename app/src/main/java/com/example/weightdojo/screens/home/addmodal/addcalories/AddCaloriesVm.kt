@@ -25,6 +25,7 @@ class AddCaloriesVm(
     private val mealRepository: MealRepository = MealRepositoryImpl(database.mealDao())
 ) : ViewModel() {
     var stateHandler by mutableStateOf(AddCaloriesStateHandler(dayId = dayId))
+    private val addCaloriesValidation = AddCaloriesValidation()
 
     fun moveToAddNewMeal(mealTemplateId: Long? = null) {
         if (mealTemplateId == null) {
@@ -61,13 +62,26 @@ class AddCaloriesVm(
             return false
         }
 
-        val mealTemplate = stateHandler.templateConverter.toMealTemplate(mealState, true)
+        val validate = addCaloriesValidation.validateSubmission(stateHandler.state)
 
-        val res = viewModelScope.async(Dispatchers.IO) {
+        if (!validate.success) {
+            stateHandler.setErrorMessage(error = validate.errorMessage)
+            return false
+        }
+
+        val mealTemplate = stateHandler.templateConverter.toMealTemplate(mealState)
+
+        val job = viewModelScope.async(Dispatchers.IO) {
             mealTemplateRepo.overwriteTemplate(mealTemplate, stateHandler.state.ingredientList)
         }
 
-        return res.await().success
+        val res = job.await()
+
+        if (!res.success) {
+            stateHandler.setErrorMessage(res.errorMessage)
+        }
+
+        return res.success
     }
 
     suspend fun submitMeal(): Boolean {
@@ -78,6 +92,14 @@ class AddCaloriesVm(
             Log.e("Error", "one of the required arguments is null")
             return false
         }
+
+        val validate = addCaloriesValidation.validateSubmission(stateHandler.state)
+
+        if (!validate.success) {
+            stateHandler.setErrorMessage(error = validate.errorMessage)
+            return false
+        }
+
         val meal = Meal(
             name = mealState.name,
             totalFat = mealState.totalFat,
@@ -87,53 +109,43 @@ class AddCaloriesVm(
             dayId = dayId
         )
 
-        val res = viewModelScope.async(Dispatchers.IO) {
+        val job = viewModelScope.async(Dispatchers.IO) {
             mealRepository.handleInsert(
                 mealState = meal,
                 ingredientList = stateHandler.state.ingredientList
             )
         }
 
-        return res.await().success
-    }
+        val res = job.await()
 
-    private suspend fun templateSubmitHandler(overwrite: Boolean): Boolean {
-        return mealTemplateRepo.createMealTemplate(
-            mealState = stateHandler.state.mealState,
-            ingredientStateList = stateHandler.state.ingredientList,
-            overwrite = overwrite
-        )
+        if (!res.success) {
+            stateHandler.setErrorMessage(res.errorMessage)
+        }
+
+        return res.success
     }
 
     suspend fun createTemplate(): Boolean {
+        val validate = addCaloriesValidation.validateSubmission(stateHandler.state)
 
-        val mealTemplateId = stateHandler.state.mealState?.mealTemplateId
-        val overwriteTemplate = stateHandler.state.overwriteTemplate
-
-        if (mealTemplateId == null) {
-            Log.e(
-                "mealStateError",
-                "mealState is required and is null"
-            )
-            return false
-        }
-        if (overwriteTemplate == null) {
-            Log.e(
-                "createTemplateError",
-                "overwriteTemplate is required and is null. " +
-                        "User should be prompted to choose whether this template should be overwritten"
-            )
+        if (!validate.success) {
+            stateHandler.setErrorMessage(error = validate.errorMessage)
             return false
         }
 
-        if (mealTemplateId == 0L) {
-            return templateSubmitHandler(false)
+        val job = viewModelScope.async(Dispatchers.IO) {
+            mealTemplateRepo.createMealTemplate(
+                mealState = stateHandler.state.mealState,
+                ingredientStateList = stateHandler.state.ingredientList,
+            )
         }
 
-        if (mealTemplateId != 0L) {
-            return templateSubmitHandler(overwriteTemplate)
+        val res = job.await()
+
+        if (!res.success) {
+            stateHandler.setErrorMessage(res.errorMessage)
         }
 
-        return false
+        return res.success
     }
 }

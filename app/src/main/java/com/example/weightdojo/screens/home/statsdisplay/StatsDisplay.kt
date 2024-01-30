@@ -76,7 +76,8 @@ fun StatsDisplay(
                             config?.sex,
                             config?.height,
                             mostRecentWeight,
-                            config?.calorieUnit
+                            config?.calorieUnit,
+                            config?.weightUnit
                         ) ?: "-", statTitle = "TDEE", modifier = Modifier.weight(1f)
                     )
                     Widget(

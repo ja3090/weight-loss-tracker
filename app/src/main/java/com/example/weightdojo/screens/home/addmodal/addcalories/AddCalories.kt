@@ -5,12 +5,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.MyApp
+import com.example.weightdojo.components.ErrorDialog
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.screens.home.addmodal.AddModalVm
 import com.example.weightdojo.screens.home.addmodal.ModalFrame
 import com.example.weightdojo.screens.home.addmodal.addcalories.addnewmeal.AddNewMeal
-import com.example.weightdojo.screens.home.addmodal.addcalories.searchingredienttemplates.SearchIngredientTemplates
+import com.example.weightdojo.components.addingredients.searchingredienttemplates.SearchIngredientTemplates
 import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchMealTemplates
 import com.example.weightdojo.utils.VMFactory
 
@@ -23,6 +24,11 @@ fun AddCalories(
     state: AddCaloriesState = addCaloriesVm.stateHandler.state,
     addModalVm: AddModalVm = viewModel()
 ) {
+    ErrorDialog(
+        onConfirm = { addCaloriesVm.stateHandler.setErrorMessage(null) },
+        title = "Error",
+        text = state.error
+    )
 
     ModalFrame(title = state.currentSubModal.toString(), onBack = {
         when (state.currentSubModal) {
@@ -30,6 +36,7 @@ fun AddCalories(
             AddCalsSubModals.AddIngredientTemplate -> addCaloriesVm.stateHandler.moveToSubModal(
                 AddCalsSubModals.MealCreation
             )
+
             AddCalsSubModals.MealCreation -> addCaloriesVm.stateHandler.moveToSubModal(
                 AddCalsSubModals.AddMealTemplate
             )
@@ -38,7 +45,11 @@ fun AddCalories(
         when (state.currentSubModal) {
             AddCalsSubModals.AddMealTemplate -> SearchMealTemplates()
             AddCalsSubModals.MealCreation -> AddNewMeal()
-            AddCalsSubModals.AddIngredientTemplate -> SearchIngredientTemplates()
+            AddCalsSubModals.AddIngredientTemplate -> SearchIngredientTemplates(
+                onAddNew = addCaloriesVm.stateHandler::addNewIngredient,
+                useTemplate = addCaloriesVm.stateHandler::addIngredientToMeal,
+                isOpen = addCaloriesVm.stateHandler.state.currentSubModal == AddCalsSubModals.AddIngredientTemplate
+            )
         }
     }
 }

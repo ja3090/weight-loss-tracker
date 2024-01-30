@@ -52,7 +52,7 @@ fun CaloriesDisplay(meals: List<MealData>?, weightUnit: String) {
                 modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
             )
 
-            MealList(meals, weightUnit)
+            MealList(meals)
         }
     }
 }

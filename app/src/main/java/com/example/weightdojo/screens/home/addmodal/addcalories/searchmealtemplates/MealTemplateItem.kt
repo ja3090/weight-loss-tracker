@@ -11,14 +11,20 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.screens.home.addmodal.addcalories.AddCaloriesVm
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun MealTemplateItem(it: MealTemplate) {
+fun MealTemplateItem(
+    it: MealTemplate,
+    config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
+    calorieUnit: String = config?.weightUnit?.name ?: "KCAL",
+) {
     val addCaloriesVm: AddCaloriesVm = viewModel()
     val searchMealTemplatesVM: SearchMealTemplatesVM = viewModel()
     val state = searchMealTemplatesVM.state
@@ -40,7 +46,7 @@ fun MealTemplateItem(it: MealTemplate) {
             ) {
                 TextDefault(text = it.name, color = MaterialTheme.colors.primaryVariant)
 
-                TextDefault(text = "${(it.totalCalories ?: 0f).toInt()} KCAL")
+                TextDefault(text = "${it.totalCalories.toInt()} $calorieUnit")
             }
 
             if (state.activeMealTemplate?.mealTemplateId == it.mealTemplateId) {
@@ -61,7 +67,6 @@ fun MealTemplateItem(it: MealTemplate) {
         }
     }
 }
-
 
 
 @Composable

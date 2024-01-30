@@ -7,21 +7,19 @@ import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.MealState
 import com.example.weightdojo.datatransferobjects.RepoResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 
 interface MealTemplateRepo {
-    fun searchMealTemplates(term: String): List<MealTemplate>
+    suspend fun searchMealTemplates(term: String): RepoResponse<List<MealTemplate>>
     suspend fun createMealTemplate(
         mealState: MealState?,
         ingredientStateList: List<IngredientState>,
-        overwrite: Boolean
-    ): Boolean
+    ): RepoResponse<Nothing?>
+
     suspend fun getMealTemplateWithIngredientsById(
         mealTemplateId: Long,
         dayId: Long?
     ): RepoResponse<out TemplateState?>
+
     suspend fun overwriteTemplate(
         mealTemplate: MealTemplate,
         ingredientList: List<IngredientState>
@@ -35,8 +33,22 @@ class MealTemplateRepoImpl(
     private val templateConverter: ConvertTemplates = ConvertTemplates()
 ) : MealTemplateRepo {
 
-    override fun searchMealTemplates(term: String): List<MealTemplate> {
-        return mealTemplateDao.searchMealTemplates(term)
+    override suspend fun searchMealTemplates(term: String): RepoResponse<List<MealTemplate>> {
+        return try {
+            val mealTempls = mealTemplateDao.searchMealTemplates(term)
+
+            RepoResponse(
+                success = true,
+                data = mealTempls
+            )
+        } catch (e: Exception) {
+
+            RepoResponse(
+                success = false,
+                data = listOf(),
+                errorMessage = e.message
+            )
+        }
     }
 
     override suspend fun getMealTemplateWithIngredientsById(
@@ -71,7 +83,7 @@ class MealTemplateRepoImpl(
         ingredientList: List<IngredientState>
     ): RepoResponse<Nothing?> {
         return try {
-            mealTemplateDao.updateMealTemplate(mealTemplate, ingredientList)
+            mealTemplateDao.updateMealTemplateHandler(mealTemplate, ingredientList)
 
             RepoResponse(success = true, data = null)
         } catch (e: Exception) {
@@ -82,29 +94,20 @@ class MealTemplateRepoImpl(
     override suspend fun createMealTemplate(
         mealState: MealState?,
         ingredientStateList: List<IngredientState>,
-        overwrite: Boolean
-    ): Boolean {
+    ): RepoResponse<Nothing?> {
+        return try {
+            mealState ?: throw Exception("mealState is null")
 
-        val success = CoroutineScope(Dispatchers.IO).async {
-            try {
-                mealState ?: throw Exception("mealState is null")
+            mealTemplateDao.createMealTemplate(
+                mealTemplate = templateConverter.toMealTemplate(mealState),
+                ingredientTemplates = ingredientStateList
+            )
 
-                val ingTemplates =
-                    ingredientStateList.map { templateConverter.toIngredientTemplate(it) }
+            RepoResponse(success = true, data = null)
+        } catch (e: Exception) {
+            Log.e("templateSubmissionError", e.message.toString())
 
-                mealTemplateDao.createMealTemplate(
-                    mealTemplate = templateConverter.toMealTemplate(mealState, false),
-                    ingredientTemplates = ingTemplates
-                )
-
-                return@async true
-            } catch (e: Exception) {
-                Log.e("templateSubmissionError", e.message.toString())
-
-                return@async false
-            }
+            RepoResponse(success = true, data = null, errorMessage = e.message)
         }
-
-        return success.await()
     }
 }

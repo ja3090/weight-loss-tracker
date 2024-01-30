@@ -19,18 +19,25 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.R
 import com.example.weightdojo.components.CustomButton
+import com.example.weightdojo.components.addingredients.AddIngredient
+import com.example.weightdojo.components.addingredients.searchingredienttemplates.SearchIngredientTemplates
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.inputs.IngredientAsInput
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.ui.Sizing
+import com.example.weightdojo.utils.CalorieUnit
+import com.example.weightdojo.utils.CalorieUnits
 import com.example.weightdojo.utils.totalGrams
 
 @Composable
 fun IngredientList(
-    weightUnit: String,
+    calorieUnit: CalorieUnits,
     mealListVM: MealListVM = viewModel(),
     state: MealListState = mealListVM.state,
 ) {
+    if (state.addIngredientModalOpen) {
+        AddIngredientModal()
+    }
 
     Column(
         modifier = Modifier
@@ -50,7 +57,6 @@ fun IngredientList(
             state.ingredientListAsState?.map { ingredientAsState ->
                 IngredientAsInput(
                     ingredientState = ingredientAsState,
-                    weightUnit = weightUnit,
                     onValueChange = {
                         mealListVM.changeIngredient(it)
                     },
@@ -61,8 +67,11 @@ fun IngredientList(
             state.ingredientList?.map {
                 Ingredient(
                     name = it.name,
-                    weightUnit = weightUnit,
-                    totalCalories = totalGrams(it.grams, it.caloriesPer100)
+                    weightUnit = calorieUnit.name,
+                    totalCalories = CalorieUnit.convert(
+                        to = calorieUnit,
+                        value = totalGrams(it.grams, it.caloriesPer100)
+                    )
                 )
             }
         }
@@ -101,15 +110,22 @@ fun IngredientList(
                     .padding(vertical = Sizing.paddings.medium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                AddIngredient {
+                    mealListVM.openAddIngModal(true)
+                }
                 CustomButton(buttonName = "Save") {
                     mealListVM.makeEdits()
                 }
-                TextDefault(text = "Cancel", modifier = Modifier
-                    .padding(
-                        vertical = Sizing.paddings.small,
-                        horizontal = Sizing.paddings.medium
-                    )
-                    .clickable { mealListVM.removeActive() })
+                TextDefault(
+                    text = "Cancel",
+                    modifier = Modifier
+                        .padding(
+                            vertical = Sizing.paddings.small,
+                            horizontal = Sizing.paddings.medium
+                        )
+                        .clickable { mealListVM.removeActive() },
+                    fontSize = Sizing.font.small
+                )
             }
         }
     }

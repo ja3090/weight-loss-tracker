@@ -12,21 +12,42 @@ data class Stats(
     val calories: String
 )
 
+
 fun statsDisplayHelper(config: Config?, dayData: DayData?): Stats {
     val calorieUnit = config?.calorieUnit ?: AppConfig.internalDefaultCalorieUnit
-    val weightUnit = config?.weightUnit?.name ?: "KG"
+    val weightUnit = config?.weightUnit ?: AppConfig.internalDefaultWeightUnit
     val weight = dayData?.day?.weight
     val goalWeight = config?.goalWeight
     val totalCalories = dayData?.day?.totalCalories
 
-    val goalWeightAsString = if (goalWeight !== null) "$goalWeight $weightUnit" else "-"
-    val weightAsString = if (weight !== null) "$weight $weightUnit" else "-"
+    val goalWeightAsString = if (goalWeight !== null) "${
+        WeightUnit.convert(
+            from = AppConfig.internalDefaultWeightUnit,
+            to = weightUnit,
+            value = goalWeight
+        )
+    } $weightUnit" else "-"
+    
+    val weightAsString = if (weight !== null) "${
+        WeightUnit.convert(
+            to = weightUnit,
+            from = AppConfig.internalDefaultWeightUnit,
+            value = weight
+        )
+    } $weightUnit" else "-"
+
     val caloriesAsString =
-        if (totalCalories !== null) "${totalCalories.toInt()} $calorieUnit" else "-"
+        if (totalCalories !== null) "${
+            CalorieUnit.convert(
+                to = calorieUnit,
+                value = totalCalories,
+                from = AppConfig.internalDefaultCalorieUnit
+            )
+        } $calorieUnit" else "-"
 
     return Stats(
         calorieUnit = calorieUnit.name,
-        weightUnit = weightUnit,
+        weightUnit = weightUnit.name,
         goalWeight = goalWeightAsString,
         weight = weightAsString,
         calories = caloriesAsString

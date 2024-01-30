@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.weightdojo.database.dao.CalorieChartDao
-import com.example.weightdojo.database.dao.ConfigDao
 import com.example.weightdojo.database.dao.DayDao
 import com.example.weightdojo.database.dao.IngredientDao
 import com.example.weightdojo.database.dao.IngredientTemplateDao
@@ -28,7 +27,6 @@ import com.example.weightdojo.database.models.MealTemplate
 @Database(
     entities = [
         Meal::class,
-        Config::class,
         Ingredient::class,
         Day::class,
         Date::class,
@@ -40,7 +38,6 @@ import com.example.weightdojo.database.models.MealTemplate
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun configDao(): ConfigDao
     abstract fun dayDao(): DayDao
     abstract fun mealDao(): MealDao
     abstract fun calorieChartDao(): CalorieChartDao

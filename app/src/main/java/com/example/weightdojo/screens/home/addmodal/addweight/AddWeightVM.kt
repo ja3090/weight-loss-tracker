@@ -24,13 +24,13 @@ class AddWeightVM(
     private val dayData: DayData?,
     private val setWeightRepo: SetWeightRepo = SetWeightRepoImpl(
         dayDao = database.dayDao(),
-        configDao = database.configDao()
     ),
     private val configSessionCache: ConfigSessionCache = MyApp.appModule.configSessionCache,
     private val config: Config? = configSessionCache.getActiveSession()
 ) : ViewModel() {
 
-    var weight by mutableStateOf(initialWeight(dayData))
+    var weight by mutableStateOf(initialWeight(dayData, config?.weightUnit))
+    var showExtraOptions by mutableStateOf(config?.showExtraOptions ?: true)
 
     val extraOptions by mutableStateOf(ExtraOptions(config))
 
@@ -60,6 +60,16 @@ class AddWeightVM(
         weight = newWeight
     }
 
+    fun showExtraOptions() {
+        val updatedConfig = config?.copy(showExtraOptions = !showExtraOptions)
+        showExtraOptions = !showExtraOptions
+        extraOptions.sex = null
+        extraOptions.age = null
+        extraOptions.height = null
+
+        configSessionCache.saveSession(updatedConfig)
+    }
+
     suspend fun submit(): Boolean {
         val passes = validateSubmission()
 
@@ -86,7 +96,6 @@ class AddWeightVM(
                     dayId = dayData.day.id,
                     weight = weightToInternalUnit,
                     configExtraOptions = extraOptions,
-                    configId = config.id
                 )
 
                 return@async true

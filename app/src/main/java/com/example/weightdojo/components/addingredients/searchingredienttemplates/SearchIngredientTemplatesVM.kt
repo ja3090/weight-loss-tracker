@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.home.addmodal.addcalories.searchingredienttemplates
+package com.example.weightdojo.components.addingredients.searchingredienttemplates
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -10,8 +10,12 @@ import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.dao.IngredientTemplateDao
 import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.MealTemplate
+import com.example.weightdojo.repositories.IngredientRepositoryImpl
+import com.example.weightdojo.repositories.IngredientTemplateRepo
+import com.example.weightdojo.repositories.IngredientTemplateRepoImpl
 import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchMealTemplatesState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -22,12 +26,18 @@ data class SearchIngredientTemplatesState(
 
 class SearchIngredientTemplatesVM(
     private val database: AppDatabase,
-    private val ingredientTemplateDao: IngredientTemplateDao = database.ingredientTemplateDao()
+    private val ingredientTemplateRepo: IngredientTemplateRepo = IngredientTemplateRepoImpl(
+        database.ingredientTemplateDao()
+    )
 ) : ViewModel() {
 
     var state by mutableStateOf(
         SearchIngredientTemplatesState()
     )
+
+    fun reset() {
+        state = state.copy(activeIngredientTemplate = null, ingredientTemplates = listOf())
+    }
 
     fun makeActive(mealTemplate: IngredientTemplate) {
         val isActive =
@@ -45,24 +55,23 @@ class SearchIngredientTemplatesVM(
     }
 
     fun setSearchResults(term: String) {
-        if (term.isEmpty()) {
-            state = state.copy(ingredientTemplates = listOf())
-        } else {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    getSearchResults(term)
-                } catch (e: Exception) {
-                    Log.e("Error", e.message.toString())
-                }
+        if (term.isEmpty()) state = state.copy(ingredientTemplates = listOf())
+        else {
+            viewModelScope.launch {
+                getSearchResults(term)
             }
         }
     }
 
     private suspend fun getSearchResults(term: String) {
-        val searchResults = ingredientTemplateDao.searchIngredientTemplates(term)
+        val job = viewModelScope.async(Dispatchers.IO) {
+            ingredientTemplateRepo.getIngredientTemplates(term)
+        }
+
+        val res = job.await()
 
         withContext(Dispatchers.Main) {
-            state = state.copy(ingredientTemplates = searchResults)
+            state = state.copy(ingredientTemplates = res.data)
         }
     }
 }

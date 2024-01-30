@@ -3,14 +3,12 @@ package com.example.weightdojo.database.dao.mealtemplate
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.MealIngredientTemplate
 import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
-import com.example.weightdojo.utils.totals
 
 
 interface UpdateTemplate {
@@ -22,7 +20,7 @@ interface UpdateTemplate {
                 "total_calories = :totalCals " +
                 " WHERE mealTemplateId = :id"
     )
-    fun updateMeal(
+    fun updateMealTemplate(
         totalCarbs: Float,
         totalFat: Float,
         totalCals: Float,

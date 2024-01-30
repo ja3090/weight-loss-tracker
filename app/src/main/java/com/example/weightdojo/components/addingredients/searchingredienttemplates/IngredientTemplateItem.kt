@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.home.addmodal.addcalories.searchingredienttemplates
+package com.example.weightdojo.components.addingredients.searchingredienttemplates
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,18 +11,24 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.screens.home.addmodal.addcalories.AddCaloriesVm
 import com.example.weightdojo.ui.Sizing
 
 @Composable
-fun IngredientTemplateItem(it: IngredientTemplate) {
-    val addCaloriesVm: AddCaloriesVm = viewModel()
+fun IngredientTemplateItem(
+    it: IngredientTemplate,
+    useTemplate: (templ: IngredientTemplate) -> Unit,
+    config: Config? = MyApp.appModule.configSessionCache.getActiveSession()
+) {
     val searchIngredientTemplatesVM: SearchIngredientTemplatesVM = viewModel()
     val state = searchIngredientTemplatesVM.state
+    val calorieUnit = config?.calorieUnit?.name ?: "KCAL"
 
     Box(
         modifier = Modifier
@@ -41,7 +47,7 @@ fun IngredientTemplateItem(it: IngredientTemplate) {
             ) {
                 TextDefault(text = it.name, color = MaterialTheme.colors.primaryVariant)
 
-                TextDefault(text = "${it.caloriesPer100.toInt()} KCAL")
+                TextDefault(text = "${it.caloriesPer100.toInt()} $calorieUnit")
             }
 
             if (state.activeIngredientTemplate?.ingredientTemplateId == it.ingredientTemplateId) {
@@ -55,14 +61,14 @@ fun IngredientTemplateItem(it: IngredientTemplate) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CustomButton(buttonName = "Use") {
-                        addCaloriesVm.stateHandler.addIngredientToMeal(it)
+//                        addCaloriesVm.stateHandler.addIngredientToMeal(it)
+                        useTemplate(it)
                     }
                 }
             }
         }
     }
 }
-
 
 
 @Composable

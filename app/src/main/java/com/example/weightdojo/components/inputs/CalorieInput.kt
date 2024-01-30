@@ -27,6 +27,7 @@ fun CalorieInput(
 ) {
     Box(
         modifier = Modifier
+            .then(modifier)
             .padding(vertical = Sizing.paddings.extraSmall / 2)
     ) {
         if (value == 0f) {
@@ -53,7 +54,6 @@ fun CalorieInput(
             ),
             cursorBrush = SolidColor(MaterialTheme.colors.primary),
             modifier = Modifier
-                .then(modifier)
         )
     }
 }

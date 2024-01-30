@@ -7,6 +7,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Ingredient
+import com.example.weightdojo.database.models.IngredientTemplate
+import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.datatransferobjects.MealData
@@ -20,17 +22,37 @@ data class MealListState(
     val activeMeal: MealData? = null,
     val ingredientList: List<Ingredient>? = null,
     val isEditing: Boolean = false,
-    val ingredientListAsState: List<IngredientState>? = null
+    val ingredientListAsState: List<IngredientState>? = null,
+    val addIngredientModalOpen: Boolean = false
 )
 
 class MealListVM(
     val database: AppDatabase,
+    val templateConverter: ConvertTemplates = ConvertTemplates(),
     private val ingredientRepo: IngredientRepository = IngredientRepositoryImpl(
         database.ingredientDao()
     )
 ) : ViewModel() {
 
     var state by mutableStateOf(MealListState())
+
+    fun openAddIngModal(boolean: Boolean) {
+        state = state.copy(addIngredientModalOpen = boolean)
+    }
+
+    fun addIngredient(templ: IngredientTemplate) {
+        val ingredientState = templateConverter.toIngredientState(templ)
+
+        state = state.copy(
+            ingredientListAsState = state.ingredientListAsState?.plus(ingredientState)
+        )
+    }
+
+    fun addNewIngredient() {
+        state = state.copy(
+            ingredientListAsState = state.ingredientListAsState?.plus(IngredientState())
+        )
+    }
 
     fun makeEdits() {
         val dayId = state.activeMeal?.dayId
@@ -121,7 +143,7 @@ class MealListVM(
                 ingredientId = it.id,
                 name = it.name,
                 grams = it.grams,
-                carbsPer100 = it.carbohydratesPer100,
+                carbohydratesPer100 = it.carbohydratesPer100,
                 fatPer100 = it.fatPer100,
                 proteinPer100 = it.proteinPer100
             )

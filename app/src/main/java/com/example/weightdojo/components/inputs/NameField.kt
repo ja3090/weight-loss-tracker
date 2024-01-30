@@ -53,7 +53,7 @@ fun NameField(
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
                 textStyle = TextStyle(
                     fontSize = Sizing.font.default,
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colors.primaryVariant,
                 ),
                 cursorBrush = SolidColor(MaterialTheme.colors.primary),
                 modifier = Modifier

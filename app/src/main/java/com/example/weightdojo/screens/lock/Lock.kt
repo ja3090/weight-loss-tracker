@@ -27,7 +27,7 @@ fun Lock(
     canUseBiometrics: Boolean = Biometrics.canUseBiometrics(context),
     redirectToHome: () -> Unit,
     lockViewModel: LockViewModel = viewModel(factory = VMFactory.build {
-        LockViewModel(database = MyApp.appModule.database, config = config)
+        LockViewModel(config = config)
     }),
     isAuthenticated: Boolean,
 
@@ -39,7 +39,10 @@ fun Lock(
         !lockViewModel.state.declineBiometrics
     ) {
         Biometrics.authenticateWithBiometric(context,
-            onSuccess = redirectToHome,
+            onSuccess = {
+                lockViewModel.setIsLoading(true)
+                redirectToHome()
+            },
             onFail = {},
             onError = { lockViewModel.declineBiometrics(true) })
     }
@@ -81,11 +84,8 @@ fun Lock(
                 }
             } else {
                 null
-            }
+            },
+            isLoading = lockViewModel.state.loading
         )
-    }
-
-    if (lockViewModel.state.loading) {
-        Loading()
     }
 }

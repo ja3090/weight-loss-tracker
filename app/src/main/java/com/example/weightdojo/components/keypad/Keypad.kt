@@ -1,5 +1,6 @@
 package com.example.weightdojo.components.keypad
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.weightdojo.PASSCODE_LENGTH
 import com.example.weightdojo.R
 import com.example.weightdojo.TestTags
+import com.example.weightdojo.components.Loading
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.ui.Sizing
@@ -37,12 +39,18 @@ fun Keypad(
     rightOfZeroCustomBtn: @Composable ((
         modifier: Modifier
     ) -> Unit)? = null,
+    isLoading: Boolean
 ) {
+    Log.d("isLoading", isLoading.toString())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
     ) {
+        if (isLoading) {
+            Loading()
+        }
         Column(
             modifier = Modifier
                 .weight(2f),

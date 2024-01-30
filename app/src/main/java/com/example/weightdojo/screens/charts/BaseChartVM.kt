@@ -47,7 +47,7 @@ enum class TimePeriods {
 abstract class BaseChartVM(
     open val database: AppDatabase,
     open val dateRepo: ChartRepository,
-    val timePeriod: TimePeriods = TimePeriods.ONE_WEEK
+    private val timePeriod: TimePeriods = TimePeriods.ONE_WEEK
 ) : ViewModel() {
 
     var chartState by mutableStateOf(ChartState(timePeriod = timePeriod))

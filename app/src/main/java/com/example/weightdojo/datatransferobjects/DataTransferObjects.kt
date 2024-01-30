@@ -3,6 +3,8 @@ package com.example.weightdojo.datatransferobjects
 import com.example.weightdojo.database.models.Day
 import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.database.models.Meal
+import com.example.weightdojo.database.models.MealTemplate
+import com.example.weightdojo.database.models.NutritionalValues
 import java.time.LocalDate
 import java.util.UUID
 
@@ -36,13 +38,13 @@ data class IngredientState(
     var markedFor: Marked = Marked.EDIT,
     val ingredientId: Long = 0,
     val name: String = "",
-    val caloriesPer100: Float = 0f,
-    val grams: Float = 0f,
-    val proteinPer100: Float = 0f,
-    val carbsPer100: Float = 0f,
-    val fatPer100: Float = 0f,
+    override val caloriesPer100: Float = 0f,
+    override val grams: Float = 0f,
+    override val proteinPer100: Float = 0f,
+    override val carbohydratesPer100: Float = 0f,
+    override val fatPer100: Float = 0f,
     val ingredientTemplateId: Long = 0L
-)
+) : NutritionalValues
 
 data class MealState(
     val id: Long = 0,

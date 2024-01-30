@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.Database
-import com.example.weightdojo.database.dao.ConfigDao
 import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.utils.Hashing
 import junit.framework.TestCase.assertNotNull

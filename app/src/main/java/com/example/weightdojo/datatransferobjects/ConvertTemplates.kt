@@ -1,5 +1,6 @@
 package com.example.weightdojo.datatransferobjects
 
+import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.MealTemplate
 
@@ -46,7 +47,7 @@ class ConvertTemplates {
             grams = ingTemplate.grams,
             name = ingTemplate.name,
             ingredientId = 0,
-            carbsPer100 = ingTemplate.carbohydratesPer100,
+            carbohydratesPer100 = ingTemplate.carbohydratesPer100,
             fatPer100 = ingTemplate.fatPer100,
             proteinPer100 = ingTemplate.proteinPer100,
             ingredientTemplateId = ingTemplate.ingredientTemplateId
@@ -57,7 +58,7 @@ class ConvertTemplates {
         return IngredientTemplate(
             ingredientTemplateId = ingredientState.ingredientTemplateId,
             grams = ingredientState.grams,
-            carbohydratesPer100 = ingredientState.carbsPer100,
+            carbohydratesPer100 = ingredientState.carbohydratesPer100,
             name = ingredientState.name,
             fatPer100 = ingredientState.fatPer100,
             caloriesPer100 = ingredientState.caloriesPer100,
@@ -65,14 +66,27 @@ class ConvertTemplates {
         )
     }
 
-    fun toMealTemplate(mealState: MealState, overwrite: Boolean): MealTemplate {
+    fun toMealTemplate(mealState: MealState): MealTemplate {
         return MealTemplate(
-            mealTemplateId = if (overwrite) mealState.mealTemplateId else 0L,
+            mealTemplateId = mealState.mealTemplateId,
             name = mealState.name,
             totalCarbohydrates = mealState.totalCarbohydrates,
             totalProtein = mealState.totalProtein,
             totalFat = mealState.totalFat,
             totalCalories = mealState.totalCalories
+        )
+    }
+
+    fun toIngredient(ingredientState: IngredientState, mealId: Long): Ingredient {
+        return Ingredient(
+            grams = ingredientState.grams,
+            caloriesPer100 = ingredientState.caloriesPer100,
+            carbohydratesPer100 = ingredientState.carbohydratesPer100,
+            fatPer100 = ingredientState.fatPer100,
+            proteinPer100 = ingredientState.proteinPer100,
+            name = ingredientState.name,
+            id = ingredientState.ingredientId,
+            mealId = mealId
         )
     }
 }

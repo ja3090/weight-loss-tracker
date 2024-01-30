@@ -9,7 +9,6 @@ import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.MealIngredientTemplate
 import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.datatransferobjects.ConvertTemplates
-import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue

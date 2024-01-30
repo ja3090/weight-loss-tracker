@@ -4,8 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.repositories.ConfigRepository
-import com.example.weightdojo.repositories.ConfigRepositoryImpl
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.PASSCODE_LENGTH
@@ -22,8 +20,6 @@ data class LockState(
 )
 
 class LockViewModel(
-    private val database: AppDatabase,
-    private val repo: ConfigRepository = ConfigRepositoryImpl(database.configDao()),
     private val config: Config,
 ) : ViewModel() {
     var state by mutableStateOf(LockState())
@@ -40,14 +36,16 @@ class LockViewModel(
         }
     }
 
+    fun setIsLoading(boolean: Boolean) {
+        state = state.copy(loading = true)
+    }
+
     suspend fun submit(): Boolean {
         if (state.passcode.length < PASSCODE_LENGTH) return false
 
-        val passCorrect = viewModelScope.async(Dispatchers.IO) {
+        setIsLoading(true)
 
-            withContext(Dispatchers.Main) {
-                state = state.copy(loading = true)
-            }
+        val passCorrect = viewModelScope.async(Dispatchers.IO) {
 
             val loginAttempt =
                 Hashing.generateHashDetails(passcode = state.passcode, salt = config.salt)
@@ -55,7 +53,7 @@ class LockViewModel(
             val isEqual = MessageDigest.isEqual(loginAttempt.passwordHash, config.passwordHash)
 
             withContext(Dispatchers.Main) {
-                state = state.copy(loading = false)
+                setIsLoading(false)
             }
 
             return@async isEqual

@@ -7,19 +7,18 @@ import com.example.weightdojo.utils.CalorieUnits
 import com.example.weightdojo.utils.WeightUnits
 
 
-@Entity(tableName = "config")
 data class Config(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    @ColumnInfo(name = "weight_unit", defaultValue = "KG") val weightUnit: WeightUnits,
-    @ColumnInfo(name = "calorie_unit", defaultValue = "KCAL") val calorieUnit: CalorieUnits,
-    @ColumnInfo(name = "goal_weight") val goalWeight: Float? = null,
-    @ColumnInfo(name = "passcode_enabled") val passcodeEnabled: Boolean,
-    @ColumnInfo(name = "password_hash") val passwordHash: ByteArray,
-    @ColumnInfo(name = "salt") val salt: ByteArray,
-    @ColumnInfo(name = "bio_enabled") val bioEnabled: Boolean,
-    @ColumnInfo(name = "age") val age: Int?,
-    @ColumnInfo(name = "sex") val sex: Sex?,
-    @ColumnInfo(name = "height") val height: Float?,
+    val weightUnit: WeightUnits = WeightUnits.KG,
+    val calorieUnit: CalorieUnits = CalorieUnits.KCAL,
+    val goalWeight: Float? = null,
+    val passcodeEnabled: Boolean,
+    val passwordHash: ByteArray,
+    val salt: ByteArray,
+    val bioEnabled: Boolean,
+    val age: Int? = null,
+    val sex: Sex? = null,
+    val height: Float? = null,
+    val showExtraOptions: Boolean = true
 ) {
 //    override fun equals(other: Any?): Boolean {
 //        if (other !is ByteArray) return false

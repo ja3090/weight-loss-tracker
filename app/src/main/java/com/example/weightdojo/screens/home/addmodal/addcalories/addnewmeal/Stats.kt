@@ -7,17 +7,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.text.TextDefault
+import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.datatransferobjects.IngredientState
-import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.ui.Sizing
-import com.example.weightdojo.utils.totalGrams
 import com.example.weightdojo.utils.totals
 
 
 @Composable
-fun Stats(ingredientList: List<IngredientState>) {
+fun Stats(
+    ingredientList: List<IngredientState>,
+    config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
+    calorieUnit: String = config?.weightUnit?.name ?: "KCAL",
+) {
     val fontSize = Sizing.font.default * 0.85
 
     val totals = totals(ingredientList)
@@ -78,7 +81,7 @@ fun Stats(ingredientList: List<IngredientState>) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TextDefault(
-                    text = "KCAL",
+                    text = calorieUnit,
                     fontSize = fontSize
                 )
                 TextDefault(

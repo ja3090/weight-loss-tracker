@@ -12,7 +12,6 @@ import com.example.weightdojo.database.models.MealTemplateWithIngredients
 import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
-import com.example.weightdojo.datatransferobjects.MealState
 import com.example.weightdojo.utils.totals
 
 const val message = "Internal use only"
@@ -21,7 +20,7 @@ const val message = "Internal use only"
 interface MealTemplateDao : UpdateTemplate {
 
     @Transaction
-    fun updateMealTemplate(
+    fun updateMealTemplateHandler(
         mealTemplate: MealTemplate,
         ingredientTemplates: List<IngredientState>,
     ) {
@@ -39,7 +38,7 @@ interface MealTemplateDao : UpdateTemplate {
 
         val totals = totals(ingredientTemplates.filter { it.markedFor !== Marked.DELETE })
 
-        updateMeal(
+        updateMealTemplate(
             totalCals = totals.totalCals,
             totalProtein = totals.protein,
             totalFat = totals.fat,
@@ -50,29 +49,44 @@ interface MealTemplateDao : UpdateTemplate {
 
     @Transaction
     fun createMealTemplate(
-        mealTemplate: MealTemplate,
-        ingredientTemplates: List<IngredientTemplate>
+        mealTemplate: MealTemplate, ingredientTemplates: List<IngredientState>
     ) {
         val mealTemplateId = insertMealTemplate(mealTemplate)
-        overwriteOrCreateIngredients(ingredientTemplates)
+
+        val convertTemplates = ConvertTemplates()
 
         for (templ in ingredientTemplates) {
-            val mealIng =
-                MealIngredientTemplate(mealTemplateId, templ.ingredientTemplateId)
+            if (templ.markedFor == Marked.DELETE) continue
+
+            val toTemplate = convertTemplates.toIngredientTemplate(templ)
+
+            val ingId = overwriteOrCreateIngredient(toTemplate)
+
+            val mealIng = MealIngredientTemplate(mealTemplateId, ingId)
+
             overwriteMealIngredientJunction(mealIng)
         }
+
+        val totals = totals(ingredientTemplates.filter { it.markedFor !== Marked.DELETE })
+
+        updateMealTemplate(
+            totalCals = totals.totalCals,
+            totalProtein = totals.protein,
+            totalCarbs = totals.carbs,
+            totalFat = totals.fat,
+            id = mealTemplateId
+        )
     }
 
     @Insert
     fun insertMealTemplate(mealTemplate: MealTemplate): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun overwriteOrCreateIngredients(ingredientTemplates: List<IngredientTemplate>)
+    fun overwriteOrCreateIngredient(ingredientTemplate: IngredientTemplate): Long
 
     @Transaction
     @Query(
-        "SELECT * FROM meal_template " +
-                "WHERE mealTemplateId = :mealTemplateId "
+        "SELECT * FROM meal_template " + "WHERE mealTemplateId = :mealTemplateId "
     )
     fun getMealTemplateWithIngredientsById(mealTemplateId: Long): MealTemplateWithIngredients
 

@@ -34,7 +34,7 @@ fun Inches(
     val setExtraOptions = {
         if (inches.isEmpty() || feet.isEmpty()) extraOptions.height = null
         else {
-            val heightInInches = (feet.toFloat() * 12) + inches.toFloat()
+            val heightInInches = ((feet.toFloat() * 12) + inches.toFloat()) * 2.54
 
             extraOptions.height = heightInInches.toString()
         }

@@ -9,11 +9,11 @@ import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.database.models.Meal
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
-import com.example.weightdojo.datatransferobjects.MealState
-import com.example.weightdojo.datatransferobjects.MealWithIngredients
+import com.example.weightdojo.utils.totals
 
 @Dao
-interface MealDao {
+interface MealDao : CommonMethods {
+
     @Transaction
     fun insertMeal(mealState: Meal, ingredientList: List<IngredientState>) {
         val mealId = insertMealEntry(mealState)
@@ -27,12 +27,24 @@ interface MealDao {
                 caloriesPer100 = ingredient.caloriesPer100,
                 proteinPer100 = ingredient.proteinPer100,
                 fatPer100 = ingredient.fatPer100,
-                carbohydratesPer100 = ingredient.carbsPer100,
+                carbohydratesPer100 = ingredient.carbohydratesPer100,
                 grams = ingredient.grams
             )
 
             insertIngredient(ing)
         }
+
+        val totals = totals(ingredientList.filter { it.markedFor !== Marked.DELETE })
+
+        updateMeal(
+            totalCarbs = totals.carbs,
+            totalProtein = totals.protein,
+            totalFat = totals.fat,
+            totalCals = totals.totalCals,
+            id = mealId
+        )
+
+        updateDay(mealState.dayId)
     }
 
     @Insert

@@ -32,14 +32,9 @@ data class InputArgs(
 fun Input(
     inputArgs: InputArgs
 ) {
-    val (inputValue, onValueChange, trailingIcon, placeholder, modifier, leadingIcon, keyboardOptions, textStyle) = inputArgs
+    val (inputValue,
+        onValueChange, trailingIcon, placeholder, modifier, leadingIcon, keyboardOptions, textStyle) = inputArgs
 
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(Sizing.cornerRounding))
-            .background(MaterialTheme.colors.background)
-            .then(modifier),
-    ) {
         TextField(
             value = inputValue,
             onValueChange = onValueChange,
@@ -49,11 +44,9 @@ fun Input(
                 textColor = MaterialTheme.colors.primary, backgroundColor = Color.Transparent
             ),
             modifier = Modifier
-                .padding(Sizing.paddings.small)
-                .align(Alignment.Center),
+                .then(modifier),
             trailingIcon = trailingIcon,
             placeholder = placeholder,
             textStyle = textStyle
         )
-    }
 }

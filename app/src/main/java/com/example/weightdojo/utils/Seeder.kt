@@ -95,7 +95,9 @@ class Seeder(
                 val mealId = createMeals(day.id)
                 createIngredients(mealId, day.id)
 
-                if (counter % 15 == 0) database.seedMealTemplateDao().handleTemplateInsertion(mealId)
+                if (counter % 15 == 0) {
+                    database.seedMealTemplateDao().handleTemplateInsertion(mealId)
+                }
             }
 
             currentDate = currentDate.plusDays(1L)
@@ -124,14 +126,5 @@ class Seeder(
     private fun random(from: Int = 500, until: Int = 800): Float {
         return Random.nextInt(from, until)
             .toFloat()
-    }
-
-    private fun randomOrNull(from: Int = 20, until: Int = 100): Float? {
-        return if (Random.nextFloat() > 0.5) {
-            null
-        } else {
-            Random.nextInt(from, until)
-                .toFloat()
-        }
     }
 }
