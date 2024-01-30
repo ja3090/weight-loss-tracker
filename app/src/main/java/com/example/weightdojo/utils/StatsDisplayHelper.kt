@@ -42,7 +42,7 @@ fun statsDisplayHelper(config: Config?, dayData: DayData?): Stats {
                 to = calorieUnit,
                 value = totalCalories,
                 from = AppConfig.internalDefaultCalorieUnit
-            )
+            ).toInt()
         } $calorieUnit" else "-"
 
     return Stats(

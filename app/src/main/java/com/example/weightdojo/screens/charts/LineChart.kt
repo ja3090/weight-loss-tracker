@@ -66,7 +66,7 @@ fun LineChart(
     val textMeasurer = rememberTextMeasurer()
 
     val textStyle = TextStyle(
-        color = MaterialTheme.colors.primary.copy(0.25f),
+        color = MaterialTheme.colors.primary.copy(0.85f),
         fontSize = 12.sp
     )
 

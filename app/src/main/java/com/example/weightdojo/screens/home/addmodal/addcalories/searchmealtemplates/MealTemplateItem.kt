@@ -23,7 +23,7 @@ import com.example.weightdojo.ui.Sizing
 fun MealTemplateItem(
     it: MealTemplate,
     config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
-    calorieUnit: String = config?.weightUnit?.name ?: "KCAL",
+    calorieUnit: String = config?.calorieUnit?.name ?: "KCAL",
 ) {
     val addCaloriesVm: AddCaloriesVm = viewModel()
     val searchMealTemplatesVM: SearchMealTemplatesVM = viewModel()
