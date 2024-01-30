@@ -4,10 +4,7 @@ Weight Dojo is an android app that helps you track your calories and weight. You
 
 ## Screenshots
 
-![home screen](https://github.com/ja3090/weight-dojo/blob/main/assets/home_screen_dark.png)
-![keypad](https://github.com/ja3090/weight-dojo/blob/main/assets/keypad.png)
-![meal search](https://github.com/ja3090/weight-dojo/blob/main/assets/meal_search.png)
-![chart](https://github.com/ja3090/weight-dojo/blob/main/assets/charts_weight.png)
+<img src="https://github.com/ja3090/weight-dojo/blob/main/assets/home_screen_dark.png" width="300"> <img src="https://github.com/ja3090/weight-dojo/blob/main/assets/keypad.png" width="300"> <img src="https://github.com/ja3090/weight-dojo/blob/main/assets/meal_search.png" width="300"> <img src="https://github.com/ja3090/weight-dojo/blob/main/assets/charts_weight.png" width="300">
 
 ## Features
 
