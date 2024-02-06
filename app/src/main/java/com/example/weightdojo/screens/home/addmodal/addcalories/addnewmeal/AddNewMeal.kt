@@ -103,6 +103,8 @@ fun AddNewMeal(
                     onValueChange = {
                         stateHandler.changeIngredient(it)
                     },
+                    activeIngredientId = stateHandler.state.activeIngredientId,
+                    setActiveIngredient = stateHandler::setActiveIngredient
                 )
             }
             AddIngredient {

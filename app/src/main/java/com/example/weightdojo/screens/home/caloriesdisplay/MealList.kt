@@ -17,11 +17,15 @@ import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Config
+import com.example.weightdojo.database.models.Ingredient
+import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.MealData
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.CalorieUnit
 import com.example.weightdojo.utils.CalorieUnits
+import com.example.weightdojo.utils.Totals
 import com.example.weightdojo.utils.VMFactory
+import com.example.weightdojo.utils.totals
 
 @Composable
 fun MealList(
@@ -40,6 +44,8 @@ fun MealList(
     LaunchedEffect(meals) {
         mealListViewModel.removeActive()
     }
+
+    val totals = totals(mealListViewModel.state.ingredientList ?: listOf())
 
     meals?.map {
         Row(
@@ -64,7 +70,13 @@ fun MealList(
             TextDefault(
                 modifier = Modifier.padding(Sizing.paddings.medium),
                 text = "${
-                    CalorieUnit.convert(value = it.totalCalories ?: 0f, to = calorieUnit).toInt()
+                    CalorieUnit.convert(
+                        value = if (mealListViewModel.state.activeMeal == it) {
+                            totals.totalCals
+                        } else {
+                            it.totalCalories ?: 0f
+                        }, to = calorieUnit
+                    ).toInt()
                 } $calorieUnit",
             )
         }

@@ -19,7 +19,7 @@ import com.example.weightdojo.utils.totals
 fun Stats(
     ingredientList: List<IngredientState>,
     config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
-    calorieUnit: String = config?.weightUnit?.name ?: "KCAL",
+    calorieUnit: String = config?.calorieUnit?.name ?: "KCAL",
 ) {
     val fontSize = Sizing.font.default * 0.85
 

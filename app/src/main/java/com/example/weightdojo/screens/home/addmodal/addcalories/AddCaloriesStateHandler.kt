@@ -8,13 +8,15 @@ import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.datatransferobjects.MealState
+import java.util.UUID
 
 data class AddCaloriesState(
     val mealState: MealState? = null,
     val ingredientList: List<IngredientState> = listOf(),
     val dayId: Long? = null,
     val currentSubModal: AddCalsSubModals = AddCalsSubModals.AddMealTemplate,
-    val error: String? = null
+    val error: String? = null,
+    val activeIngredientId: UUID? = null
 )
 
 enum class AddCalsSubModals {
@@ -44,6 +46,14 @@ class AddCaloriesStateHandler(
 
     fun setErrorMessage(error: String?) {
         state = state.copy(error = error)
+    }
+
+    fun setActiveIngredient(ingredient: IngredientState) {
+        state = if (ingredient.internalId == state.activeIngredientId) {
+            state.copy(activeIngredientId = null)
+        } else {
+            state.copy(activeIngredientId = ingredient.internalId)
+        }
     }
 
     fun addNewIngredient() {

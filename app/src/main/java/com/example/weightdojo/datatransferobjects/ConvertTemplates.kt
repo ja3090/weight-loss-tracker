@@ -89,4 +89,16 @@ class ConvertTemplates {
             mealId = mealId
         )
     }
+
+    fun fromIngredientToIngredientState(ingredient: Ingredient): IngredientState {
+        return IngredientState(
+            ingredientId = ingredient.id,
+            name = ingredient.name,
+            carbohydratesPer100 = ingredient.carbohydratesPer100,
+            caloriesPer100 = ingredient.caloriesPer100,
+            proteinPer100 = ingredient.proteinPer100,
+            fatPer100 = ingredient.fatPer100,
+            grams = ingredient.grams,
+        )
+    }
 }

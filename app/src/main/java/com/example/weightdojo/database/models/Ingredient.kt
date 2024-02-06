@@ -2,11 +2,22 @@ package com.example.weightdojo.database.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "ingredient")
-data class Ingredient (
+@Entity(
+    tableName = "ingredient",
+    foreignKeys = [
+        ForeignKey(
+            entity = Meal::class,
+            parentColumns = ["id"],
+            childColumns = ["meal_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class Ingredient(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "meal_id") val mealId: Long = 0,
     @ColumnInfo(name = "name") val name: String,

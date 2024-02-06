@@ -12,18 +12,24 @@ import com.example.weightdojo.datatransferobjects.ConvertTemplates
 import com.example.weightdojo.datatransferobjects.IngredientState
 import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.datatransferobjects.MealData
+import com.example.weightdojo.datatransferobjects.MealState
+import com.example.weightdojo.datatransferobjects.RepoResponse
 import com.example.weightdojo.repositories.IngredientRepository
 import com.example.weightdojo.repositories.IngredientRepositoryImpl
+import com.example.weightdojo.repositories.MealRepository
+import com.example.weightdojo.repositories.MealRepositoryImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 data class MealListState(
     val activeMeal: MealData? = null,
-    val ingredientList: List<Ingredient>? = null,
+    val ingredientList: List<IngredientState>? = null,
     val isEditing: Boolean = false,
-    val ingredientListAsState: List<IngredientState>? = null,
-    val addIngredientModalOpen: Boolean = false
+    val addIngredientModalOpen: Boolean = false,
+    val activeIngredientId: UUID? = null
 )
 
 class MealListVM(
@@ -31,6 +37,9 @@ class MealListVM(
     val templateConverter: ConvertTemplates = ConvertTemplates(),
     private val ingredientRepo: IngredientRepository = IngredientRepositoryImpl(
         database.ingredientDao()
+    ),
+    private val mealRepository: MealRepository = MealRepositoryImpl(
+        database.mealDao()
     )
 ) : ViewModel() {
 
@@ -44,20 +53,29 @@ class MealListVM(
         val ingredientState = templateConverter.toIngredientState(templ)
 
         state = state.copy(
-            ingredientListAsState = state.ingredientListAsState?.plus(ingredientState)
+            ingredientList = state.ingredientList?.plus(ingredientState)
         )
     }
 
     fun addNewIngredient() {
         state = state.copy(
-            ingredientListAsState = state.ingredientListAsState?.plus(IngredientState())
+            ingredientList = state.ingredientList?.plus(IngredientState())
         )
+    }
+
+    suspend fun deleteHandler(): RepoResponse<Nothing?> {
+        Log.d("state.activeMeal?.dayId", state.activeMeal?.dayId.toString())
+        Log.d("state.activeMeal?.mealId", state.activeMeal?.mealId.toString())
+
+        return viewModelScope.async {
+            mealRepository.deleteMeal(state.activeMeal?.mealId, state.activeMeal?.dayId)
+        }.await()
     }
 
     fun makeEdits() {
         val dayId = state.activeMeal?.dayId
         val mealId = state.activeMeal?.mealId
-        val updatedIngredients = state.ingredientListAsState
+        val updatedIngredients = state.ingredientList
 
         if (dayId == null || updatedIngredients == null || mealId == null) {
             Log.e(
@@ -103,15 +121,23 @@ class MealListVM(
         }
     }
 
+    fun setActiveIngredient(ingredient: IngredientState) {
+        state = if (ingredient.internalId == state.activeIngredientId) {
+            state.copy(activeIngredientId = null)
+        } else {
+            state.copy(activeIngredientId = ingredient.internalId)
+        }
+    }
+
     fun changeIngredient(ingredient: IngredientState) {
 
-        val updatedList = state.ingredientListAsState?.map {
+        val updatedList = state.ingredientList?.map {
             if (it.internalId == ingredient.internalId) {
                 ingredient
             } else it
         }
 
-        state = state.copy(ingredientListAsState = updatedList)
+        state = state.copy(ingredientList = updatedList)
     }
 
     fun showIngredientListAsState() {
@@ -127,42 +153,30 @@ class MealListVM(
     fun deleteIngredient(toDelete: IngredientState) {
         val markedFor = if (toDelete.markedFor == Marked.DELETE) Marked.EDIT else Marked.DELETE
 
-        val updatedList = state.ingredientListAsState?.map {
+        val updatedList = state.ingredientList?.map {
             if (it === toDelete) {
                 it.copy(markedFor = markedFor)
             } else it
         }
 
-        state = state.copy(ingredientListAsState = updatedList)
+        state = state.copy(ingredientList = updatedList)
     }
 
-    private suspend fun getDetailedIngredients() {
-        val detailedIngredients = state.ingredientList?.map {
-            IngredientState(
-                caloriesPer100 = it.caloriesPer100,
-                ingredientId = it.id,
-                name = it.name,
-                grams = it.grams,
-                carbohydratesPer100 = it.carbohydratesPer100,
-                fatPer100 = it.fatPer100,
-                proteinPer100 = it.proteinPer100
-            )
-        }
-
-        withContext(Dispatchers.Main) {
-            state = state.copy(ingredientListAsState = detailedIngredients, isEditing = true)
-        }
+    private fun getDetailedIngredients() {
+        state = state.copy(isEditing = true)
     }
 
     private suspend fun getIngredients(meal: MealData) {
         val ingredients = ingredientRepo.getIngredientsByMealId(mealId = meal.mealId)
+        val ingredientStates = ingredients.map {
+            templateConverter.fromIngredientToIngredientState(it)
+        }
 
         withContext(Dispatchers.Main) {
             state = state.copy(
-                ingredientList = ingredients,
+                ingredientList = ingredientStates,
                 activeMeal = meal,
                 isEditing = false,
-                ingredientListAsState = null
             )
         }
     }
@@ -172,7 +186,6 @@ class MealListVM(
             activeMeal = null,
             ingredientList = null,
             isEditing = false,
-            ingredientListAsState = null
         )
     }
 }

@@ -14,6 +14,7 @@ import com.example.weightdojo.AppConfig
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.R
 import com.example.weightdojo.components.AlertDialog
+import com.example.weightdojo.components.ConfirmDelete
 import com.example.weightdojo.components.CustomDivider
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.database.models.Config
@@ -23,7 +24,7 @@ import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.CalorieUnit
 import com.example.weightdojo.utils.CalorieUnits
 import com.example.weightdojo.utils.WeightUnit
-
+import java.util.UUID
 
 @Composable
 fun IngredientAsInput(
@@ -32,28 +33,16 @@ fun IngredientAsInput(
     calorieUnit: CalorieUnits = config?.calorieUnit ?: AppConfig.internalDefaultCalorieUnit,
     onConfirmDelete: (newState: IngredientState) -> Unit,
     onValueChange: (ingredientState: IngredientState) -> Unit,
+    activeIngredientId: UUID?,
+    setActiveIngredient: (ingredient: IngredientState) -> Unit
 ) {
     if (ingredientState.markedFor == Marked.DELETE) return
 
-    var confirmDelete by remember {
-        mutableStateOf(false)
+    val confirmDelete = ConfirmDelete {
+        onConfirmDelete(ingredientState)
     }
 
-    var showDetailedList by remember {
-        mutableStateOf(false)
-    }
-
-    if (confirmDelete) {
-        AlertDialog(
-            onDismissRequest = { confirmDelete = false },
-            onConfirmation = {
-                onConfirmDelete(ingredientState)
-                confirmDelete = false
-            },
-            dialogTitle = "Delete",
-            dialogText = "Are you sure you want to delete this?",
-        )
-    }
+    confirmDelete.DeleteModal()
 
     Column {
         NameField(
@@ -64,8 +53,8 @@ fun IngredientAsInput(
                 onValueChange(newState)
             },
             modifier = Modifier
-                .clickable { showDetailedList = !showDetailedList },
-            showDetailedList = showDetailedList,
+                .clickable { setActiveIngredient(ingredientState) },
+            showDetailedList = activeIngredientId == ingredientState.internalId,
         )
 
         CustomDivider(
@@ -96,7 +85,7 @@ fun IngredientAsInput(
             tinted = true, modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
         )
 
-        if (showDetailedList) {
+        if (activeIngredientId == ingredientState.internalId) {
             CalorieBreakdown(
                 calorieInfo = ingredientState.proteinPer100,
                 nutrimentName = "Protein",
@@ -161,7 +150,7 @@ fun IngredientAsInput(
             tinted = true, modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
         )
 
-        if (showDetailedList) {
+        if (activeIngredientId == ingredientState.internalId) {
             IconBuilder(
                 id = R.drawable.delete,
                 contentDescription = "Delete ingredient",
@@ -169,7 +158,7 @@ fun IngredientAsInput(
                 modifier = Modifier
                     .padding(vertical = Sizing.paddings.small, horizontal = Sizing.paddings.medium)
                     .fillMaxWidth()
-                    .clickable { confirmDelete = true },
+                    .clickable { confirmDelete.openOrClose(true) },
             )
         }
     }

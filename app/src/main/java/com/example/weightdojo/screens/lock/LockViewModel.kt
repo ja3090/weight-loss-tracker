@@ -45,6 +45,8 @@ class LockViewModel(
 
         setIsLoading(true)
 
+        val salt = config.salt ?: return false
+
         val passCorrect = viewModelScope.async(Dispatchers.IO) {
 
             val loginAttempt =

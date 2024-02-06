@@ -54,4 +54,13 @@ interface MealDao : CommonMethods {
     @Deprecated(DEPRECATED_MESSAGE)
     @Query("DELETE FROM meal")
     fun _DELETE_ALL()
+
+    @Query("DELETE FROM meal WHERE id = :id ")
+    fun deleteMeal(id: Long)
+
+    @Transaction
+    fun handleDelete(id: Long, dayId: Long) {
+        deleteMeal(id)
+        updateDay(dayId)
+    }
 }

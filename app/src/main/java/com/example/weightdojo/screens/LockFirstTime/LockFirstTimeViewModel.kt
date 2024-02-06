@@ -21,7 +21,8 @@ data class LockFirstTimeState(
     var enteringPasscode: Boolean = true,
     var confirmingPasscode: Boolean = false,
     var loading: Boolean = false,
-    var showBiometricDialog: Boolean = false
+    var showBiometricDialog: Boolean = false,
+    var showUsePasscodeDialog: Boolean = true
 )
 
 open class LockFirstTimeViewModel(
@@ -95,5 +96,18 @@ open class LockFirstTimeViewModel(
 
             false
         }
+    }
+
+    fun confirmUsingPasscode(bool: Boolean) {
+        state = state.copy(showUsePasscodeDialog = bool)
+    }
+
+    fun refusePasscode() {
+        val config = Config(
+            passcodeEnabled = false,
+            bioEnabled = false,
+        )
+
+        configSessionCache.saveSession(config)
     }
 }
