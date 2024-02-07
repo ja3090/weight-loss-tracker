@@ -24,6 +24,8 @@ interface MealTemplateRepo {
         mealTemplate: MealTemplate,
         ingredientList: List<IngredientState>
     ): RepoResponse<Nothing?>
+
+    suspend fun deleteMealTemplate(mealTemplate: MealTemplate): RepoResponse<Nothing?>
 }
 
 typealias TemplateState = Pair<MealState, List<IngredientState>>
@@ -108,6 +110,16 @@ class MealTemplateRepoImpl(
             Log.e("templateSubmissionError", e.message.toString())
 
             RepoResponse(success = true, data = null, errorMessage = e.message)
+        }
+    }
+
+    override suspend fun deleteMealTemplate(mealTemplate: MealTemplate): RepoResponse<Nothing?> {
+        return try {
+            mealTemplateDao.deleteMealTemplateHandler(mealTemplate)
+
+            RepoResponse(success = true, data = null)
+        } catch (e: Exception) {
+            RepoResponse(success = false, data = null, errorMessage = e.message)
         }
     }
 }

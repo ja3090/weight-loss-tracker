@@ -1,6 +1,7 @@
 package com.example.weightdojo.database.dao.mealtemplate
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,6 +19,11 @@ const val message = "Internal use only"
 
 @Dao
 interface MealTemplateDao : UpdateTemplate {
+    @Delete
+    fun deleteMealTemplate(mealTemplate: MealTemplate)
+
+    @Query("DELETE FROM meal_ingredient WHERE mealTemplateId = :mealTemplateId")
+    fun deleteMealIngredient(mealTemplateId: Long)
 
     @Transaction
     fun updateMealTemplateHandler(
@@ -98,4 +104,10 @@ interface MealTemplateDao : UpdateTemplate {
     @Deprecated(message)
     @Query("DELETE FROM meal_template")
     fun _DELETE_ALL()
+
+    @Transaction
+    fun deleteMealTemplateHandler(mealTemplate: MealTemplate) {
+        deleteMealTemplate(mealTemplate)
+        deleteMealIngredient(mealTemplate.mealTemplateId)
+    }
 }

@@ -29,6 +29,10 @@ class SearchMealTemplatesVM(
         SearchMealTemplatesState()
     )
 
+    fun reset() {
+        state = state.copy(mealTemplates = listOf(), activeMealTemplate = null)
+    }
+
     fun makeActive(mealTemplate: MealTemplate) {
         val isActive = mealTemplate.mealTemplateId == state.activeMealTemplate?.mealTemplateId
 

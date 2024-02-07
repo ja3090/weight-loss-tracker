@@ -7,13 +7,18 @@ import com.example.weightdojo.datatransferobjects.RepoResponse
 
 interface IngredientTemplateRepo {
     suspend fun getIngredientTemplates(term: String): RepoResponse<List<IngredientTemplate>>
+    suspend fun deleteIngTemplate(
+        ingredientTemplate: IngredientTemplate
+    ): RepoResponse<Nothing?>
 }
 
 class IngredientTemplateRepoImpl(
     private val ingredientTemplateDao: IngredientTemplateDao
 ) : IngredientTemplateRepo {
 
-    override suspend fun getIngredientTemplates(term: String): RepoResponse<List<IngredientTemplate>> {
+    override suspend fun getIngredientTemplates(
+        term: String
+    ): RepoResponse<List<IngredientTemplate>> {
         return try {
             val ingTempls = ingredientTemplateDao.searchIngredientTemplates(term)
 
@@ -27,6 +32,19 @@ class IngredientTemplateRepoImpl(
                 data = listOf(),
                 errorMessage = e.message
             )
+        }
+    }
+
+    override suspend fun deleteIngTemplate(
+        ingredientTemplate: IngredientTemplate
+    ): RepoResponse<Nothing?> {
+        return try {
+            ingredientTemplateDao.deleteIngTemplate(ingredientTemplate)
+
+            RepoResponse(success = true, data = null)
+        } catch (e: Exception) {
+
+            RepoResponse(success = false, errorMessage = e.message, data = null)
         }
     }
 }
