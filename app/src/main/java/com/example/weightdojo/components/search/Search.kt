@@ -6,11 +6,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.weightdojo.database.models.Searchable
 
 @Composable
 fun <T> Search(
     onSearch: (term: String) -> Unit,
-    items: List<T>?,
+    items: List<T>,
     listMapper: @Composable (item: T) ->  Unit
 ) {
     Column(

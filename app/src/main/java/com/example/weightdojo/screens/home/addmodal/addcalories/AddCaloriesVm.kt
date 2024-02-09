@@ -36,16 +36,23 @@ class AddCaloriesVm(
     var stateHandler by mutableStateOf(AddCaloriesStateHandler(dayId = dayId))
     private val addCaloriesValidation = AddCaloriesValidation()
 
-    fun moveToAddNewMeal(mealTemplateId: Long? = null) {
-        if (mealTemplateId == null) {
+    fun moveToAddNewMeal(mealTemplate: MealTemplate? = null) {
+        if (mealTemplate == null) {
             return stateHandler.initMealCreation(dayId)
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            mealWithIngredientsDbCall(mealTemplateId)
+            mealWithIngredientsDbCall(mealTemplate.mealTemplateId)
         }
     }
 
+    fun addIngredientToMeal(ingredientTemplate: IngredientTemplate? = null) {
+        if (ingredientTemplate == null) {
+            return stateHandler.addNewIngredient()
+        }
+
+        stateHandler.addIngredientToMeal(ingredientTemplate)
+    }
     private suspend fun mealWithIngredientsDbCall(mealTemplateId: Long) {
         val response =
             mealTemplateRepo.getMealTemplateWithIngredientsById(mealTemplateId, dayId)

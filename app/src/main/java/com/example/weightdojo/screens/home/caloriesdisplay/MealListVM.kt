@@ -34,7 +34,7 @@ data class MealListState(
 
 class MealListVM(
     val database: AppDatabase,
-    val templateConverter: ConvertTemplates = ConvertTemplates(),
+    private val templateConverter: ConvertTemplates = ConvertTemplates(),
     private val ingredientRepo: IngredientRepository = IngredientRepositoryImpl(
         database.ingredientDao()
     ),
@@ -64,9 +64,6 @@ class MealListVM(
     }
 
     suspend fun deleteHandler(): RepoResponse<Nothing?> {
-        Log.d("state.activeMeal?.dayId", state.activeMeal?.dayId.toString())
-        Log.d("state.activeMeal?.mealId", state.activeMeal?.mealId.toString())
-
         return viewModelScope.async {
             mealRepository.deleteMeal(state.activeMeal?.mealId, state.activeMeal?.dayId)
         }.await()
