@@ -19,8 +19,8 @@ const val message = "Internal use only"
 
 @Dao
 interface MealTemplateDao : UpdateTemplate {
-    @Delete
-    fun deleteMealTemplate(mealTemplate: MealTemplate)
+    @Query("DELETE FROM meal_template WHERE mealTemplateId = :id")
+    fun deleteMealTemplate(id: Long)
 
     @Query("DELETE FROM meal_ingredient WHERE mealTemplateId = :mealTemplateId")
     fun deleteMealIngredient(mealTemplateId: Long)
@@ -106,8 +106,8 @@ interface MealTemplateDao : UpdateTemplate {
     fun _DELETE_ALL()
 
     @Transaction
-    fun deleteMealTemplateHandler(mealTemplate: MealTemplate) {
-        deleteMealTemplate(mealTemplate)
-        deleteMealIngredient(mealTemplate.mealTemplateId)
+    fun deleteMealTemplateHandler(mealTemplateId: Long) {
+        deleteMealTemplate(mealTemplateId)
+        deleteMealIngredient(mealTemplateId)
     }
 }

@@ -84,7 +84,8 @@ fun MealList(
                                 totals.totalCals
                             } else {
                                 it.totalCalories ?: 0f
-                            }, to = calorieUnit
+                            }, 
+                            to = calorieUnit
                         ).toInt()
                     } $calorieUnit",
                 )

@@ -1,18 +1,17 @@
 package com.example.weightdojo.screens.home.addmodal.addcalories
 
-import android.net.wifi.WifiManager.AddNetworkResult
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.ErrorDialog
-import com.example.weightdojo.components.text.TextDefault
-import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.screens.home.addmodal.AddModalVm
 import com.example.weightdojo.screens.home.addmodal.ModalFrame
 import com.example.weightdojo.screens.home.addmodal.addcalories.addnewmeal.AddNewMeal
 import com.example.weightdojo.components.addingredients.searchingredienttemplates.SearchIngredientTemplates
-import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchMealTemplates
+import com.example.weightdojo.components.searchtemplates.SearchTemplate
+import com.example.weightdojo.components.searchtemplates.Templates
+import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchIngredientTemplatesVM
+import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchMealTemplatesVM
 import com.example.weightdojo.utils.VMFactory
 
 @Composable
@@ -43,12 +42,21 @@ fun AddCalories(
         }
     }) {
         when (state.currentSubModal) {
-            AddCalsSubModals.AddMealTemplate -> SearchMealTemplates()
+            AddCalsSubModals.AddMealTemplate -> SearchTemplate(
+                searchTemplatesVm = SearchMealTemplatesVM(),
+                onDelete = addCaloriesVm::deleteMealTemplate,
+                onUseClick = addCaloriesVm::moveToAddNewMeal,
+                viewModel = addCaloriesVm,
+                per100 = false
+            )
+
             AddCalsSubModals.MealCreation -> AddNewMeal()
-            AddCalsSubModals.AddIngredientTemplate -> SearchIngredientTemplates(
-                onAddNew = addCaloriesVm.stateHandler::addNewIngredient,
-                useTemplate = addCaloriesVm.stateHandler::addIngredientToMeal,
-                isOpen = addCaloriesVm.stateHandler.state.currentSubModal == AddCalsSubModals.AddIngredientTemplate
+            AddCalsSubModals.AddIngredientTemplate -> SearchTemplate(
+                searchTemplatesVm = SearchIngredientTemplatesVM(),
+                onDelete = addCaloriesVm::deleteIngredientTemplate,
+                onUseClick = addCaloriesVm::addIngredientToMeal,
+                viewModel = addCaloriesVm,
+                per100 = true
             )
         }
     }

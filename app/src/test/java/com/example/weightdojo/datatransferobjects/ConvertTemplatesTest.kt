@@ -113,7 +113,7 @@ class ConvertTemplatesTest {
         assertEquals(ingredientTemplate.grams, result.grams)
         assertEquals(ingredientTemplate.name, result.name)
         assertEquals(0L, result.ingredientId)
-        assertEquals(ingredientTemplate.carbohydratesPer100, result.carbsPer100)
+        assertEquals(ingredientTemplate.carbohydratesPer100, result.carbohydratesPer100)
         assertEquals(ingredientTemplate.fatPer100, result.fatPer100)
         assertEquals(ingredientTemplate.proteinPer100, result.proteinPer100)
         assertEquals(ingredientTemplate.ingredientTemplateId, result.ingredientTemplateId)
@@ -126,7 +126,7 @@ class ConvertTemplatesTest {
             grams = 150f,
             name = "Test Ingredient",
             ingredientId = 1L,
-            carbsPer100 = 30f,
+            carbohydratesPer100 = 30f,
             fatPer100 = 10f,
             proteinPer100 = 20f,
             ingredientTemplateId = 2L
@@ -137,7 +137,7 @@ class ConvertTemplatesTest {
         assertEquals(ingredientState.caloriesPer100, result.caloriesPer100)
         assertEquals(ingredientState.grams, result.grams)
         assertEquals(ingredientState.name, result.name)
-        assertEquals(ingredientState.carbsPer100, result.carbohydratesPer100)
+        assertEquals(ingredientState.carbohydratesPer100, result.carbohydratesPer100)
         assertEquals(ingredientState.fatPer100, result.fatPer100)
         assertEquals(ingredientState.proteinPer100, result.proteinPer100)
         assertEquals(ingredientState.ingredientTemplateId, result.ingredientTemplateId)
@@ -145,9 +145,7 @@ class ConvertTemplatesTest {
 
     @Test
     fun testToMealTemplate_ConversionWithOverwrite() {
-        val overwrite = true
-
-        val resultWithOverwrite = convertTemplates.toMealTemplate(mealState, overwrite)
+        val resultWithOverwrite = convertTemplates.toMealTemplate(mealState)
 
         assertEquals(mealState.mealTemplateId, resultWithOverwrite.mealTemplateId)
         assertEquals(mealState.name, resultWithOverwrite.name)
@@ -159,9 +157,7 @@ class ConvertTemplatesTest {
 
     @Test
     fun testToMealTemplate_ConversionWithoutOverwrite() {
-        val overwrite = false
-
-        val resultWithoutOverwrite = convertTemplates.toMealTemplate(mealState, overwrite)
+        val resultWithoutOverwrite = convertTemplates.toMealTemplate(mealState)
 
         assertEquals(0L, resultWithoutOverwrite.mealTemplateId)
         assertEquals(mealState.name, resultWithoutOverwrite.name)
