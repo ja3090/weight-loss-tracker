@@ -12,21 +12,13 @@ import androidx.lifecycle.ViewModel
 import com.example.weightdojo.components.search.Search
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.database.models.Searchable
-import com.example.weightdojo.datatransferobjects.RepoResponse
-import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchTemplatesBaseVM
 import com.example.weightdojo.ui.Sizing
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KSuspendFunction1
 
-enum class Templates {
-    MEAL_TEMPLATES,
-    INGREDIENT_TEMPLATES
-}
-
 @Composable
 fun <Template : Searchable> SearchTemplate(
     searchTemplatesVm: SearchTemplatesBaseVM<Template>,
-    onDelete: KSuspendFunction1<Template, RepoResponse<Nothing?>>,
     onUseClick: KFunction1<Template?, Unit>,
     viewModel: ViewModel,
     per100: Boolean
@@ -40,7 +32,6 @@ fun <Template : Searchable> SearchTemplate(
         TemplateItem(
             it = it,
             isActive = searchTemplatesVm.state.activeTemplate == it,
-            onDelete = onDelete,
             onUseClick = onUseClick,
             per100 = per100,
             viewModel = viewModel

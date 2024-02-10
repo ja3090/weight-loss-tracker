@@ -16,6 +16,8 @@ import com.example.weightdojo.datatransferobjects.MealState
 import com.example.weightdojo.datatransferobjects.RepoResponse
 import com.example.weightdojo.repositories.IngredientRepository
 import com.example.weightdojo.repositories.IngredientRepositoryImpl
+import com.example.weightdojo.repositories.IngredientTemplateRepo
+import com.example.weightdojo.repositories.IngredientTemplateRepoImpl
 import com.example.weightdojo.repositories.MealRepository
 import com.example.weightdojo.repositories.MealRepositoryImpl
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +42,9 @@ class MealListVM(
     ),
     private val mealRepository: MealRepository = MealRepositoryImpl(
         database.mealDao()
+    ),
+    private val ingredientTemplateRepo: IngredientTemplateRepo = IngredientTemplateRepoImpl(
+        database.ingredientTemplateDao()
     )
 ) : ViewModel() {
 
@@ -49,7 +54,9 @@ class MealListVM(
         state = state.copy(addIngredientModalOpen = boolean)
     }
 
-    fun addIngredient(templ: IngredientTemplate) {
+    fun addIngredient(templ: IngredientTemplate?) {
+        if (templ == null) return addNewIngredient()
+
         val ingredientState = templateConverter.toIngredientState(templ)
 
         state = state.copy(
@@ -57,7 +64,7 @@ class MealListVM(
         )
     }
 
-    fun addNewIngredient() {
+    private fun addNewIngredient() {
         state = state.copy(
             ingredientList = state.ingredientList?.plus(IngredientState())
         )

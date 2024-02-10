@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates
+package com.example.weightdojo.components.searchtemplates
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -27,7 +27,7 @@ data class SearchTemplate(
     val activeTemplate: Searchable? = null
 )
 
-open class SearchTemplatesBaseVM<Template : Searchable>(
+abstract class SearchTemplatesBaseVM<Template : Searchable>(
     private val templateRepo: SearchTemplateRepo<Template>
 ) : ViewModel() {
 
@@ -80,15 +80,24 @@ open class SearchTemplatesBaseVM<Template : Searchable>(
             state = state.copy(templates = res.data)
         }
     }
+
+    suspend fun deleteTemplate(templ: Template): RepoResponse<Nothing?> {
+        val job = viewModelScope.async(Dispatchers.IO) {
+            templateRepo.deleteTemplate(templ)
+        }
+
+        return job.await()
+    }
 }
 
 class SearchMealTemplatesVM(
-    database: AppDatabase = MyApp.appModule.database
+    database: AppDatabase = MyApp.appModule.database,
 ) : SearchTemplatesBaseVM<MealTemplate>(
     templateRepo = SearchMealTemplateRepo(database.searchTemplatesDao())
 )
+
 class SearchIngredientTemplatesVM(
-    database: AppDatabase = MyApp.appModule.database
+    database: AppDatabase = MyApp.appModule.database,
 ) : SearchTemplatesBaseVM<IngredientTemplate>(
     templateRepo = SearchIngredientTemplateRepo(database.searchTemplatesDao())
 )

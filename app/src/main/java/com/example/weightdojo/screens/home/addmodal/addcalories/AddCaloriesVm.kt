@@ -12,12 +12,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.Meal
 import com.example.weightdojo.database.models.MealTemplate
-import com.example.weightdojo.datatransferobjects.RepoResponse
-import com.example.weightdojo.repositories.IngredientTemplateRepo
-import com.example.weightdojo.repositories.IngredientTemplateRepoImpl
 import com.example.weightdojo.repositories.MealRepository
 import com.example.weightdojo.repositories.MealRepositoryImpl
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -29,9 +25,6 @@ class AddCaloriesVm(
     private val dayId: Long?,
     private val mealTemplateRepo: MealTemplateRepo = MealTemplateRepoImpl(database.mealTemplateDao()),
     private val mealRepository: MealRepository = MealRepositoryImpl(database.mealDao()),
-    private val ingredientTemplateRepo: IngredientTemplateRepo = IngredientTemplateRepoImpl(
-        database.ingredientTemplateDao()
-    )
 ) : ViewModel() {
     var stateHandler by mutableStateOf(AddCaloriesStateHandler(dayId = dayId))
     private val addCaloriesValidation = AddCaloriesValidation()
@@ -163,18 +156,5 @@ class AddCaloriesVm(
         }
 
         return res.success
-    }
-
-    suspend fun deleteMealTemplate(mealTemplate: MealTemplate): RepoResponse<Nothing?> {
-        val job = viewModelScope.async { mealTemplateRepo.deleteMealTemplate(mealTemplate) }
-
-        return job.await()
-    }
-
-    suspend fun deleteIngredientTemplate(ingredientTemplate: IngredientTemplate): RepoResponse<Nothing?> {
-        val job =
-            viewModelScope.async { ingredientTemplateRepo.deleteIngTemplate(ingredientTemplate) }
-
-        return job.await()
     }
 }

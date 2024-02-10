@@ -38,7 +38,6 @@ fun <Template : Searchable> TemplateItem(
     isActive: Boolean,
     config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
     viewModel: ViewModel,
-    onDelete: KSuspendFunction1<Template, RepoResponse<Nothing?>>,
     per100: Boolean,
     onUseClick: KFunction1<Template?, Unit>
 ) {
@@ -49,7 +48,7 @@ fun <Template : Searchable> TemplateItem(
     val confirmDelete = ConfirmDelete {
         viewModel.viewModelScope.launch(Dispatchers.IO) {
 
-            val res = onDelete(it as Template)
+            val res = searchTemplateVm.deleteTemplate(it as Template)
 
             if (res.success) {
                 toast("Success", context)

@@ -20,8 +20,6 @@ const val message = "Internal use only"
 
 @Dao
 interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
-    @Query("DELETE FROM meal_template WHERE mealTemplateId = :id")
-    fun deleteMealTemplate(id: Long)
 
     @Query("DELETE FROM meal_ingredient WHERE mealTemplateId = :mealTemplateId")
     fun deleteMealIngredient(mealTemplateId: Long)
@@ -106,9 +104,4 @@ interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
     @Query("DELETE FROM meal_template")
     fun _DELETE_ALL()
 
-    @Transaction
-    fun deleteMealTemplateHandler(mealTemplateId: Long) {
-        deleteMealTemplate(mealTemplateId)
-        deleteUnusedIngredientTemplates()
-    }
 }

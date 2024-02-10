@@ -8,6 +8,7 @@ import com.example.weightdojo.datatransferobjects.RepoResponse
 
 interface SearchTemplateRepo<Template> {
     suspend fun searchTemplate(term: String): RepoResponse<List<Template>>
+    suspend fun deleteTemplate(mealTemplate: Template): RepoResponse<Nothing?>
 }
 
 class SearchMealTemplateRepo(
@@ -26,6 +27,16 @@ class SearchMealTemplateRepo(
             )
         }
     }
+
+    override suspend fun deleteTemplate(mealTemplate: MealTemplate): RepoResponse<Nothing?> {
+        return try {
+            searchTemplatesDao.deleteMealTemplateHandler(mealTemplate.mealTemplateId)
+
+            RepoResponse(success = true, data = null)
+        } catch (e: Exception) {
+            RepoResponse(success = false, data = null, errorMessage = e.message)
+        }
+    }
 }
 
 class SearchIngredientTemplateRepo(
@@ -42,6 +53,16 @@ class SearchIngredientTemplateRepo(
             RepoResponse(
                 success = false, data = listOf(), errorMessage = e.message
             )
+        }
+    }
+
+    override suspend fun deleteTemplate(ingTemplate: IngredientTemplate): RepoResponse<Nothing?> {
+        return try {
+            searchTemplatesDao.deleteIngTemplateHandler(ingTemplate)
+
+            RepoResponse(success = true, data = null)
+        } catch (e: Exception) {
+            RepoResponse(success = false, data = null, errorMessage = e.message)
         }
     }
 }

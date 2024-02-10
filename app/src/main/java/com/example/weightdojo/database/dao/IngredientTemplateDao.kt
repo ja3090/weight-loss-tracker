@@ -12,17 +12,6 @@ interface IngredientTemplateDao : NormalisationMethods {
     @Delete
     fun deleteIngTemplate(ingredientTemplate: IngredientTemplate)
 
-    @Query("UPDATE ingredient_template " +
-            "SET soft_delete = 1 " +
-            "WHERE ingredientTemplateId = :ingredientTemplateId")
-    fun softDeleteIngTemplate(ingredientTemplateId: Long)
-
-    @Transaction
-    fun deleteIngTemplateHandler(ingredientTemplate: IngredientTemplate) {
-        softDeleteIngTemplate(ingredientTemplate.ingredientTemplateId)
-        deleteUnusedIngredientTemplates()
-    }
-
     @Query("DELETE FROM meal_ingredient WHERE ingredientTemplateId = :ingTemplateId")
     fun deleteMealIng(ingTemplateId: Long)
 
