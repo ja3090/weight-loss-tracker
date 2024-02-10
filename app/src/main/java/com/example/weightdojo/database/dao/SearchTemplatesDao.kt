@@ -11,24 +11,12 @@ import com.example.weightdojo.database.models.MealTemplate
 @Dao
 interface SearchTemplatesDao {
 
-    @RawQuery
-    fun <T> searchTemplates(query: SimpleSQLiteQuery): List<T>
+    @Query("SELECT * FROM ingredient_template " +
+            "WHERE soft_delete = 0 AND name LIKE '%' || :term || '%'")
+    fun searchIngredientTemplates(term: String): List<IngredientTemplate>
 
-    fun searchIngredientTemplates(term: String): List<IngredientTemplate> {
-        val query = SimpleSQLiteQuery(
-            "SELECT * FROM ingredient_template " +
-                "WHERE name LIKE '%' || ? || '%'", arrayOf(term)
-        )
 
-        return searchTemplates(query)
-    }
-
-    fun searchMealTemplates(term: String): List<MealTemplate> {
-        val query = SimpleSQLiteQuery(
-            "SELECT * FROM meal_template " +
-                "WHERE name LIKE '%' || ? || '%'", arrayOf(term)
-        )
-
-        return searchTemplates(query)
-    }
+    @Query("SELECT * FROM meal_template " +
+            "WHERE name LIKE '%' || :term || '%'")
+    fun searchMealTemplates(term: String): List<MealTemplate>
 }

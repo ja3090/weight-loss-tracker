@@ -2,7 +2,7 @@ package com.example.weightdojo.database.dao
 
 import androidx.room.Query
 
-interface CommonMethods {
+interface NormalisationMethods {
 
     @Query(
         "WITH CalorieTotals AS ( " +
@@ -38,4 +38,8 @@ interface CommonMethods {
         totalProtein: Float,
         id: Long
     )
+
+    @Query("DELETE FROM ingredient_template " +
+            "WHERE ingredientTemplateId NOT IN (SELECT ingredientTemplateId FROM meal_ingredient)")
+    fun deleteUnusedIngredientTemplates()
 }
