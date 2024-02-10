@@ -12,7 +12,7 @@ import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.utils.totals
 
 @Dao
-interface MealDao : CommonMethods {
+interface MealDao : NormalisationMethods {
 
     @Transaction
     fun insertMeal(mealState: Meal, ingredientList: List<IngredientState>) {

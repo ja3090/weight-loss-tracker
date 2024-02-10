@@ -13,7 +13,7 @@ import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.utils.totals
 
 @Dao
-interface IngredientDao : CommonMethods {
+interface IngredientDao : NormalisationMethods {
     @Query(
         "SELECT * FROM ingredient " +
                 "WHERE meal_id = :mealId"

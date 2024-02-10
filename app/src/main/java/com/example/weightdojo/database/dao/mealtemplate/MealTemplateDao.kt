@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.example.weightdojo.database.dao.NormalisationMethods
 import com.example.weightdojo.database.models.IngredientTemplate
 import com.example.weightdojo.database.models.MealIngredientTemplate
 import com.example.weightdojo.database.models.MealTemplate
@@ -18,7 +19,7 @@ import com.example.weightdojo.utils.totals
 const val message = "Internal use only"
 
 @Dao
-interface MealTemplateDao : UpdateTemplate {
+interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
     @Query("DELETE FROM meal_template WHERE mealTemplateId = :id")
     fun deleteMealTemplate(id: Long)
 
@@ -108,6 +109,6 @@ interface MealTemplateDao : UpdateTemplate {
     @Transaction
     fun deleteMealTemplateHandler(mealTemplateId: Long) {
         deleteMealTemplate(mealTemplateId)
-        deleteMealIngredient(mealTemplateId)
+        deleteUnusedIngredientTemplates()
     }
 }
