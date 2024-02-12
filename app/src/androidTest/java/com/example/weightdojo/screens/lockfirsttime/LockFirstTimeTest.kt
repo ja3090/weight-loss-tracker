@@ -13,7 +13,6 @@ import com.example.weightdojo.TestTags
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.Database
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.repositories.ConfigRepository
 import com.example.weightdojo.utils.SessionCache
 import junit.framework.TestCase.assertTrue
 import org.junit.After
@@ -21,20 +20,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
-import kotlin.reflect.KProperty1
-
-class TestConfigRepo : ConfigRepository {
-    override suspend fun getConfig(): Config? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun submitConfig(passcode: String, bioEnabled: Boolean): Boolean {
-        return false
-    }
-}
 
 class TestConfigSession : SessionCache<Config> {
-    override fun saveSession(session: Config) {
+    override fun saveSession(session: Config?) {
         TODO("Not yet implemented")
     }
 
@@ -62,11 +50,8 @@ class LockFirstTimeTest {
     fun init() {
         context = ApplicationProvider.getApplicationContext()
         db = Database.buildDb(context, true)
-        val testConfigRepo = TestConfigRepo()
         viewModel = LockFirstTimeViewModel(
-            db,
             configSessionCache = TestConfigSession(),
-            repo = testConfigRepo
         )
 
         composeTestRule.setContent {

@@ -33,4 +33,10 @@ interface TestMealTemplateDao {
     @Transaction
     @Query("SELECT * FROM meal_template")
     fun getAllMealIngredient(): List<MealTemplateWithIngredients>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM meal_template"
+    )
+    fun getAllMealIngredientByMealTemplId(): List<MealTemplateWithIngredients>
 }

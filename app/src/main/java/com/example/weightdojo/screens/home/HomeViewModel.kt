@@ -36,6 +36,14 @@ class HomeViewModel(
         getAndSetDay()
     }
 
+    fun getDayData(): DayData? {
+        return state.dayData
+    }
+
+    fun getDayId(): Long? {
+        return state.dayData?.day?.id
+    }
+
     fun showModal(show: Boolean) {
         state = state.copy(showAddModal = show)
     }

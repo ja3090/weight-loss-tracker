@@ -1,5 +1,6 @@
 package com.example.weightdojo.components.searchtemplates
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,16 +22,11 @@ import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.components.toast
 import com.example.weightdojo.database.models.Config
-import com.example.weightdojo.database.models.IngredientTemplate
-import com.example.weightdojo.database.models.MealTemplate
 import com.example.weightdojo.database.models.Searchable
-import com.example.weightdojo.datatransferobjects.RepoResponse
-import com.example.weightdojo.screens.home.addmodal.addcalories.searchmealtemplates.SearchTemplatesBaseVM
 import com.example.weightdojo.ui.Sizing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.reflect.KFunction1
-import kotlin.reflect.KSuspendFunction1
 
 @Composable
 fun <Template : Searchable> TemplateItem(
@@ -39,9 +35,9 @@ fun <Template : Searchable> TemplateItem(
     config: Config? = MyApp.appModule.configSessionCache.getActiveSession(),
     viewModel: ViewModel,
     per100: Boolean,
-    onUseClick: KFunction1<Template?, Unit>
+    onUseClick: KFunction1<Template?, Unit>,
+    searchTemplateVm: SearchTemplatesBaseVM<Template>
 ) {
-    val searchTemplateVm: SearchTemplatesBaseVM<Template> = viewModel()
     val calorieUnit = config?.calorieUnit?.name ?: "KCAL"
     val context = LocalContext.current
 
@@ -58,6 +54,8 @@ fun <Template : Searchable> TemplateItem(
             }
         }
     }
+
+    Log.d("mealTemplate", it.toString())
 
     confirmDelete.DeleteModal()
 

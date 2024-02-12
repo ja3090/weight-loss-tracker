@@ -23,7 +23,6 @@ import com.example.weightdojo.R
 import com.example.weightdojo.components.ConfirmDelete
 import com.example.weightdojo.components.CustomButton
 import com.example.weightdojo.components.addingredients.AddIngredient
-import com.example.weightdojo.components.addingredients.searchingredienttemplates.SearchIngredientTemplates
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.inputs.IngredientAsInput
 import com.example.weightdojo.components.successToast

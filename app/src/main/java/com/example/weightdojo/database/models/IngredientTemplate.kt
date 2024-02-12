@@ -15,8 +15,13 @@ data class IngredientTemplate(
     @ColumnInfo(name = "calories_per_100g") val caloriesPer100: Float,
     @ColumnInfo(name = "grams") val grams: Float,
     @ColumnInfo(name = "soft_delete") val softDelete: Boolean = false,
-    override val protein: Float = proteinPer100,
-    override val carbs: Float = carbohydratesPer100,
-    override val cals: Float = totalGrams(grams, caloriesPer100),
-    override val fat: Float = fatPer100,
-) : Searchable
+) : Searchable {
+    override val protein: Float
+        get() = proteinPer100
+    override val carbs: Float
+        get() = carbohydratesPer100
+    override val cals: Float
+        get() = totalGrams(grams, caloriesPer100)
+    override val fat: Float
+        get() = fatPer100
+}

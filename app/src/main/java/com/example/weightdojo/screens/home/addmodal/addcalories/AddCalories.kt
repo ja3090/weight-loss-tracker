@@ -21,6 +21,7 @@ fun AddCalories(
     state: AddCaloriesState = addCaloriesVm.stateHandler.state,
     addModalVm: AddModalVm = viewModel()
 ) {
+
     ErrorDialog(
         onConfirm = { addCaloriesVm.stateHandler.setErrorMessage(null) },
         title = "Error",
@@ -46,7 +47,6 @@ fun AddCalories(
                 viewModel = addCaloriesVm,
                 per100 = false
             )
-
             AddCalsSubModals.MealCreation -> AddNewMeal()
             AddCalsSubModals.AddIngredientTemplate -> SearchTemplate(
                 searchTemplatesVm = SearchIngredientTemplatesVM(),

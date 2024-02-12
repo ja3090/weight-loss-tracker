@@ -16,8 +16,6 @@ import com.example.weightdojo.datatransferobjects.MealState
 import com.example.weightdojo.datatransferobjects.RepoResponse
 import com.example.weightdojo.repositories.IngredientRepository
 import com.example.weightdojo.repositories.IngredientRepositoryImpl
-import com.example.weightdojo.repositories.IngredientTemplateRepo
-import com.example.weightdojo.repositories.IngredientTemplateRepoImpl
 import com.example.weightdojo.repositories.MealRepository
 import com.example.weightdojo.repositories.MealRepositoryImpl
 import kotlinx.coroutines.Dispatchers
@@ -43,9 +41,6 @@ class MealListVM(
     private val mealRepository: MealRepository = MealRepositoryImpl(
         database.mealDao()
     ),
-    private val ingredientTemplateRepo: IngredientTemplateRepo = IngredientTemplateRepoImpl(
-        database.ingredientTemplateDao()
-    )
 ) : ViewModel() {
 
     var state by mutableStateOf(MealListState())

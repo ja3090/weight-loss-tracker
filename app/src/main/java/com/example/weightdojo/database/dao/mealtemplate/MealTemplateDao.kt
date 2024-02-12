@@ -1,5 +1,6 @@
 package com.example.weightdojo.database.dao.mealtemplate
 
+import android.util.Log
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -54,9 +55,12 @@ interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
 
     @Transaction
     fun createMealTemplate(
-        mealTemplate: MealTemplate, ingredientTemplates: List<IngredientState>
-    ) {
-        val mealTemplateId = insertMealTemplate(mealTemplate)
+        mealTemplate: MealTemplate,
+        ingredientTemplates: List<IngredientState>
+    ): Long {
+        val newTemplate = mealTemplate.copy(mealTemplateId = 0L)
+
+        val mealTemplateId = insertMealTemplate(newTemplate)
 
         val convertTemplates = ConvertTemplates()
 
@@ -69,7 +73,7 @@ interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
 
             val mealIng = MealIngredientTemplate(mealTemplateId, ingId)
 
-            overwriteMealIngredientJunction(mealIng)
+            insertMealIngredientTemplate(mealIng)
         }
 
         val totals = totals(ingredientTemplates.filter { it.markedFor !== Marked.DELETE })
@@ -81,7 +85,12 @@ interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
             totalFat = totals.fat,
             id = mealTemplateId
         )
+
+        return mealTemplateId
     }
+
+    @Insert
+    fun insertMealIngredientTemplate(mealIngredientTemplate: MealIngredientTemplate): Long
 
     @Insert
     fun insertMealTemplate(mealTemplate: MealTemplate): Long
@@ -91,7 +100,7 @@ interface MealTemplateDao : UpdateTemplate, NormalisationMethods {
 
     @Transaction
     @Query(
-        "SELECT * FROM meal_template " + "WHERE mealTemplateId = :mealTemplateId "
+        "SELECT * FROM meal_template WHERE mealTemplateId = :mealTemplateId "
     )
     fun getMealTemplateWithIngredientsById(mealTemplateId: Long): MealTemplateWithIngredients
 

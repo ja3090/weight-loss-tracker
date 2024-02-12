@@ -13,9 +13,14 @@ data class MealTemplate(
     @ColumnInfo(name = "total_protein") val totalProtein: Float = 0f,
     @ColumnInfo(name = "total_fat") val totalFat: Float = 0f,
     @ColumnInfo(name = "total_calories") val totalCalories: Float = 0f,
-    override val protein: Float = totalProtein,
-    override val carbs: Float = totalCarbohydrates,
-    override val cals: Float = totalCalories,
-    override val fat: Float = totalFat,
 
-) : Searchable
+) : Searchable {
+    override val protein: Float
+        get() = totalProtein
+    override val carbs: Float
+        get() = totalCarbohydrates
+    override val cals: Float
+        get() = totalCalories
+    override val fat: Float
+        get() = totalFat
+}

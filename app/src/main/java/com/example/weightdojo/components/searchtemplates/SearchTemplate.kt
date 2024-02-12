@@ -34,7 +34,8 @@ fun <Template : Searchable> SearchTemplate(
             isActive = searchTemplatesVm.state.activeTemplate == it,
             onUseClick = onUseClick,
             per100 = per100,
-            viewModel = viewModel
+            viewModel = viewModel,
+            searchTemplateVm = searchTemplatesVm
         )
     }
     Row(

@@ -72,9 +72,7 @@ fun Home(
         }
 
         if (homeState.showAddModal) {
-            AddModal(
-                dayData = homeState.dayData
-            )
+            AddModal()
         }
 
         DayPicker(todayFullDate = homeState.currentDate, dateSetter = homeViewModel::getAndSetDay)

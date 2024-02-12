@@ -107,7 +107,7 @@ class MealTemplateRepoImpl(
         } catch (e: Exception) {
             Log.e("templateSubmissionError", e.message.toString())
 
-            RepoResponse(success = true, data = null, errorMessage = e.message)
+            RepoResponse(success = false, data = null, errorMessage = e.message)
         }
     }
 }

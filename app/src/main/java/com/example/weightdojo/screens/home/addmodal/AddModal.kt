@@ -15,13 +15,9 @@ import com.example.weightdojo.screens.main.Screens
 
 @Composable
 fun AddModal(
-    dayData: DayData?,
     homeViewModel: HomeViewModel = viewModel(),
     addModalVm: AddModalVm = viewModel()
 ) {
-
-    val homeState = homeViewModel.state
-
     Dialog(
         onDismissRequest = { homeViewModel.showModal(false) },
         properties = DialogProperties(
@@ -30,8 +26,8 @@ fun AddModal(
     ) {
         when (addModalVm.currentSubModal) {
             AddMenuSubModals.Initial -> Initial()
-            AddMenuSubModals.AddWeight -> AddWeight(dayData = dayData)
-            AddMenuSubModals.AddCalories -> AddCalories(dayId = homeState.dayData?.day?.id)
+            AddMenuSubModals.AddWeight -> AddWeight(dayData = homeViewModel.getDayData())
+            AddMenuSubModals.AddCalories -> AddCalories(dayId = homeViewModel.getDayId())
         }
     }
 }
