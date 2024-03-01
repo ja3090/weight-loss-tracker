@@ -2,6 +2,7 @@ package com.example.weightdojo.database.dao
 
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Transaction
 import com.example.weightdojo.database.models.Ingredient
 import com.example.weightdojo.database.models.Meal
 import com.example.weightdojo.database.models.MealIngredient
@@ -28,6 +29,17 @@ interface Inserters {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun replaceIngredient(ingredient: Ingredient): Long
+
+    @Transaction
+    fun ingredientInsertWhenEditing(ingredient: Ingredient, mealId: Long): Ingredient {
+        val toInsert = if (ingredient.isTemplate) {
+            ingredient.copy(ingredientId = 0, isTemplate = false, mealId = mealId)
+        } else ingredient
+
+        val newId = replaceIngredient(toInsert)
+
+        return toInsert.copy(ingredientId = newId)
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun replaceNutrimentIngredient(nutrimentIngredient: NutrimentIngredient): Long

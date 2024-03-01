@@ -12,12 +12,20 @@ import com.example.weightdojo.database.models.Searchable
 fun <T> Search(
     onSearch: (term: String) -> Unit,
     items: List<T>,
-    listMapper: @Composable (item: T) ->  Unit
+    listMapper: @Composable (T, Boolean, (T) -> Unit) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 300.dp, max = 500.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 300.dp, max = 500.dp)
     ) {
         DebouncingSearchBar(onSearch = { onSearch(it) })
-        SearchResults(items = items) { listMapper(it) }
+        SearchResults(items = items) { item, isActive, setter ->
+            listMapper(
+                item,
+                isActive,
+                setter
+            )
+        }
     }
 }

@@ -9,8 +9,8 @@ import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.datatransferobjects.MealWithNutrimentData
 import com.example.weightdojo.datatransferobjects.SingleMealDetailed
-import com.example.weightdojo.repositories.MealRepository
-import com.example.weightdojo.repositories.MealRepositoryImpl
+import com.example.weightdojo.repositories.mealrepo.MealRepository
+import com.example.weightdojo.repositories.mealrepo.MealRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ data class MealListVMState(
 
 class MealListViewModel(
     private val database: AppDatabase = MyApp.appModule.database,
-    private val mealRepository: MealRepository = MealRepositoryImpl(database.mealDao())
+    private val mealRepository: MealRepository = MealRepositoryImpl(database)
 ) : ViewModel() {
 
     var state by mutableStateOf(MealListVMState())

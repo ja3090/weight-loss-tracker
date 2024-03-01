@@ -41,8 +41,8 @@ class HomeViewModel(
         return state.dayData
     }
 
-    fun getDayId(): Long? {
-        return state.dayData?.day?.id
+    fun getDayId(): Long {
+        return state.dayData?.day?.id ?: 0
     }
 
     fun showModal(show: Boolean) {

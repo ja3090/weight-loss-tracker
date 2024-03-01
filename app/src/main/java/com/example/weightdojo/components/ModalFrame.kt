@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.home.addmodal
+package com.example.weightdojo.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.R
 import com.example.weightdojo.components.CustomDivider
@@ -49,9 +50,11 @@ fun ModalFrame(
                     .clickable { onBack() }
                     .padding(Sizing.paddings.medium)
             )
-            Heading(
+            TextDefault(
                 text = title,
-                modifier = Modifier.padding(horizontal = Sizing.paddings.medium)
+                modifier = Modifier.padding(horizontal = Sizing.paddings.medium),
+                fontWeight = FontWeight.Bold,
+                fontSize = Sizing.font.default * 1.05
             )
             IconBuilder(
                 id = R.drawable.close,

@@ -18,18 +18,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.R
+import com.example.weightdojo.components.ConfirmModal
 import com.example.weightdojo.components.icon.IconBuilder
 import com.example.weightdojo.components.inputs.Field
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.datatransferobjects.SingleMealDetailedIngredient
+import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.ui.CustomColors
 import com.example.weightdojo.ui.Sizing
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Composable
@@ -39,6 +44,15 @@ fun IngredientInput(
     stateHandler: MealCreationStateHandler = mealCreationVM.stateHandler,
     isActive: Boolean = stateHandler.state.activeIngredient?.internalId == ingredient.internalId,
 ) {
+
+    val confirmDelete = ConfirmModal(
+        title = "Delete Ingredient",
+        text = "Are you sure you want to delete this?"
+    ) {
+        mealCreationVM.stateHandler.removeIngredientFromList(ingredient)
+    }
+
+    confirmDelete.Modal()
 
     Column(
         modifier = Modifier
@@ -84,10 +98,10 @@ fun IngredientInput(
                     ingredient.internalId
                 )
             },
-            placeholder = "Calories*",
+            placeholder = "Calories",
             trailingIcon = {
                 TextDefault(
-                    text = MyApp.appModule.calorieUnit.name,
+                    text = "*${MyApp.appModule.calorieUnit.name}",
                     color = MaterialTheme.colors.primary.copy(0.5f),
                     fontSize = Sizing.font.small
                 )
@@ -125,6 +139,17 @@ fun IngredientInput(
                     ingredientUUID = ingredient.internalId
                 )
             }
+            IconBuilder(
+                id = R.drawable.delete,
+                contentDescription = "Delete Ingredient",
+                testTag = "DELETE_INGREDIENT",
+                modifier = Modifier
+                    .padding(vertical = Sizing.paddings.medium)
+                    .fillMaxWidth()
+                    .clickable {
+                        confirmDelete.openOrClose(true)
+                    }
+            )
         }
     }
 }

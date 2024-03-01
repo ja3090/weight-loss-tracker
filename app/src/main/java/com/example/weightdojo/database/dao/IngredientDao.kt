@@ -1,11 +1,17 @@
 package com.example.weightdojo.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.weightdojo.database.models.Ingredient
+import com.example.weightdojo.datatransferobjects.IngredientWithNutrimentData
+import com.example.weightdojo.datatransferobjects.IngredientWithNutrimentDataDTO
+import com.example.weightdojo.datatransferobjects.MealWithNutrimentData
+import com.example.weightdojo.datatransferobjects.SingleIngredientDetailedDTO
+import com.example.weightdojo.datatransferobjects.SingleMealDetailedIngredient
 import com.example.weightdojo.utils.totals
 
 @Dao
@@ -54,4 +60,37 @@ interface IngredientDao : NormalisationMethods {
                 "WHERE mealId = :id "
     )
     fun deleteMeal(id: Long)
+
+    @Query(
+        "SELECT nutriment.name as nutrimentName,  " +
+                "ingredient.name as ingredientName,  " +
+                "calories_per_100g as caloriesPer100,  " +
+                "ingredient.ingredientId as ingredientId, " +
+                "nutriment.nutrimentId, " +
+                "nutriment_ingredient.gPer100 as gPer100 " +
+                "FROM ingredient " +
+                "JOIN nutriment_ingredient ON nutriment_ingredient.ingredientId = ingredient.ingredientId " +
+                "JOIN nutriment ON nutriment.nutrimentId = nutriment_ingredient.nutrimentId " +
+                "WHERE ingredient.name LIKE '%' || :term || '%' AND is_template = 1 " +
+                "ORDER BY ingredientName ASC "
+    )
+    fun searchMealTemplates(term: String): List<IngredientWithNutrimentDataDTO>
+
+    @Query(
+        "SELECT " +
+                "nutriment.name as nutrimentName, " +
+                "meal_id as mealId, " +
+                "ingredient.ingredientId, " +
+                "gPer100, " +
+                "grams, " +
+                "ingredient.name as ingredientName, " +
+                "ingredient.is_template as ingredientIsTemplate, " +
+                "nutriment.nutrimentId, " +
+                "calories_per_100g as caloriesPer100 " +
+                "FROM ingredient " +
+        "JOIN nutriment_ingredient ON nutriment_ingredient.ingredientId = ingredient.ingredientId " +
+        "JOIN nutriment ON nutriment_ingredient.nutrimentId = nutriment.nutrimentId " +
+        "WHERE ingredient.ingredientId = :id "
+    )
+    fun getDetailedIngredient(id: Long): List<SingleIngredientDetailedDTO>
 }

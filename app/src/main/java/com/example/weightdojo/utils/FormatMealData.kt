@@ -1,14 +1,14 @@
 package com.example.weightdojo.utils
 
-import android.util.Log
 import com.example.weightdojo.datatransferobjects.MealWithNutrimentData
 import com.example.weightdojo.datatransferobjects.MealWithNutrimentDataDTO
-import com.example.weightdojo.datatransferobjects.NutrimentBreakdown
+import com.example.weightdojo.datatransferobjects.NutrimentBreakdownIngredient
+import com.example.weightdojo.datatransferobjects.NutrimentBreakdownMeal
 
 interface FormatMealData {
     fun formatMealData(mealData: List<MealWithNutrimentDataDTO>): List<MealWithNutrimentData> {
 
-        val nutrimentBreakdownById = mutableMapOf<Long, MutableList<NutrimentBreakdown>>()
+        val nutrimentBreakdownById = mutableMapOf<Long, MutableList<NutrimentBreakdownMeal>>()
         val mealById = mutableMapOf<Long, MealWithNutrimentData>()
 
         for (meal in mealData) {
@@ -18,7 +18,7 @@ interface FormatMealData {
                 mutableListOf()
             }
 
-            val nutrimentBreakdown = NutrimentBreakdown(
+            val nutrimentBreakdown = NutrimentBreakdownMeal(
                 nutrimentId = meal.nutrimentId,
                 nutrimentName = meal.nutrimentName,
                 totalGrams = meal.totalGrams
@@ -37,7 +37,7 @@ interface FormatMealData {
         }
 
         return mealById.map {
-            it.value.copy(nutriments = nutrimentBreakdownById[it.value.mealId] ?: listOf())
+            it.value.copy(nutriments = nutrimentBreakdownById[it.value.id] ?: mutableListOf())
         }
     }
 }

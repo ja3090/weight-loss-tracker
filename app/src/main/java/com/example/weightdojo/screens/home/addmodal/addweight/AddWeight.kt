@@ -23,7 +23,7 @@ import com.example.weightdojo.database.models.Config
 import com.example.weightdojo.datatransferobjects.DayData
 import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.screens.home.addmodal.AddModalVm
-import com.example.weightdojo.screens.home.addmodal.ModalFrame
+import com.example.weightdojo.components.ModalFrame
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.ConfigSessionCache
 import com.example.weightdojo.utils.VMFactory

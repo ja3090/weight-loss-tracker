@@ -13,15 +13,9 @@ interface NutrimentMealDao {
     fun insertNutrimentMeal(nutrimentMeal: NutrimentMeal)
 
     @Query(
-        "WITH PriorTotal AS (" +
-                    "SELECT SUM(totalGrams) as totalGrams FROM nutriment_meal " +
-                    "WHERE nutrimentId = :nutrimentId " +
-                    "AND mealId = :mealId " +
-                ")" +
-                "" +
-                "UPDATE nutriment_meal " +
-                "SET totalGrams = (SELECT totalGrams FROM PriorTotal) + :totalGrams " +
-                "WHERE nutrimentId = :nutrimentId AND mealId = :mealId"
+        "UPDATE nutriment_meal " +
+        "SET totalGrams = :totalGrams " +
+        "WHERE nutrimentId = :nutrimentId AND mealId = :mealId"
     )
     fun updateNutrimentTotals(nutrimentId: Long, mealId: Long, totalGrams: Float)
 

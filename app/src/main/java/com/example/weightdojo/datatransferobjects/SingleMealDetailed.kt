@@ -67,7 +67,8 @@ data class SingleMealDetailedIngredient(
     val nutriments: MutableList<SingleMealDetailedNutriment> = mutableListOf(),
     val caloriesPer100: Float = 0f,
     val mealId: Long? = null,
-    val ingredientIsTemplate: Boolean,
+    val ingredientIsTemplate: Boolean = false,
+    val markedFor: Marked = Marked.EDIT
 ) {
     fun toIngredient(): Ingredient {
         return Ingredient(

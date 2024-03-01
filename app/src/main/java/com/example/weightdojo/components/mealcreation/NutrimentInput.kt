@@ -47,10 +47,10 @@ fun NutrimentInput(
                 ingredientUuid = ingredientUUID
             )
         },
-        placeholder = "Grams*",
+        placeholder = "Grams",
         trailingIcon = {
             TextDefault(
-                text = "${nutriment.nutrimentName} g",
+                text = "*${nutriment.nutrimentName} g",
                 fontSize = Sizing.font.small,
                 color = it
             )

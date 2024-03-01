@@ -14,4 +14,7 @@ interface NutrimentIngredientDao {
     @Deprecated("Used for testing purposes. Do not use anywhere")
     @Query("DELETE FROM nutriment_ingredient")
     fun _DELETE_ALL()
+
+    @Query("DELETE FROM nutriment_ingredient WHERE ingredientId = :ingredientId")
+    fun deleteNutrimentIngredient(ingredientId: Long)
 }

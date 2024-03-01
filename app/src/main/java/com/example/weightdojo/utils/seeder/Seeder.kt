@@ -1,6 +1,5 @@
-package com.example.weightdojo.utils
+package com.example.weightdojo.utils.seeder
 
-import android.util.Log
 import com.example.weightdojo.database.AppDatabase
 import com.example.weightdojo.database.models.Day
 import com.example.weightdojo.database.models.Ingredient
@@ -8,6 +7,7 @@ import com.example.weightdojo.database.models.Meal
 import com.example.weightdojo.database.models.Nutriment
 import com.example.weightdojo.database.models.NutrimentIngredient
 import com.example.weightdojo.database.models.NutrimentMeal
+import com.example.weightdojo.utils.totalGrams
 import io.github.serpro69.kfaker.Faker
 import io.github.serpro69.kfaker.faker
 import kotlinx.coroutines.runBlocking
@@ -28,7 +28,9 @@ class Seeder(
         "Protein",
         "Fibre"
     ),
-    private var nutrimentIds: MutableList<Long> = mutableListOf()
+    private var nutrimentIds: MutableList<Long> = mutableListOf(),
+    private val nutrimentTotals: NutrimentTotals = NutrimentTotals(database),
+    private val calorieTotals: CalorieTotals = CalorieTotals(database)
 ) {
     fun execute() {
 
@@ -85,10 +87,10 @@ class Seeder(
 
             database.nutrimentMealDao().insertNutrimentMeal(nutrimentMeal)
 
-            database.nutrimentMealDao().updateNutrimentTotals(
+            nutrimentTotals.updateTotal(
                 nutrimentId = nutrimentId,
                 mealId = mealId,
-                totalGrams = totalGrams(ingredient.grams, gPer100)
+                value = totalGrams(ingredient.grams, gPer100)
             )
         }
     }
@@ -109,10 +111,13 @@ class Seeder(
 
             val ingId = database.ingredientDao().insertIngredient(ingredient)
 
+            calorieTotals.updateTotal(mealId, totalGrams(grams, calsPer100))
+
             nutrimentsForMealsAndIngredients(ingredient.copy(ingredientId = ingId), mealId)
         }
 
-        database.mealDao().updateCalorieTotals(mealId)
+        nutrimentTotals.updateMealTotals()
+        calorieTotals.updateMealTotals()
     }
 
     private fun createMeals(dayId: Long): Long {

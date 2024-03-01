@@ -19,6 +19,13 @@ class MealCreationValidation {
 
         val nutriments = mutableListOf<SingleMealDetailedNutriment>()
 
+        if (state.singleMealDetailed.ingredients.isEmpty()) {
+            return ValidationResponse(
+                success = false,
+                message = "Cannot submit a meal without ingredients"
+            )
+        }
+
         for (ingredient in state.singleMealDetailed.ingredients) {
             if (ingredient.caloriesPer100 == 0f) {
                 return ValidationResponse(

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,11 +15,11 @@ import com.example.weightdojo.MyApp
 import com.example.weightdojo.R
 import com.example.weightdojo.components.ConfirmModal
 import com.example.weightdojo.components.CustomDivider
+import com.example.weightdojo.components.NutrimentData
+import com.example.weightdojo.components.NutritionBreakdown
 import com.example.weightdojo.components.icon.IconBuilder
-import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.datatransferobjects.MealWithNutrimentData
 import com.example.weightdojo.ui.Sizing
-import com.example.weightdojo.utils.toTwoDecimalPlaces
 
 @Composable
 fun MealItem(
@@ -29,10 +28,9 @@ fun MealItem(
     activeMeal: MealWithNutrimentData?,
     setter: (meal: MealWithNutrimentData) -> Unit,
     arrSize: Int,
-    calorieUnit: String = MyApp.appModule.calorieUnit.name,
     onEditButtonClick: (Long) -> Unit
 ) {
-    val isActive = activeMeal !== null && activeMeal.mealId == meal.mealId
+    val isActive = activeMeal !== null && activeMeal.id == meal.id
 
     val confirmDelete = ConfirmModal(
         title = "Delete",
@@ -42,20 +40,8 @@ fun MealItem(
     confirmDelete.Modal()
 
     Column(modifier = Modifier.animateContentSize()) {
-        Row(
-            modifier = Modifier
-                .clickable { setter(meal) }
-                .padding(vertical = Sizing.paddings.medium, horizontal = Sizing.paddings.small)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            if (isActive) TextDefault(
-                text = meal.mealName,
-                color = MaterialTheme.colors.primaryVariant
-            )
-            else TextDefault(text = meal.mealName)
-            TextDefault(text = "${toTwoDecimalPlaces(meal.totalCalories)} $calorieUnit")
-        }
+        NutritionBreakdown(data = meal, setter = { setter(meal) }, isActive = isActive)
+
         if (index != arrSize - 1) {
             CustomDivider(
                 modifier = Modifier.padding(horizontal = Sizing.paddings.small)
@@ -63,8 +49,6 @@ fun MealItem(
         }
 
         if (isActive) {
-            NutrimentData(nutriments = meal.nutriments)
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -75,7 +59,7 @@ fun MealItem(
                     contentDescription = "edit",
                     testTag = "EDIT_BUTTON",
                     modifier = Modifier
-                        .clickable { onEditButtonClick(meal.mealId) }
+                        .clickable { onEditButtonClick(meal.id) }
                         .weight(1f)
                         .fillMaxSize()
                         .padding(Sizing.paddings.medium),

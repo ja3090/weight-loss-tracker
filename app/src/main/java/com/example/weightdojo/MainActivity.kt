@@ -2,11 +2,10 @@ package com.example.weightdojo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import com.example.weightdojo.screens.main.MainScreen
 import com.example.weightdojo.ui.AppTheme
-import com.example.weightdojo.utils.Seeder
+import com.example.weightdojo.utils.seeder.Seeder
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {

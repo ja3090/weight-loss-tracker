@@ -21,3 +21,22 @@ fun <Data> repoWrapper(dbCall: () -> Data): RepoResponse<Data?> {
         )
     }
 }
+
+fun <Data> repoWrapper(
+    defaultValue: Data,
+    dbCall: () -> Data,
+): RepoResponse<Data> {
+    return try {
+        RepoResponse(
+            success = true,
+            data = dbCall(),
+            errorMessage = null
+        )
+    } catch (e: Exception) {
+        RepoResponse(
+            success = false,
+            data = defaultValue,
+            errorMessage = e.message
+        )
+    }
+}

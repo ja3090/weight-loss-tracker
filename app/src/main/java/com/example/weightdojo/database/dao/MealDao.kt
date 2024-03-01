@@ -7,6 +7,8 @@ import androidx.room.Transaction
 import com.example.weightdojo.DEPRECATED_MESSAGE
 import com.example.weightdojo.database.models.NutrimentIngredient
 import com.example.weightdojo.database.models.NutrimentMeal
+import com.example.weightdojo.datatransferobjects.MealWithNutrimentData
+import com.example.weightdojo.datatransferobjects.MealWithNutrimentDataDTO
 import com.example.weightdojo.datatransferobjects.SingleMealBuilder
 import com.example.weightdojo.datatransferobjects.SingleMealDetailed
 import com.example.weightdojo.datatransferobjects.SingleMealDetailedDTO
@@ -19,9 +21,11 @@ typealias NutrimentCalorieTotals = Pair<Float, MutableMap<SingleMealDetailedNutr
 @Dao
 interface MealDao : NormalisationMethods, Inserters {
     @Query(
-        "WITH PriorTotal AS (" + "SELECT SUM((grams/100) * calories_per_100g) as totalCals FROM ingredient " + "WHERE meal_id = :mealId " + ")" + "" + "UPDATE meal " + "SET total_calories = (SELECT totalCals FROM PriorTotal)" + "WHERE mealId = :mealId"
+        "UPDATE meal " +
+        "SET total_calories = :totalCalories " +
+        "WHERE mealId = :mealId "
     )
-    fun updateCalorieTotals(mealId: Long)
+    fun updateCalorieTotals(mealId: Long, totalCalories: Float)
 
     @Deprecated(DEPRECATED_MESSAGE)
     @Query("DELETE FROM meal")
@@ -51,6 +55,27 @@ interface MealDao : NormalisationMethods, Inserters {
                 "WHERE mealId = :mealId "
     )
     fun mealWithIngredientsDetailed(mealId: Long): List<SingleMealDetailedDTO>
+//    @Query(
+//        "SELECT nutriment.name as nutrimentName, " +
+//                "                meal.name as mealName," +
+//                "                mealId," +
+//                "                total_calories as totalCalories," +
+//                "                day_id as dayId," +
+//                "                ingredient.ingredientId," +
+//                "                grams," +
+//                "                COALESCE(gPer100, 0) as gPer100," +
+//                "                ingredient.name as ingredientName," +
+//                "                meal.is_template as mealIsTemplate," +
+//                "                ingredient.is_template as ingredientIsTemplate," +
+//                "                nutriment.nutrimentId," +
+//                "                calories_per_100g as caloriesPer100" +
+//                "                FROM meal" +
+//                "                JOIN ingredient ON ingredient.meal_id = meal.mealId" +
+//                "                CROSS JOIN nutriment" +
+//                "                LEFT JOIN nutriment_ingredient ON nutriment_ingredient.nutrimentId = nutriment.nutrimentId AND nutriment_ingredient.ingredientId = ingredient.ingredientId" +
+//                "                WHERE mealId = 1"
+//    )
+//    fun mealWithIngredientsDetailed(mealId: Long): List<SingleMealDetailedDTO>
 
     @Transaction
     fun handleDelete(id: Long, dayId: Long) {
@@ -66,76 +91,18 @@ interface MealDao : NormalisationMethods, Inserters {
         return singleMealDetailed.data
     }
 
-    @Transaction
-    fun updateMeal(singleMealDetailed: SingleMealDetailed) {
-        val (calorieTotal, nutrimentTotals) = processIngredients(singleMealDetailed.ingredients)
-
-        processNutrimentMeals(singleMealDetailed, nutrimentTotals)
-
-        val meal = singleMealDetailed.toMeal().copy(totalCalories = calorieTotal)
-
-        replaceMeal(meal)
-    }
-
-    @Transaction
-    fun processIngredients(
-        ingredients: List<SingleMealDetailedIngredient>
-    ): NutrimentCalorieTotals {
-        val nutrimentTotals = mutableMapOf<SingleMealDetailedNutriment, Float>()
-        var calorieTotal = 0f
-
-        for (ingredient in ingredients) {
-            val toIngredient = ingredient.toIngredient()
-
-            Log.d("ingredient", ingredient.toString())
-            Log.d("toIngredient", toIngredient.toString())
-
-            replaceIngredient(toIngredient)
-
-            calorieTotal += totalGrams(ingredient.grams, ingredient.caloriesPer100)
-
-            processNutrimentIngredients(ingredient.nutriments, ingredient, nutrimentTotals)
-        }
-
-        return Pair(calorieTotal, nutrimentTotals)
-    }
-
-    @Transaction
-    fun processNutrimentMeals(
-        singleMealDetailed: SingleMealDetailed,
-        nutrimentTotals: MutableMap<SingleMealDetailedNutriment, Float>,
-    ) {
-        for (key in nutrimentTotals.keys) {
-            val nutrimentMeal = NutrimentMeal(
-                nutrimentId = key.nutrimentId,
-                mealId = singleMealDetailed.mealId,
-                totalGrams = nutrimentTotals[key] ?: 0f
-            )
-
-            replaceNutrimentMeal(nutrimentMeal)
-        }
-    }
-
-    @Transaction
-    fun processNutrimentIngredients(
-        nutriments: List<SingleMealDetailedNutriment>,
-        ingredient: SingleMealDetailedIngredient,
-        totals: MutableMap<SingleMealDetailedNutriment, Float>
-    ) {
-        for (nutriment in nutriments) {
-            val gPer100 = nutriment.gPer100AsString.toFloat()
-
-            val nutrimentIngredient = NutrimentIngredient(
-                ingredientId = ingredient.ingredientId,
-                nutrimentId = nutriment.nutrimentId,
-                gPer100 = gPer100
-            )
-
-            replaceNutrimentIngredient(nutrimentIngredient)
-
-            val newValue = totals.getOrPut(nutriment) { 0f } + totalGrams(ingredient.grams, gPer100)
-
-            totals[nutriment] = newValue
-        }
-    }
+    @Query(
+        "SELECT nutriment.name as nutrimentName,  " +
+                "meal.name as mealName,  " +
+                "total_calories as totalCalories,  " +
+                "meal.mealId as mealId, " +
+                "totalGrams,  " +
+                "nutriment.nutrimentId  " +
+                "FROM meal " +
+                "JOIN nutriment_meal ON nutriment_meal.mealId = meal.mealId " +
+                "JOIN nutriment ON nutriment.nutrimentId = nutriment_meal.nutrimentId " +
+                "WHERE meal.name LIKE '%' || :term || '%' AND is_template = 1 " +
+                "ORDER BY mealName ASC "
+    )
+    fun searchMealTemplates(term: String): List<MealWithNutrimentDataDTO>
 }

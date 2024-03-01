@@ -42,28 +42,6 @@ data class MealState(
     val mealTemplateId: Long = 0
 )
 
-data class MealWithNutrimentDataDTO(
-    val nutrimentName: String,
-    val mealName: String,
-    val totalCalories: Float,
-    val totalGrams: Float,
-    val nutrimentId: Long,
-    val mealId: Long
-)
-
-data class NutrimentBreakdown(
-    val nutrimentId: Long,
-    val totalGrams: Float,
-    val nutrimentName: String
-)
-
-data class MealWithNutrimentData(
-    val totalCalories: Float,
-    val mealName: String,
-    val mealId: Long,
-    var nutriments: List<NutrimentBreakdown>
-)
-
 data class NutrimentTotalsByDay(
     val totalGrams: Float,
     val nutrimentName: String,

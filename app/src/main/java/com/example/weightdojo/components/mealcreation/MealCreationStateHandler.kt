@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
+import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.datatransferobjects.SingleMealDetailed
 import com.example.weightdojo.datatransferobjects.SingleMealDetailedIngredient
 import com.example.weightdojo.datatransferobjects.SingleMealDetailedNutriment
@@ -13,20 +14,52 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
+
+enum class SubScreens {
+    CREATION,
+    SEARCH_INGREDIENTS,
+    SEARCH_MEALS,
+}
+
 data class MealCreationState(
     val singleMealDetailed: SingleMealDetailed,
     val activeIngredient: SingleMealDetailedIngredient? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val subScreens: SubScreens = SubScreens.CREATION
 )
 
 class MealCreationStateHandler(
-    singleMealDetailed: SingleMealDetailed?
+    singleMealDetailed: SingleMealDetailed?,
+    dayId: Long
 ) {
     var state by mutableStateOf(
         MealCreationState(
-            singleMealDetailed = singleMealDetailed ?: SingleMealDetailed()
+            singleMealDetailed = singleMealDetailed ?: SingleMealDetailed(dayId = dayId)
         )
     )
+
+    fun addIngredientToMeal(ingredient: SingleMealDetailedIngredient) {
+        val updatedList = state.singleMealDetailed.ingredients.plus(ingredient).toMutableList()
+        val updatedMeal = state.singleMealDetailed.copy(ingredients = updatedList)
+
+        state = state.copy(singleMealDetailed = updatedMeal, subScreens = SubScreens.CREATION)
+    }
+
+    fun removeIngredientFromList(ingredient: SingleMealDetailedIngredient) {
+        changeIngredients(ingredient.internalId) {
+            it.copy(markedFor = Marked.DELETE)
+        }
+    }
+
+    fun addNewIngredientToMeal() {
+        val ingredient = SingleMealDetailedIngredient()
+
+        addIngredientToMeal(ingredient)
+    }
+
+    fun setSubScreen(screen: SubScreens) {
+        state = state.copy(subScreens = screen)
+    }
 
     fun setError(message: String?) {
         state = state.copy(errorMessage = message)
@@ -59,6 +92,10 @@ class MealCreationStateHandler(
         state = state.copy(activeIngredient = active)
     }
 
+    /**
+     * Provide a function to change a single ingredient specified with the uuid param.
+     * Also handles the updating of the state
+     */
     private fun changeIngredients(
         uuid: UUID,
         mapper: (SingleMealDetailedIngredient) -> SingleMealDetailedIngredient,
