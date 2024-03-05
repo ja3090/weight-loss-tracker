@@ -7,7 +7,8 @@ data class MealWithNutrimentDataDTO(
     val totalCalories: Float,
     val totalGrams: Float,
     val nutrimentId: Long,
-    val mealId: Long
+    val mealId: Long,
+    val dailyIntakeTarget: Float? = null
 ) {
     fun toMealWithNutrimentData(): MealWithNutrimentData {
         return MealWithNutrimentData(

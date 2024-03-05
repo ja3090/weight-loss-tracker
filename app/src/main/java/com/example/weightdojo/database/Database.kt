@@ -9,6 +9,7 @@ import com.example.weightdojo.database.dao.CalorieChartDao
 import com.example.weightdojo.database.dao.DayDao
 import com.example.weightdojo.database.dao.IngredientDao
 import com.example.weightdojo.database.dao.MealDao
+import com.example.weightdojo.database.dao.MealIngredientDao
 import com.example.weightdojo.database.dao.NutrimentDao
 import com.example.weightdojo.database.dao.NutrimentIngredientDao
 import com.example.weightdojo.database.dao.NutrimentMealDao
@@ -46,6 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun nutrimentDao(): NutrimentDao
     abstract fun nutrimentMealDao(): NutrimentMealDao
     abstract fun nutrimentIngredientDao(): NutrimentIngredientDao
+    abstract fun mealIngredientDao(): MealIngredientDao
     abstract fun seedDatabaseDao(): SeedDatabase
 }
 

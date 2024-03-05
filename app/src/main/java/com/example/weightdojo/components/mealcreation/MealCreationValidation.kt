@@ -1,5 +1,6 @@
 package com.example.weightdojo.components.mealcreation
 
+import com.example.weightdojo.datatransferobjects.Marked
 import com.example.weightdojo.datatransferobjects.SingleMealDetailed
 import com.example.weightdojo.datatransferobjects.SingleMealDetailedNutriment
 
@@ -27,6 +28,8 @@ class MealCreationValidation {
         }
 
         for (ingredient in state.singleMealDetailed.ingredients) {
+            if (ingredient.markedFor == Marked.DELETE) continue
+
             if (ingredient.caloriesPer100 == 0f) {
                 return ValidationResponse(
                     success = false,

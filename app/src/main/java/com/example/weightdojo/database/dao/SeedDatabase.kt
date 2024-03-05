@@ -34,7 +34,7 @@ interface SeedDatabase : Inserters {
 
             val ingId = insertIngredient(ingTemplate)
             val mealIng = MealIngredient(mealId = newMealId, ingredientId = ingId)
-            makeMealIngredient(mealIng)
+            insertMealIngredient(mealIng)
 
             processNutrimentIngredients(
                 oldIngId = ingredient.ingredientId,

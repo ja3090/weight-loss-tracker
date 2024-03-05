@@ -9,9 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.weightdojo.MyApp
 import com.example.weightdojo.database.models.Day
 import com.example.weightdojo.datatransferobjects.DayData
+import com.example.weightdojo.datatransferobjects.RepoResponse
+import com.example.weightdojo.datatransferobjects.SingleMealDetailed
 import com.example.weightdojo.repositories.DayRepositoryImpl
+import com.example.weightdojo.repositories.mealrepo.MealRepository
+import com.example.weightdojo.repositories.mealrepo.MealRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -27,11 +32,27 @@ data class HomeState(
 class HomeViewModel(
     private val database: AppDatabase,
     private val repo: DayRepositoryImpl = DayRepositoryImpl(database.dayDao()),
+    private val mealRepository: MealRepository = MealRepositoryImpl(database),
 ) : ViewModel() {
-
     var state by mutableStateOf(
         HomeState()
     )
+
+    suspend fun submitEdit(singleMealDetailed: SingleMealDetailed): RepoResponse<Unit?> {
+        val job = viewModelScope.async(Dispatchers.IO) {
+            mealRepository.updateMeal(singleMealDetailed)
+        }
+
+        return job.await()
+    }
+
+    suspend fun submitMeal(singleMealDetailed: SingleMealDetailed): RepoResponse<Unit?> {
+        val job = viewModelScope.async(Dispatchers.IO) {
+            mealRepository.enterMeal(singleMealDetailed, getDayId())
+        }
+
+        return job.await()
+    }
 
     init {
         getAndSetDay()

@@ -22,15 +22,17 @@ fun plotPoints(
     val shape = Path()
     var min = 0F
     var max = 0F
+    var nullTally = 0
 
     if (chartDimensions.height == 0 || chartDimensions.width == 0) {
-        return PlotPointsDTO(line, shape, min, max)
+        return PlotPointsDTO(line, shape, min, max, nullTally, firstPoint)
     }
 
     for (index in data.indices) {
         val row = data[index]
 
         if (row.min == null || row.value == null || row.max == null) {
+            nullTally++
             continue
         }
 
@@ -71,14 +73,16 @@ fun plotPoints(
     shape.lineTo(firstPoint?.x ?: 0f, chartDimensions.height.toFloat())
     shape.lineTo(firstPoint?.x ?: 0f, firstPoint?.y ?: 0f)
 
-    return PlotPointsDTO(line, shape, min, max)
+    return PlotPointsDTO(line, shape, min, max, nullTally, firstPoint)
 }
 
 data class PlotPointsDTO(
     val line: Path,
     val shape: Path,
     val min: Float,
-    val max: Float
+    val max: Float,
+    val nullTally: Int,
+    val firstPoint: Offset?
 )
 
 private fun buildCurveLine(path: Path, startPoint: Offset, endPoint: Offset) {

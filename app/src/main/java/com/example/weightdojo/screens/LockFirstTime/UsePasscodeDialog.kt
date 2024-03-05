@@ -1,4 +1,4 @@
-package com.example.weightdojo.screens.lock
+package com.example.weightdojo.screens.LockFirstTime
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel

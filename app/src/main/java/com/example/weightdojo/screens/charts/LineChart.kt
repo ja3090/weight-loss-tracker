@@ -58,7 +58,11 @@ fun LineChart(
         List(chartState.data?.size ?: 0) { mutableStateOf<HighlightablePoint?>(null) }
     }
 
-    val (line, shape, min, max) = remember(chartState.data, dimensions, points) {
+    val (line, shape, min, max, nullTally, firstPoint) = remember(
+        chartState.data,
+        dimensions,
+        points
+    ) {
         plotPoints(chartState.data ?: listOf(), dimensions, points, upperLowerBound, convertValues)
     }
 
@@ -120,6 +124,14 @@ fun LineChart(
                         height = it.size.height, width = it.size.width
                     )
                 }, onDraw = {
+                    if (nullTally == points.size - 1 && firstPoint != null) {
+                        drawCircle(
+                            color = lineColor,
+                            radius = 20f,
+                            center = firstPoint
+                        )
+                    }
+
                 if (highlightedDataPoint != null) {
 
                     drawCircle(

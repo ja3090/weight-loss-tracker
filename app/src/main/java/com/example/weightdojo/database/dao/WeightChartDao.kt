@@ -37,19 +37,18 @@ interface WeightChartDao: ChartDao {
     @Query(
         "WITH MonthlyAverages AS ( " +
                 "        SELECT  " +
-                "        AVG(w.weight) AS value, " +
-                "        d.date " +
+                "        AVG(day.weight) AS value, " +
+                "        day.date " +
                 "        FROM " +
-                "        date d " +
-                "        LEFT JOIN " +
-                "        day w ON strftime('%m-%Y', d.date) = strftime('%m-%Y', w.date) " +
+                "        day  " +
                 "        GROUP BY " +
-                "        strftime('%m-%Y', d.date) " +
+                "        strftime('%m-%Y', day.date) " +
                 "     ), " +
                 "      MinMax as ( " +
                 "        SELECT MAX(value) as max, MIN(value) as min FROM MonthlyAverages " +
                 "        )  " +
-                "        SELECT max, min, date, value FROM MinMax, monthlyaverages"
+                "        SELECT max, min, date.date, value FROM MinMax, date " +
+                "LEFT JOIN MonthlyAverages ON strftime('%m-%Y', monthlyaverages.date) = strftime('%m-%Y', date.date)"
     )
     override fun getRangeByMonth(): List<ChartData>
 

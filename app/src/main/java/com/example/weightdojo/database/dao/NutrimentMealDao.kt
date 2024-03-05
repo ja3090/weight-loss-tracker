@@ -13,6 +13,11 @@ interface NutrimentMealDao {
     fun insertNutrimentMeal(nutrimentMeal: NutrimentMeal)
 
     @Query(
+        "DELETE FROM nutriment_meal WHERE mealId = :mealId"
+    )
+    fun deleteNutrimentMeal(mealId: Long)
+
+    @Query(
         "UPDATE nutriment_meal " +
         "SET totalGrams = :totalGrams " +
         "WHERE nutrimentId = :nutrimentId AND mealId = :mealId"

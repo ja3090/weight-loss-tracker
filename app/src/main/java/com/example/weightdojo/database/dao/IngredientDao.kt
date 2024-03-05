@@ -71,7 +71,9 @@ interface IngredientDao : NormalisationMethods {
                 "FROM ingredient " +
                 "JOIN nutriment_ingredient ON nutriment_ingredient.ingredientId = ingredient.ingredientId " +
                 "JOIN nutriment ON nutriment.nutrimentId = nutriment_ingredient.nutrimentId " +
-                "WHERE ingredient.name LIKE '%' || :term || '%' AND is_template = 1 " +
+                "WHERE ingredient.name LIKE '%' || :term || '%' " +
+                "AND is_template = 1 " +
+                "AND is_soft_deleted = 0 " +
                 "ORDER BY ingredientName ASC "
     )
     fun searchMealTemplates(term: String): List<IngredientWithNutrimentDataDTO>
@@ -93,4 +95,48 @@ interface IngredientDao : NormalisationMethods {
         "WHERE ingredient.ingredientId = :id "
     )
     fun getDetailedIngredient(id: Long): List<SingleIngredientDetailedDTO>
+
+    @Query(
+        "SELECT " +
+                "nutriment.name as nutrimentName, " +
+                "0 as mealId, " +
+                "0 as caloriesPer100, " +
+                "0 as gPer100, " +
+                "0 as grams, " +
+                "0 as ingredientId, " +
+                "'' as ingredientName, " +
+                "0 as ingredientIsTemplate, " +
+                "nutriment.nutrimentId, " +
+                "0 as caloriesPer100 " +
+                "FROM nutriment "
+    )
+    fun getDetailedIngredient(): List<SingleIngredientDetailedDTO>
+
+    @Query(
+            "WITH RedundantIngredients AS (" +
+                "SELECT * " +
+                "FROM ingredient " +
+                "LEFT JOIN meal_ingredient ON ingredient.ingredientId = meal_ingredient.ingredientId " +
+                "WHERE meal_ingredient.ingredientId IS NULL AND ingredient.is_template = 1 " +
+            ")" +
+                "DELETE FROM ingredient " +
+                "WHERE ingredient.ingredientId IN ( " +
+                "    SELECT RedundantIngredients.ingredientId " +
+                "    FROM RedundantIngredients " +
+                ")"
+    )
+    fun deleteRedundantIngredients()
+
+    @Transaction
+    fun deleteIngredientTemplate(ingredientId: Long) {
+        softDeleteIngredientTemplate(ingredientId)
+        deleteRedundantIngredients()
+    }
+
+    @Query(
+        "UPDATE ingredient " +
+        "SET is_soft_deleted = 1 " +
+        "WHERE ingredientId = :ingredientId "
+    )
+    fun softDeleteIngredientTemplate(ingredientId: Long)
 }

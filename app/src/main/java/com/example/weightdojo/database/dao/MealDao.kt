@@ -55,6 +55,29 @@ interface MealDao : NormalisationMethods, Inserters {
                 "WHERE mealId = :mealId "
     )
     fun mealWithIngredientsDetailed(mealId: Long): List<SingleMealDetailedDTO>
+
+    @Query(
+        "SELECT nutriment.name as nutrimentName,  " +
+                "meal.name as mealName, " +
+                "meal.mealId, " +
+                "total_calories as totalCalories, " +
+                "day_id as dayId,  " +
+                "ingredient.ingredientId, " +
+                "gPer100, " +
+                "grams, " +
+                "ingredient.name as ingredientName, " +
+                "meal.is_template as mealIsTemplate, " +
+                "ingredient.is_template as ingredientIsTemplate, " +
+                "nutriment.nutrimentId, " +
+                "calories_per_100g as caloriesPer100 " +
+                "FROM meal " +
+                "JOIN meal_ingredient ON meal_ingredient.mealId = meal.mealId " +
+                "JOIN ingredient ON ingredient.ingredientId = meal_ingredient.ingredientId " +
+                "LEFT JOIN nutriment_ingredient ON nutriment_ingredient.ingredientId = meal_ingredient.ingredientId " +
+                "JOIN nutriment ON nutriment.nutrimentId = nutriment_ingredient.nutrimentId " +
+                "WHERE meal.mealId = :mealId "
+    )
+    fun mealWithIngredientsDetailedFromTemplate(mealId: Long): List<SingleMealDetailedDTO>
 //    @Query(
 //        "SELECT nutriment.name as nutrimentName, " +
 //                "                meal.name as mealName," +
@@ -85,6 +108,14 @@ interface MealDao : NormalisationMethods, Inserters {
 
     fun getMealWithIngredientsDetailed(mealId: Long): SingleMealDetailed? {
         val rows = mealWithIngredientsDetailed(mealId)
+
+        val singleMealDetailed = SingleMealBuilder(rows)
+
+        return singleMealDetailed.data
+    }
+
+    fun useMealTemplate(mealId: Long): SingleMealDetailed? {
+        val rows = mealWithIngredientsDetailedFromTemplate(mealId)
 
         val singleMealDetailed = SingleMealBuilder(rows)
 

@@ -1,7 +1,9 @@
 package com.example.weightdojo.database.dao
 
+import android.util.Log
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.weightdojo.database.models.Day
@@ -16,25 +18,31 @@ interface DayDao : NormalisationMethods, FormatMealData {
 
     @Transaction
     fun getDay(date: LocalDate): DayData {
-        var day = getDayByDate(date)
+        var day = getDayByDate(date) ?: Day(date = date)
 
-        if (day == null) {
-            val id = insert(Day(date = date))
-            day = getDayById(id)
+        if (day.id == 0L) {
+            val id = insert(day)
+            day = day.copy(id = id)
         }
 
-        day as Day
-
         val meals = getMeals(day.id)
-        val totalCals = totalCalsForDay(day.id)
-        val nutrimentTotalsByDay = getNutrimentTotals(day.id)
+
+        val formattedData = formatMealData(meals)
 
         return DayData(
-            day = day.copy(totalCalories = totalCals),
-            meals = formatMealData(meals),
-            nutrimentTotals = nutrimentTotalsByDay
+            day = day.copy(totalCalories = formattedData.totalCalories),
+            meals = formattedData.mealWithNutrimentData,
+            nutrimentTotals = formattedData.nutrimentTotalsByDay.ifEmpty {
+                getNutrimentTotals()
+            }
         )
     }
+
+    @Query(
+        "SELECT * FROM day " +
+                "WHERE day.date = :date "
+    )
+    fun getDayByDate(date: LocalDate): Day?
 
     @Query(
         "SELECT SUM(total_calories) as total_calories FROM meal " +
@@ -47,21 +55,17 @@ interface DayDao : NormalisationMethods, FormatMealData {
                 "meal.name as mealName,  " +
                 "total_calories as totalCalories,  " +
                 "meal.mealId as mealId, " +
-                "totalGrams,  " +
-                "nutriment.nutrimentId  " +
+                "COALESCE(totalGrams, 0) as totalGrams,  " +
+                "nutriment.nutrimentId," +
+                "nutriment.daily_intake_target as dailyIntakeTarget " +
                 "FROM meal " +
-                "JOIN nutriment_meal ON nutriment_meal.mealId = meal.mealId " +
-                "JOIN nutriment ON nutriment.nutrimentId = nutriment_meal.nutrimentId " +
+                "CROSS JOIN nutriment " +
+                "LEFT JOIN nutriment_meal ON nutriment_meal.mealId = meal.mealId " +
+                "AND nutriment.nutrimentId = nutriment_meal.nutrimentId " +
                 "WHERE meal.day_id = :dayId " +
                 "ORDER BY mealName ASC "
     )
     fun getMeals(dayId: Long): List<MealWithNutrimentDataDTO>
-
-    @Query(
-        "SELECT * FROM day " +
-                "WHERE date = :date"
-    )
-    fun getDayByDate(date: LocalDate): Day?
 
     @Query(
         "SELECT * FROM day " +
@@ -92,18 +96,9 @@ interface DayDao : NormalisationMethods, FormatMealData {
     fun getMostRecentWeight(): Day?
 
     @Query(
-        "WITH MealByDayId AS ( " +
-                "    SELECT nutriment_meal.nutrimentId, " +
-                "SUM(totalGrams) as totalGrams FROM meal " +
-                "    JOIN nutriment_meal ON nutriment_meal.mealId = meal.mealId " +
-                "    WHERE meal.day_id = :dayId " +
-                "    GROUP BY nutriment_meal.nutrimentId " +
-                ") " +
-                " " +
-                "SELECT COALESCE(totalGrams, 0) as totalGrams, nutriment.name as nutrimentName, " +
-                "daily_intake_target as dailyIntakeTarget " +
-                "FROM nutriment " +
-                "LEFT JOIN MealByDayId ON nutriment.nutrimentId = MealByDayId.nutrimentId"
+        "SELECT 0 as totalGrams, " +
+                "daily_intake_target as dailyIntakeTarget, " +
+                "name as nutrimentName FROM nutriment"
     )
-    fun getNutrimentTotals(dayId: Long): List<NutrimentTotalsByDay>
+    fun getNutrimentTotals(): List<NutrimentTotalsByDay>
 }

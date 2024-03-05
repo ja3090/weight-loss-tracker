@@ -76,8 +76,20 @@ fun CreationSubScreen(
         )
     }
     Column(
-        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (state.singleMealDetailed.mealIsTemplate) {
+            OverwriteTemplateOption(
+                modifier = Modifier
+                    .padding(Sizing.paddings.small)
+            )
+        } else {
+            CreateTemplateOption(
+                modifier = Modifier
+                    .padding(Sizing.paddings.small)
+            )
+        }
         CustomButton(buttonName = "Save") {
             submit()
         }

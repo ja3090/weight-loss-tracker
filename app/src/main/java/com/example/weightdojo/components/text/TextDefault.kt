@@ -23,7 +23,7 @@ fun TextDefault(
     fontSize: TextUnit = Sizing.font.default,
     textAlign: TextAlign = TextAlign.Center,
     fontStyle: FontStyle = FontStyle.Normal,
-    textDecoration: TextDecoration = TextDecoration.None
+    textDecoration: TextDecoration = TextDecoration.None,
 ) {
     Text(
         modifier = modifier,
@@ -35,7 +35,5 @@ fun TextDefault(
         textAlign = textAlign,
         fontStyle = fontStyle,
         textDecoration = textDecoration,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
     )
 }

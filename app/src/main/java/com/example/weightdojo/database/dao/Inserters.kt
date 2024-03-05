@@ -25,7 +25,7 @@ interface Inserters {
     fun insertIngredient(ingredient: Ingredient): Long
 
     @Insert
-    fun makeMealIngredient(mealIngredient: MealIngredient)
+    fun insertMealIngredient(mealIngredient: MealIngredient)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun replaceIngredient(ingredient: Ingredient): Long

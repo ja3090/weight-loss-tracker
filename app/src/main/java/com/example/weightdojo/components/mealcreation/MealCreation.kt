@@ -1,17 +1,21 @@
 package com.example.weightdojo.components.mealcreation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weightdojo.components.dialogs.ErrorDialog
 import com.example.weightdojo.components.toast
 import com.example.weightdojo.datatransferobjects.SingleMealDetailed
 import com.example.weightdojo.components.ModalFrame
+import com.example.weightdojo.datatransferobjects.RepoResponse
+import com.example.weightdojo.screens.home.HomeState
 import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.ui.CustomColors
 import com.example.weightdojo.utils.VMFactory
@@ -25,22 +29,33 @@ fun getColour(isError: Boolean, color: Color): Color {
 }
 
 @Composable
-fun MealCreation(
-    homeViewModel: HomeViewModel = viewModel(),
-    dayId: Long = homeViewModel.getDayId(),
-    detailedMeal: SingleMealDetailed?,
-    mealCreationOptions: MealCreationOptions = MealCreationOptions.CREATING,
+fun <VM : ViewModel> MealCreation(
+    detailedMeal: SingleMealDetailed? = null,
+    mealCreationOptions: MealCreationOptions,
+    viewModel: VM,
+    onSubmit: suspend (SingleMealDetailed) -> RepoResponse<Unit?>,
     mealCreationVm: MealCreationVM = viewModel(
         factory = VMFactory.build {
-            MealCreationVM(singleMealDetailed = detailedMeal, dayId = dayId)
-        }
+            MealCreationVM(
+                singleMealDetailed = detailedMeal,
+                mealCreationOptions = mealCreationOptions
+            )
+        },
     ),
     state: MealCreationState = mealCreationVm.stateHandler.state,
     openModal: (Boolean) -> Unit,
     onSuccess: (() -> Unit)? = null
 ) {
-    LaunchedEffect(detailedMeal) {
-        mealCreationVm.stateHandler.reset(detailedMeal)
+    Log.d("mealCreationOptions", mealCreationOptions.toString())
+
+    LaunchedEffect(detailedMeal, mealCreationOptions) {
+        val subScreen = if (mealCreationOptions == MealCreationOptions.CREATING) {
+            SubScreens.SEARCH_MEALS
+        } else {
+            SubScreens.CREATION
+        }
+
+        mealCreationVm.stateHandler.reset(detailedMeal, subScreen)
     }
 
     val context = LocalContext.current
@@ -57,6 +72,7 @@ fun MealCreation(
             SubScreens.SEARCH_INGREDIENTS -> {
                 mealCreationVm.stateHandler.setSubScreen(SubScreens.CREATION)
             }
+
             SubScreens.CREATION -> {
                 if (mealCreationOptions == MealCreationOptions.CREATING) {
                     mealCreationVm.stateHandler.setSubScreen(SubScreens.SEARCH_MEALS)
@@ -72,11 +88,8 @@ fun MealCreation(
 
         if (!valid.success) return mealCreationVm.stateHandler.setError(valid.message)
 
-        mealCreationVm.viewModelScope.launch {
-            val res = when (mealCreationOptions) {
-                MealCreationOptions.CREATING -> mealCreationVm.submitMeal()
-                MealCreationOptions.EDITING -> mealCreationVm.submitEdit()
-            }
+        viewModel.viewModelScope.launch {
+            val res = onSubmit(state.singleMealDetailed)
 
             if (res.success) {
                 toast("Success", context)
@@ -93,16 +106,19 @@ fun MealCreation(
         text = mealCreationVm.stateHandler.state.errorMessage
     )
 
-    if (detailedMeal != null) Dialog(
+    Dialog(
         onDismissRequest = { openModal(false) },
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         ModalFrame(
             title = modalTitle,
-            onClose = { openModal(false) },
+            onClose = {
+                mealCreationVm.stateHandler.reset()
+                openModal(false)
+            },
             onBack = { onBackClick() }
         ) {
-            Wizard(openModal = openModal, mealCreationOptions = mealCreationOptions) {
+            Wizard(openModal = openModal) {
                 submit()
             }
         }

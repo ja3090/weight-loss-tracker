@@ -45,7 +45,7 @@ interface CalorieChartDao: ChartDao {
          "), minMax AS (SELECT MAX(value) as max, MIN(value) as min FROM monthlyAverages)" +
          "" +
          "SELECT date.date, value, min, max FROM date, minMax " +
-         "LEFT JOIN monthlyAverages ON monthlyAverages.date = strftime('%m-%Y', date.date)"
+         "LEFT JOIN monthlyAverages ON strftime('%m-%Y', monthlyAverages.date) = strftime('%m-%Y', date.date)"
     )
     override fun getRangeByMonth(): List<ChartData>
 

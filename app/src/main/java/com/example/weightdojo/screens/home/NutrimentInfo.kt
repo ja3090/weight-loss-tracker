@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.weightdojo.components.text.TextDefault
 import com.example.weightdojo.datatransferobjects.NutrimentTotalsByDay
@@ -30,7 +33,8 @@ fun NutrimentInfo(nutrimentTotals: List<NutrimentTotalsByDay>) {
     Row(
         modifier = Modifier
             .horizontalScroll(rememberScrollState())
-            .padding(bottom = Sizing.paddings.medium, start = Sizing.paddings.small)
+            .padding(horizontal = Sizing.paddings.small)
+
     ) {
         nutrimentTotals.mapIndexed { index, it ->
             NutrimentTotalBar(
@@ -50,14 +54,17 @@ fun NutrimentTotalBar(
         val colourIndex = index % CustomColors.colorList.size
         CustomColors.colorList[colourIndex]
     }
-
     val height = 80.dp
-    val width = 80.dp
     val colour = getColour(index)
+
+    val lag = Sizing.paddings.small.times(5)
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp - lag
+    val singleWidth = screenWidth / 4
+
 
     val percentOfTarget = when (total.dailyIntakeTarget) {
         is Float -> (total.totalGrams / total.dailyIntakeTarget)
-        else -> 1f
+        else -> if (total.totalGrams == 0f) 0f else 1f
     }
 
     val gramsValue = when (total.dailyIntakeTarget) {
@@ -70,20 +77,23 @@ fun NutrimentTotalBar(
             .padding(start = if (index == 0) 0.dp else Sizing.paddings.small),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextDefault(
+        Text(
             text = total.nutrimentName,
             modifier = Modifier
                 .padding(bottom = Sizing.paddings.small)
-                .width(width)
+                .width(singleWidth)
                 .clipToBounds(),
             textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colors.primary.copy(0.85f)
         )
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(5.dp))
                 .background(MaterialTheme.colors.background)
                 .height(height)
-                .width(width)
+                .width(singleWidth)
         ) {
             Box(
                 modifier = Modifier

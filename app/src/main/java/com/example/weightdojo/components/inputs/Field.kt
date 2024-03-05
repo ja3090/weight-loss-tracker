@@ -74,7 +74,9 @@ fun Field(
                         MaterialTheme.colors.primary.copy(0.5f)
                     ),
                     fontSize = fontSize,
-                    textAlign = textAlign
+                    textAlign = textAlign,
+                    modifier = Modifier
+                        .fillMaxWidth()
                 )
             }
             BasicTextField(

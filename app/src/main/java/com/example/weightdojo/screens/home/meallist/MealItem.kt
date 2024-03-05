@@ -42,12 +42,6 @@ fun MealItem(
     Column(modifier = Modifier.animateContentSize()) {
         NutritionBreakdown(data = meal, setter = { setter(meal) }, isActive = isActive)
 
-        if (index != arrSize - 1) {
-            CustomDivider(
-                modifier = Modifier.padding(horizontal = Sizing.paddings.small)
-            )
-        }
-
         if (isActive) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -74,18 +68,13 @@ fun MealItem(
                         .fillMaxSize()
                         .padding(Sizing.paddings.medium),
                 )
-                IconBuilder(
-                    id = R.drawable.favorite,
-                    contentDescription = "favorite",
-                    testTag = "FAVORITE_BUTTON",
-                    modifier = Modifier
-                        .clickable { }
-                        .weight(1f)
-                        .fillMaxSize()
-                        .padding(Sizing.paddings.medium),
-                )
             }
-            CustomDivider(modifier = Modifier.padding(horizontal = Sizing.paddings.small))
+        }
+
+        if (index != arrSize - 1) {
+            CustomDivider(
+                modifier = Modifier.padding(horizontal = Sizing.paddings.small)
+            )
         }
     }
 }

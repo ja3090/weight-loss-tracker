@@ -30,11 +30,16 @@ data class MealCreationState(
 
 class MealCreationStateHandler(
     singleMealDetailed: SingleMealDetailed?,
-    dayId: Long
+    private val mealCreationOptions: MealCreationOptions
 ) {
     var state by mutableStateOf(
         MealCreationState(
-            singleMealDetailed = singleMealDetailed ?: SingleMealDetailed(dayId = dayId)
+            singleMealDetailed = singleMealDetailed ?: SingleMealDetailed(),
+            subScreens = if (mealCreationOptions == MealCreationOptions.CREATING) {
+                SubScreens.SEARCH_MEALS
+            }  else {
+                SubScreens.CREATION
+            }
         )
     )
 
@@ -51,12 +56,6 @@ class MealCreationStateHandler(
         }
     }
 
-    fun addNewIngredientToMeal() {
-        val ingredient = SingleMealDetailedIngredient()
-
-        addIngredientToMeal(ingredient)
-    }
-
     fun setSubScreen(screen: SubScreens) {
         state = state.copy(subScreens = screen)
     }
@@ -65,10 +64,27 @@ class MealCreationStateHandler(
         state = state.copy(errorMessage = message)
     }
 
-    fun reset(singleMealDetailed: SingleMealDetailed? = null) {
+    fun reset(singleMealDetailed: SingleMealDetailed? = null, subScreen: SubScreens? = null) {
         state = state.copy(
             singleMealDetailed = singleMealDetailed ?: SingleMealDetailed(),
-            activeIngredient = null
+            activeIngredient = null,
+            subScreens = subScreen ?: SubScreens.SEARCH_MEALS
+        )
+    }
+
+    fun useTemplate(singleMealDetailed: SingleMealDetailed) {
+        state = state.copy(
+            singleMealDetailed = singleMealDetailed.copy(),
+            activeIngredient = null,
+            subScreens = SubScreens.CREATION,
+        )
+    }
+
+    fun addNewMeal() {
+        state = state.copy(
+            singleMealDetailed = SingleMealDetailed(),
+            activeIngredient = null,
+            subScreens = SubScreens.CREATION
         )
     }
 

@@ -43,7 +43,7 @@ data class MealState(
 )
 
 data class NutrimentTotalsByDay(
-    val totalGrams: Float,
+    var totalGrams: Float,
     val nutrimentName: String,
     val dailyIntakeTarget: Float?
 )

@@ -12,15 +12,21 @@ class ConfirmModal(
     val onConfirm: () -> Unit,
 ) {
     private var confirmDelete by mutableStateOf(false)
+    private var callbackValue by mutableStateOf<(() -> Unit)?>(null)
 
     @Composable
     fun Modal() {
         if (confirmDelete) {
             AlertDialog(
-                onDismissRequest = { confirmDelete = false },
+                onDismissRequest = {
+                    confirmDelete = false
+                    callbackValue = null
+                },
                 onConfirmation = {
                     onConfirm()
+                    callbackValue?.let { it() }
                     confirmDelete = false
+                    callbackValue = null
                 },
                 dialogTitle = title,
                 dialogText = text,
@@ -28,7 +34,8 @@ class ConfirmModal(
         }
     }
 
-    fun openOrClose(boolean: Boolean) {
+    fun openOrClose(boolean: Boolean, callback: (() -> Unit)? = null) {
         confirmDelete = boolean
+        callbackValue = callback
     }
 }

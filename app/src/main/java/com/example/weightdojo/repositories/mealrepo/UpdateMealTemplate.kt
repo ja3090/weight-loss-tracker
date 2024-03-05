@@ -11,14 +11,14 @@ import com.example.weightdojo.utils.seeder.CalorieTotals
 import com.example.weightdojo.utils.seeder.NutrimentTotals
 import com.example.weightdojo.utils.totalGrams
 
-interface UpdateMeal {
+interface UpdateMealTemplate {
     val database: AppDatabase
     val mealDao: MealDao
     val calorieTotals: CalorieTotals
     val nutrimentTotals: NutrimentTotals
 
-    fun updateHandler(singleMealDetailed: SingleMealDetailed) {
-        val toMeal = singleMealDetailed.toMeal()
+    fun updateMealTemplateHandler(singleMealDetailed: SingleMealDetailed) {
+        val toMeal = singleMealDetailed.toMeal().copy(dayId = null)
 
         database.mealDao().replaceMeal(toMeal)
 
@@ -37,22 +37,17 @@ interface UpdateMeal {
         ingredient: SingleMealDetailedIngredient,
         mealId: Long
     ) {
-        if (ingredient.markedFor == Marked.DELETE) return deleteIngredient(ingredient)
+        if (ingredient.markedFor == Marked.DELETE) return deleteIngredient(ingredient, mealId)
 
-        val toIngredientTable = ingredient.toIngredient()
+        val toIngredient = ingredient.toIngredient()
 
-        val newIngredient = mealDao.ingredientInsertWhenEditing(toIngredientTable, mealId)
+        mealDao.replaceIngredient(toIngredient)
 
         val totalCals = totalGrams(ingredient.grams, ingredient.caloriesPer100)
 
         calorieTotals.updateTotal(mealId, totalCals)
 
-        val ingredientFinal = ingredient.copy(
-            ingredientIsTemplate = newIngredient.isTemplate,
-            ingredientId = newIngredient.ingredientId
-        )
-
-        ingredient.nutriments.forEach { processNutriment(ingredientFinal, it, mealId) }
+        ingredient.nutriments.forEach { processNutriment(ingredient, it, mealId) }
     }
 
     private fun processNutriment(
@@ -77,10 +72,13 @@ interface UpdateMeal {
         )
     }
 
-    private fun deleteIngredient(ingredient: SingleMealDetailedIngredient) {
-        if (ingredient.ingredientId == 0L || ingredient.ingredientIsTemplate) return
+    private fun deleteIngredient(ingredient: SingleMealDetailedIngredient, mealId: Long) {
+        if (ingredient.ingredientId == 0L) return
 
-        database.ingredientDao().deleteIngredient(ingredient.ingredientId)
+        database.mealIngredientDao().deleteMealIngredient(
+            mealId = mealId,
+            ingredientId = ingredient.ingredientId
+        )
 
         database.nutrimentIngredientDao().deleteNutrimentIngredient(ingredient.ingredientId)
     }

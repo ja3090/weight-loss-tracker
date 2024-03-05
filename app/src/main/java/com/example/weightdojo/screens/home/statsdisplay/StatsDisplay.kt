@@ -37,12 +37,7 @@ fun StatsDisplay(
 
     Box(
         modifier = Modifier
-            .padding(
-                top = 0.dp,
-                start = Sizing.paddings.small,
-                end = Sizing.paddings.small,
-                bottom = Sizing.paddings.small
-            )
+            .padding(Sizing.paddings.small)
             .height(200.dp)
     ) {
         Box(

@@ -29,6 +29,7 @@ import com.example.weightdojo.datatransferobjects.MealWithNutrimentData
 import com.example.weightdojo.screens.home.HomeViewModel
 import com.example.weightdojo.ui.Sizing
 import com.example.weightdojo.utils.VMFactory
+import java.util.UUID
 
 @Composable
 fun MealList(
@@ -56,7 +57,9 @@ fun MealList(
             detailedMeal = mealListState.singleMealDetailed,
             openModal = mealListVm::openModal,
             mealCreationOptions = MealCreationOptions.EDITING,
-            onSuccess = { homeViewModel.refresh() }
+            onSuccess = { homeViewModel.refresh() },
+            onSubmit = homeViewModel::submitEdit,
+            viewModel = homeViewModel
         )
     }
 

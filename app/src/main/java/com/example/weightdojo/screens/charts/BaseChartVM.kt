@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.charts
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -100,9 +101,13 @@ abstract class BaseChartVM(
             }
 
             TimePeriods.ALL -> {
-                val earliestDate = dateRepo.getEarliestDate()
+                var earliestDate = dateRepo.getEarliestDate()
 
                 val dateDifference = Period.between(earliestDate, LocalDate.now())
+
+                if (dateDifference.days < 6 && dateDifference.years == 0 && dateDifference.months == 0) {
+                    earliestDate = LocalDate.now().minusDays(6L)
+                }
 
                 val largerDifference = dateDifference.months > 2 || dateDifference.years > 0
 

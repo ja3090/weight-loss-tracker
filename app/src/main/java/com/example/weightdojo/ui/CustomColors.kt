@@ -11,7 +11,6 @@ class CustomColors {
             Color(0xffE09F3E),
             Color(0xffF13030),
             Color(0xff008DD5),
-            Color(0xff540B0E),
             Color(0xff5AFF15),
             Color(0xff8C1A6A),
             Color(0xff1D7874),

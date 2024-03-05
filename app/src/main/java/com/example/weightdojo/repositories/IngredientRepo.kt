@@ -23,6 +23,8 @@ interface IngredientRepository {
     suspend fun deleteIngredient(
         id: Long
     ): RepoResponse<Unit?>
+    suspend fun getSingleDetailedIngredient(): RepoResponse<SingleMealDetailedIngredient>
+    suspend fun deleteIngredientTemplate(id: Long): RepoResponse<Unit?>
 }
 
 class IngredientRepositoryImpl(
@@ -57,11 +59,29 @@ class IngredientRepositoryImpl(
         }
     }
 
+    override suspend fun getSingleDetailedIngredient(): RepoResponse<SingleMealDetailedIngredient> {
+        return repoWrapper(SingleMealDetailedIngredient()) {
+            val rows = ingredientDao.getDetailedIngredient()
+
+            val builder = SingleIngredientDetailedBuilder(rows)
+
+            builder.data ?: throw Exception("Couldn't find ingredient")
+        }
+    }
+
     override suspend fun deleteIngredient(
         id: Long
     ): RepoResponse<Unit?> {
         return repoWrapper {
             ingredientDao.deleteIngredient(id)
+        }
+    }
+
+    override suspend fun deleteIngredientTemplate(
+        id: Long
+    ): RepoResponse<Unit?> {
+        return repoWrapper {
+            ingredientDao.deleteIngredientTemplate(id)
         }
     }
 }

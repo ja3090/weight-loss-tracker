@@ -1,5 +1,6 @@
 package com.example.weightdojo.screens.home.meallist
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -58,6 +59,8 @@ class MealListViewModel(
         } else {
             state = state.copy(errorMessage = res.errorMessage)
         }
+
+        Log.d("res", res.toString())
     }
 
     fun editMeal(mealId: Long) {

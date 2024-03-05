@@ -12,7 +12,7 @@ import com.example.weightdojo.MyApp
 import com.example.weightdojo.components.keypad.Keypad
 import com.example.weightdojo.components.keypad.KeypadButton
 import com.example.weightdojo.screens.lock.BiometricDialog
-import com.example.weightdojo.screens.lock.UsePasscodeDialog
+import com.example.weightdojo.screens.LockFirstTime.UsePasscodeDialog
 import com.example.weightdojo.utils.Biometrics
 import com.example.weightdojo.utils.VMFactory
 import kotlinx.coroutines.Dispatchers

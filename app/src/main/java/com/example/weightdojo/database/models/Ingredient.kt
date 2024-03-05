@@ -24,4 +24,5 @@ data class Ingredient(
     @ColumnInfo(name = "calories_per_100g") val caloriesPer100: Float,
     @ColumnInfo(name = "is_template", defaultValue = "0") val isTemplate: Boolean = false,
     @ColumnInfo(name = "grams") val grams: Float,
+    @ColumnInfo(name = "is_soft_deleted") val isSoftDeleted: Boolean = false,
 )
