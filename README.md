@@ -13,6 +13,7 @@ Weight Dojo is an android app that helps you track your calories and weight. You
 - **Privacy** - Works offline and data is stored entirely on your device, nothing is sent to a third-party
 - **Templates** - For calorie entries that you enter regularly, you have the option to save these for reuse in the future
 - **Charts** - Charts to visualise your progress, not just weight loss but also calorie intake
+- **Dynamic fields** - Allows users to track additional information (besides calories) i.e. sugar, fibre or iron
 
 ### Planned Features
 
@@ -22,7 +23,7 @@ Weight Dojo is an android app that helps you track your calories and weight. You
 
 ### Possible features
 
-- **Dynamic fields** - Allow users to track additional information as they wish i.e. sugar, fibre or iron
+- **Charts for the dynamic fields**
 
 ## Installation
 
