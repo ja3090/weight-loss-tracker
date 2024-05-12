@@ -1,10 +1,10 @@
 # Weight Loss Tracker
 
-Weight Dojo is an android app that helps you track your calories and weight. You can calculate your TDEE, save meals you eat regularly for easier calorie logging and chart your progress, giving you what you need to make losing weight more efficient. 
+This is an android app that helps you track your calories and weight. You can calculate your TDEE, save meals you eat regularly for easier calorie logging and chart your progress, giving you what you need to make losing weight more efficient. 
 
 ## Screenshots
 
-<img src="https://github.com/ja3090/weight-dojo/blob/main/assets/home_screen_dark.png" width="300"> <img src="https://github.com/ja3090/weight-dojo/blob/main/assets/keypad.png" width="300"> <img src="https://github.com/ja3090/weight-dojo/blob/main/assets/meal_search.png" width="300"> <img src="https://github.com/ja3090/weight-dojo/blob/main/assets/charts_weight.png" width="300">
+<img src="https://github.com/ja3090/weight-loss-tracker/blob/main/assets/home_screen_dark.png" width="300"> <img src="https://github.com/ja3090/weight-loss-tracker/blob/main/assets/keypad.png" width="300"> <img src="https://github.com/ja3090/weight-loss-tracker/blob/main/assets/meal_search.png" width="300"> <img src="https://github.com/ja3090/weight-loss-tracker/blob/main/assets/charts_weight.png" width="300">
 
 ## Features
 
